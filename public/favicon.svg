@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Daraja">
+  <rect width="64" height="64" rx="14" fill="#0f5e59"/>
+  <path d="M12 40c0-12 8-20 20-20s20 8 20 20" fill="none" stroke="#f4f7f9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M16 40v10M48 40v10M12 40h40" fill="none" stroke="#f4f7f9" stroke-width="4" stroke-linecap="round"/>
+</svg>
