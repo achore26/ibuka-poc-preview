@@ -1,11 +1,20 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { checkSupabaseConnectivity, type ConnectivityResult } from "./lib/supabase-status";
 
 const statusClassByState: Record<ConnectivityResult["state"], string> = {
-  reachable: "ok",
-  "not-configured": "warn",
-  unreachable: "error",
-  "unexpected-response": "error",
+  reachable: "status-ok",
+  "not-configured": "status-warn",
+  unreachable: "status-error",
+  "unexpected-response": "status-error",
 };
 
 function describeResult(result: ConnectivityResult): string {
@@ -19,6 +28,69 @@ function describeResult(result: ConnectivityResult): string {
     case "unexpected-response":
       return `Unexpected response — HTTP ${result.httpStatus}. The endpoint answered but not with a healthy result.`;
   }
+}
+
+const phaseItems = [
+  {
+    number: "01",
+    label: "Company registration and magic-link sign-in",
+    status: "Planned",
+    active: false,
+  },
+  {
+    number: "02",
+    label: "Sample Market listing assessment",
+    status: "In preparation",
+    active: true,
+  },
+  {
+    number: "03",
+    label: "Readiness summary and dashboard",
+    status: "Planned",
+    active: false,
+  },
+] as const;
+
+/*
+ * Bridge elevation drawn in-repo: deck, three arches and piers in deep ink,
+ * with one accent line beneath standing for the water the bridge crosses.
+ * Purely decorative, so it is hidden from assistive technology.
+ */
+function BridgeRule({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 1200 190"
+      fill="none"
+      aria-hidden="true"
+      className={className ?? "mt-12 w-full text-foreground"}
+    >
+      <g stroke="currentColor" fill="none">
+        <line x1="0" y1="36" x2="1200" y2="36" strokeWidth="3" />
+        <path d="M70 36a130 130 0 0 0 260 0" strokeWidth="2.5" />
+        <path d="M470 36a130 130 0 0 0 260 0" strokeWidth="2.5" />
+        <path d="M870 36a130 130 0 0 0 260 0" strokeWidth="2.5" />
+        <g strokeWidth="2.5">
+          <line x1="0" y1="36" x2="0" y2="178" />
+          <line x1="70" y1="36" x2="70" y2="178" />
+          <line x1="330" y1="36" x2="330" y2="178" />
+          <line x1="470" y1="36" x2="470" y2="178" />
+          <line x1="730" y1="36" x2="730" y2="178" />
+          <line x1="870" y1="36" x2="870" y2="178" />
+          <line x1="1130" y1="36" x2="1130" y2="178" />
+          <line x1="1200" y1="36" x2="1200" y2="178" />
+        </g>
+      </g>
+      <line
+        x1="0"
+        y1="182"
+        x2="1200"
+        y2="182"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        className="text-primary"
+      />
+    </svg>
+  );
 }
 
 export default function App() {
@@ -35,66 +107,103 @@ export default function App() {
   }
 
   return (
-    <div className="page">
-      <header className="masthead">
-        <p className="eyebrow">IBUKA · Phase 1 proof of concept</p>
-        <h1>Daraja</h1>
-        <p className="tagline">Bridging business and capital</p>
-        <p className="badge">Staging · working name</p>
-      </header>
+    <div className="min-h-svh bg-background font-sans text-foreground">
+      <div className="border-t-[3px] border-foreground" />
 
-      <main>
-        <section className="card" aria-labelledby="status-title">
-          <h2 id="status-title">The sample assessment is being prepared</h2>
-          <p>
-            Daraja is being introduced in stages. The sample Market listing assessment for the
-            IBUKA Phase 1 proof of concept is still being prepared and is not available yet.
-          </p>
-          <ul className="plan">
-            <li>
-              <span>Company registration and magic-link sign-in</span>
-              <span className="pill pill-planned">Planned</span>
-            </li>
-            <li>
-              <span>Sample Market listing assessment</span>
-              <span className="pill pill-progress">In preparation</span>
-            </li>
-            <li>
-              <span>Readiness summary and dashboard</span>
-              <span className="pill pill-planned">Planned</span>
-            </li>
-          </ul>
-          <p className="note">
-            Nothing on this staging page collects company information yet, and no results are being
-            produced. This staging address is temporary.
-          </p>
-        </section>
+      <div className="mx-auto w-full max-w-3xl px-5 pb-20 sm:px-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-foreground/15 pb-3 pt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          <span>IBUKA · Phase 1 proof of concept</span>
+          <span>KASIB</span>
+        </div>
 
-        <details className="card diagnostics">
-          <summary>Service diagnostics (staging team)</summary>
-          <p className="note">
-            Runs a read-only reachability check against this project&apos;s public Supabase API
-            using only the browser-safe publishable key. It reports the observed response only;
-            it does not verify the key, authentication, company data isolation or row-level
-            security.
+        <header className="pt-16 sm:pt-24">
+          <h1 className="font-serif text-[clamp(3.75rem,13vw,7rem)] font-medium leading-[0.92] tracking-[-0.01em]">
+            Daraja
+          </h1>
+          <p className="mt-5 font-serif text-xl italic text-primary sm:text-2xl">
+            Bridging business and capital
           </p>
-          <button type="button" onClick={runCheck} disabled={pending}>
-            {pending ? "Checking…" : "Run connectivity check"}
-          </button>
-          {result ? (
-            <p className={`status status-${statusClassByState[result.state]}`} role="status">
-              {describeResult(result)}
+          <BridgeRule />
+        </header>
+
+        <main>
+          <p className="max-w-[36em] font-serif text-lg leading-relaxed text-foreground/90 sm:text-xl">
+            A staging preview of the IBUKA Phase 1 proof of concept by KASIB. The sample
+            Market listing assessment is still being prepared.
+          </p>
+
+          <section aria-labelledby="phase-heading" className="mt-16">
+            <h2
+              id="phase-heading"
+              className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
+            >
+              Phase one — what to expect
+            </h2>
+            <ol className="mt-4 divide-y divide-foreground/10 border-y border-foreground/10">
+              {phaseItems.map((item) => (
+                <li
+                  key={item.number}
+                  className="grid grid-cols-[2.75rem_1fr] items-baseline gap-x-4 py-4 sm:grid-cols-[3rem_1fr_auto]"
+                >
+                  <span
+                    className={`font-serif text-lg ${item.active ? "text-primary" : "text-muted-foreground"}`}
+                  >
+                    {item.number}
+                  </span>
+                  <span className="text-pretty">{item.label}</span>
+                  <span
+                    className={`col-span-2 pt-1 font-mono text-[11px] uppercase tracking-[0.14em] sm:col-span-1 sm:pt-0 ${
+                      item.active ? "text-primary" : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.status}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-5 max-w-[46em] text-sm leading-relaxed text-muted-foreground">
+              Nothing on this staging page collects company information, and no results are
+              being produced. This staging address is temporary.
             </p>
-          ) : null}
-        </details>
-      </main>
+          </section>
 
-      <footer className="footer">
-        <p>
-          Daraja is the working product name for the IBUKA Phase 1 proof of concept by KASIB. This
-          staging site shows the foundation of the service; the features above are not active yet.
-        </p>
-      </footer>
+          <Card className="mt-14">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg">Service diagnostics</CardTitle>
+              <CardAction className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                Staging team
+              </CardAction>
+              <CardDescription className="max-w-[38em] leading-relaxed">
+                Runs a read-only reachability check against this project’s public Supabase
+                API using only the browser-safe publishable key. It reports the observed
+                response only; it does not verify the key, authentication, company data
+                isolation or row-level security.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button size="lg" onClick={runCheck} disabled={pending}>
+                {pending ? "Checking…" : "Run connectivity check"}
+              </Button>
+              {result ? (
+                <p
+                  role="status"
+                  className={`mt-4 font-mono text-[13px] leading-relaxed ${statusClassByState[result.state]}`}
+                >
+                  {describeResult(result)}
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
+        </main>
+
+        <footer className="mt-24 border-t border-foreground/15 pt-5">
+          <p className="max-w-[52em] font-mono text-[11px] leading-relaxed tracking-[0.02em] text-muted-foreground">
+            Daraja is the working product name for the IBUKA Phase 1 proof of concept by
+            KASIB. The features listed above are not active yet, and this staging address is
+            temporary.
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }

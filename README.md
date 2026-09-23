@@ -9,7 +9,8 @@ This repository is currently the **B04 staging foundation only**:
 
 | Area | Status |
 | --- | --- |
-| Static staging shell (Vite + React + TypeScript) | Implemented (this revision) |
+| Static staging shell (Vite + React + TypeScript) | Implemented |
+| Daraja editorial visual identity (Tailwind CSS v4 + shadcn/ui Button and Card) | Implemented (this revision) |
 | Read-only Supabase connectivity diagnostic | Implemented (reachability only) |
 | Company registration / magic-link sign-in | Not implemented |
 | Sample Market listing assessment | Not implemented (being prepared; no questions seeded) |
@@ -19,7 +20,7 @@ No feature on the page collects company information or produces results.
 
 ## Requirements
 
-- Node.js ≥ 18 (20 LTS recommended). Set `NODE_VERSION` in Cloudflare Pages accordingly.
+- Node.js ≥ 18 for the pinned packages; use Node.js 22 for local and Pages builds. Check the existing Pages build image before setting `NODE_VERSION`.
 - npm (a lockfile, `package-lock.json`, is committed; installs must use it).
 
 ## Commands
@@ -57,13 +58,32 @@ one narrow exception: plain `http://` is accepted for `localhost`/loopback addre
 local Supabase dev stack can be used during development. The publishable key is therefore
 never sent to a non-TLS origin outside the developer machine.
 
+## Visual identity and styling
+
+The page uses an editorial Daraja identity defined in `src/index.css` as a Tailwind CSS v4
+CSS-first theme: warm off-white paper, deep ink, and a single accent (a fired-brick
+terracotta) reserved for the tagline, the bridge-motif water line, phase numerals in
+preparation, focus rings and the primary button. Typography uses local font stacks only
+(an `Iowan Old Style`/Palatino/Georgia serif stack for display text, system sans for body,
+system mono for meta labels) — **no font or asset is fetched from any CDN or external
+origin at runtime**. The bridge elevation under the masthead and the favicon are
+repo-native inline SVG.
+
+Interactive/accessibility primitives come from **shadcn/ui** via the official CLI
+(`components.json`, `style: radix-nova`): exactly two components are vendored into
+`src/components/ui/` — `button.tsx` and `card.tsx` — and both are used by `src/App.tsx`.
+No other shadcn components, icon library or font package is installed. Keeping the
+components in-repo is the documented shadcn model: they are plain source you own and
+style through the theme tokens.
+
+`src/config.ts` and `src/lib/supabase-status.ts` are unchanged by the visual revision.
+
 ## Cloudflare Pages settings (client-created project — do not recreate or mutate from here)
 
 - **Framework preset:** None (plain Vite output works)
 - **Build command:** `npm run build`
 - **Build output directory:** `dist`
-- **Environment variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (and
-  `NODE_VERSION=20`)
+- **Environment variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. Use `NODE_VERSION=22` if the existing build image does not already provide a compatible Node 22 version.
 - The staging URL is a temporary provider URL until the client selects a name/domain and
   email sender.
 
@@ -93,8 +113,7 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 
 ## Verifying a deployed revision
 
-1. Open the staging URL: the page shows the **Daraja** heading, the tagline, and "The
-   sample assessment is being prepared". View-source confirms
+1. Open the staging URL: the page shows the **Daraja** heading and tagline, and says the sample assessment is still being prepared. View-source confirms
    `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
 2. **Primary revision check:** in the Cloudflare Pages dashboard, record the deployment's
    revision metadata — deployment ID and the linked commit SHA — when available. That
@@ -102,17 +121,25 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 3. **Optional local cross-check:** the served bundle hash (e.g. `assets/index-<hash>.js`)
    matches a local `npm run build` output **only when the build inputs match**: the same
    code revision *and* the same public environment values, because Vite inlines `VITE_`
-   variables into the bundle at build time. A differing hash with matching code means the
-   environment values differ; compare like with like.
+   variables into the bundle at build time. A differing hash may reflect environment values or other build inputs; compare like with like.
 4. Inspect the served bundle: no `eyJ…` (JWT-like) strings, no service-role material.
-5. Expand **Service diagnostics** → **Run connectivity check**:
+   Note: a build produced **without** the `VITE_` variables set contains no `/auth/v1/health`
+   string at all — Vite inlines the unset values as `undefined` and the minifier then folds
+   the check to the honest static "Not configured" result. The fetch path
+   (`/auth/v1/health`, `apikey` header, `cache: "no-store"`) is only present in builds
+   where the public values were provided at build time, which is the case for Pages
+   deployments that set the variables.
+5. In the visible **Service diagnostics** card, choose **Run connectivity check**:
    - Pages variables set → "Reachable — HTTP 200".
    - Variables missing → "Not configured" (page still renders normally).
-6. Optionally run the `curl` above from a terminal; expect `200`.
+6. With the public values configured, optionally run the `curl` above from a terminal and record its actual status (a healthy endpoint normally returns `200`).
 
 ## Known limits (this revision)
 
 - Single static page; no routing, no sign-in, no assessment, scoring or dashboard code.
+- The shadcn/ui surface is deliberately limited to `Button` and `Card`; adding more
+  components is a reviewed decision, not a default.
+- Visual acceptance is manual (browser review); there are no visual-regression tests.
 - No automated tests yet; acceptance is the command sequence and checks above.
 - No CI pipeline; builds are run locally or by Cloudflare Pages.
 - The connectivity check is a diagnostic, not an access-control or tenant-isolation test.
@@ -124,33 +151,64 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 index.html                  # document shell (title, meta, noindex)
 src/main.tsx                # React entry point
 src/App.tsx                 # visible staging page + diagnostics panel
-src/index.css               # styling
+src/index.css               # Tailwind v4 theme: Daraja editorial tokens and fonts
 src/config.ts               # public runtime config reader (URL/key presence only)
 src/lib/supabase-status.ts  # read-only connectivity check
+src/components/ui/button.tsx  # shadcn/ui Button (official CLI copy, MIT-derived)
+src/components/ui/card.tsx    # shadcn/ui Card (official CLI copy, MIT-derived)
 src/vite-env.d.ts           # typed import.meta.env for the two public variables
-public/favicon.svg          # bridge mark
+components.json             # shadcn CLI configuration (radix-nova, css variables)
+public/favicon.svg          # bridge mark (paper, ink, terracotta water line)
 .env.example                # placeholders for the two public variables
 ```
 
 ## Dependency and licence inventory
 
 Direct dependencies, with licences read from each installed package's own declared
-`license` field at the pinned version in `package-lock.json`:
+`license` field at the pinned version in `package-lock.json` (all versions are pinned
+exactly, no ranges):
 
 | Package | Version | Declared licence | Role |
 | --- | --- | --- | --- |
 | `react` | 18.3.1 | MIT | UI runtime |
 | `react-dom` | 18.3.1 | MIT | React DOM renderer |
+| `tailwindcss` | 4.3.3 | MIT | Utility CSS engine (v4, CSS-first theme) |
+| `@tailwindcss/vite` | 4.3.3 | MIT | Tailwind v4 Vite plugin |
+| `class-variance-authority` | 0.7.1 | Apache-2.0 | Button variant typing (shadcn) |
+| `cn` | 0.4.0 | MIT | Class-name merge utility used by the shadcn components |
+| `radix-ui` | 1.6.7 | MIT | Provides `Slot` for the Button `asChild` prop |
 | `typescript` | 5.6.3 | Apache-2.0 | Type checking (`tsc --noEmit`) |
-| `vite` | 5.4.11 | MIT | Build tool and dev/preview server |
+| `vite` | 5.4.21 | MIT | Build tool and dev/preview server |
 | `@vitejs/plugin-react` | 4.3.4 | MIT | Vite ↔ React integration |
 | `@types/react` | 18.3.12 | MIT | Type definitions |
 | `@types/react-dom` | 18.3.1 | MIT | Type definitions |
 
-The full installed tree (67 packages, including transitive dependencies pinned in
-`package-lock.json`) declares only permissive licences — MIT (58), ISC (5), Apache-2.0 (2),
-BSD-3-Clause (1) and CC-BY-4.0 (1) at the time this inventory was generated. No transitive
+`src/components/ui/button.tsx` and `src/components/ui/card.tsx` are derived from the
+MIT-licensed shadcn/ui component source as fetched by the official CLI; per shadcn's
+model they are owned code in this repository.
+
+The full installed tree (157 packages, including transitive dependencies pinned in
+`package-lock.json`) declares only permissive licences — MIT (142), ISC (6), Apache-2.0
+(4), MPL-2.0 (2, both `lightningcss`, pulled in by Tailwind v4), CC-BY-4.0 (1),
+BSD-3-Clause (1) and 0BSD (1) at the time this inventory was generated. No transitive
 licence audit beyond those declarations has been performed and no deeper claim is made.
 
 This repository's own code is private KASIB property; no open-source licence is granted
 for it.
+
+## Known security advisories in the toolchain
+
+`npm audit` reports two entries against the development toolchain: the Vite dev-server
+advisories (GHSA-4w7w-66w2-5vf9, GHSA-v6wh-96g9-6wx3, GHSA-fx2h-pf6j-xcff) and the
+esbuild dev-server advisory (GHSA-67mh-4wv8-2f99) that Vite 5.x depends on. Vite was
+pinned to **5.4.21** (the patched 5.x version npm suggested within the existing major),
+but 5.4.21 still resolves `esbuild ^0.21` and still falls inside the
+advisory ranges above; the only version npm can resolve as fully patched is
+**vite 8.3.0, a breaking major upgrade**. The affected surfaces are development-server behaviours (optimised-deps `.map` path traversal,
+`server.fs.deny` bypasses), not the static production output in `dist/`. Upgrading Vite
+majors is deliberately left to a dedicated future change; until then, run
+`npm run dev` only on a trusted machine. This is a reported, unresolved status — not a
+claim that the advisories are harmless.
+
+`@tailwindcss/vite` declares Vite as a peer dependency, so `npm audit --omit=dev` still
+reports this build-tooling chain. Vite is not imported into the browser bundle.
