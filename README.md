@@ -81,27 +81,39 @@ style through the theme tokens.
 
 ## Cloudflare Workers Builds settings (client-created Worker; operator-managed settings)
 
-The staging host is the client-created Worker **`ibuka-poc`**; the client has also added
-`ibuka.co.ke` in Cloudflare settings. The resources remain client-created and owned — do
-not provision or recreate them — and the client has authorised the project operator to
-update the existing Worker's build settings and retry deployments. These settings live in
-the Cloudflare dashboard, not in this repository.
+The staging host is the client-created Worker **`ibuka-poc`**; the client confirms
+`ibuka.co.ke` is already attached as a Custom Domain and the Cloudflare zone is Active.
+The resources remain client-created and owned — do not provision or recreate them — and
+the client has authorised the project operator to update the existing Worker's build
+settings and retry deployments. The build/deploy commands and build variables live in
+the Cloudflare dashboard; the Custom Domain route is declared in `wrangler.jsonc` in
+this repository.
 
 - **Committed Wrangler config:** `wrangler.jsonc` — `name: ibuka-poc`,
-  `compatibility_date: 2026-09-24`, `assets.directory: ./dist`. Static-assets-only: no
-  Worker script, no routes, no vars or secrets. `"keep_vars": true` makes deploys
-  preserve the dashboard-configured plain variables, which a Wrangler deploy would
-  otherwise delete as the config's source of truth (encrypted secrets are never deleted
-  by a deploy); this Worker's existing runtime settings cannot be inspected from here.
-- **Build command (dashboard setting):** `npm run build`. This must be set in the
-  dashboard: Workers Builds does not honor build commands from the Wrangler config.
-- **Deploy command (existing dashboard setting):** `npx wrangler deploy`.
+  `compatibility_date: 2026-09-24`, `assets.directory: ./dist`, `keep_vars: true`, and
+  the Custom Domain route declared as code:
+  `routes: [{ "pattern": "ibuka.co.ke", "custom_domain": true }]`. The pattern is the
+  whole hostname with no path — a Custom Domain matches all paths of that exact hostname
+  (`www.ibuka.co.ke` would be a separate hostname). Static-assets-only: no Worker
+  script, no path routes, no vars or secrets. `"keep_vars": true` preserves
+  dashboard-configured plain variables, which a deploy would otherwise delete as the
+  config's source of truth (encrypted secrets are never deleted by a deploy); the
+  existing settings cannot be inspected from here. Cloudflare syncs the declared
+  Custom Domain at deploy. The config does not assert the `*.workers.dev` URL state
+  (neither enabled nor disabled); none is claimed. The Custom Domain and Active zone
+  are user-confirmed — the actual Cloudflare deploy and live page remain unobserved.
+- **Build command (dashboard setting, user-confirmed by screenshot):** `npm run build`.
+  This must stay in the dashboard: Workers Builds does not honor build commands from
+  the Wrangler config, and the route in `wrangler.jsonc` is not a way to set the build
+  command.
+- **Deploy command (dashboard setting, user-confirmed by screenshot):**
+  `npx wrangler deploy`.
 - **Build variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (public;
   inlined at build time). Use `NODE_VERSION=22` if the build image does not already
   provide a compatible Node 22 version.
-- The client has selected and added the `ibuka.co.ke` domain in Cloudflare settings;
-  DNS activation and serving state are **not yet verified**, so no live-URL claim is
-  made here. The email sender is not yet selected.
+- The client confirms `ibuka.co.ke` is already a Custom Domain on the Worker and the
+  zone is Active; the actual Cloudflare deploy and live serving are still unobserved,
+  so no live-URL claim is made here. The email sender is not yet selected.
 
 ### Why the first build failed (observed on commit `f0ae346`)
 
@@ -173,8 +185,8 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 - Cloudflare Workers Builds on the connected repository is the CI/deployment path; there
   are no repo-managed GitHub Actions workflows.
 - The connectivity check is a diagnostic, not an access-control or tenant-isolation test.
-- The client has added `ibuka.co.ke` in Cloudflare settings, but DNS activation and
-  serving state are unverified; the page remains `noindex`. The email sender is unconfirmed.
+- The `ibuka.co.ke` Custom Domain and Active zone are user-confirmed; deploy and live
+  serving are unobserved, and the page remains `noindex`. The email sender is unconfirmed.
 
 ## Project layout
 

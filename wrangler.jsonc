@@ -2,6 +2,12 @@
   "name": "ibuka-poc",
   "compatibility_date": "2026-09-24",
   "keep_vars": true,
+  "routes": [
+    {
+      "pattern": "ibuka.co.ke",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": "./dist"
   }
