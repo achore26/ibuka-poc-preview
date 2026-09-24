@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ReviewPreview } from "@/components/review-preview";
 import { checkSupabaseConnectivity, type ConnectivityResult } from "./lib/supabase-status";
 
 const statusClassByState: Record<ConnectivityResult["state"], string> = {
@@ -40,7 +41,7 @@ const phaseItems = [
   {
     number: "02",
     label: "Sample Market listing assessment",
-    status: "In preparation",
+    status: "Review preview",
     active: true,
   },
   {
@@ -128,9 +129,11 @@ export default function App() {
 
         <main>
           <p className="max-w-[36em] font-serif text-lg leading-relaxed text-foreground/90 sm:text-xl">
-            A staging preview of the IBUKA Phase 1 proof of concept by KASIB. The sample
-            Market listing assessment is still being prepared.
+            A staging preview of the IBUKA Phase 1 proof of concept by KASIB,
+            with a proposed four-item sample assessment shown below for review.
           </p>
+
+          <ReviewPreview />
 
           <section aria-labelledby="phase-heading" className="mt-16">
             <h2
@@ -162,8 +165,10 @@ export default function App() {
               ))}
             </ol>
             <p className="mt-5 max-w-[46em] text-sm leading-relaxed text-muted-foreground">
-              Nothing on this staging page collects company information, and no results are
-              being produced. This staging address is temporary.
+              The review preview above runs entirely in this page using demo
+              placeholder entries — nothing is saved, no account is involved,
+              and answers reset on reload. Company registration, sign-in, saved
+              assessments and dashboards are not implemented yet.
             </p>
           </section>
 
@@ -199,8 +204,11 @@ export default function App() {
         <footer className="mt-24 border-t border-foreground/15 pt-5">
           <p className="max-w-[52em] font-mono text-[11px] leading-relaxed tracking-[0.02em] text-muted-foreground">
             Daraja is the working product name for the IBUKA Phase 1 proof of concept by
-            KASIB. The features listed above are not active yet, and this staging address is
-            temporary.
+            KASIB. The review preview is a demo only: placeholder entries, self-reported
+            progress, nothing saved or signed in, and no regulatory, listing-eligibility
+            or approval finding. Colour tones are visually inferred from the public KASIB
+            site; no official KASIB logo or brand assets are used. Sign-in, saved
+            assessments and dashboards are not implemented yet.
           </p>
         </footer>
       </div>

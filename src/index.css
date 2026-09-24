@@ -2,9 +2,18 @@
 
 /*
  * Daraja visual identity — editorial, calm, warm.
- * Paper background, deep ink, one considered accent (fired-brick terracotta)
- * standing for the bridge/connection. Typography uses local font stacks only;
- * nothing is fetched from any font CDN or external asset at runtime.
+ * Paper background, deep ink, one considered accent standing for the
+ * bridge/connection. Typography uses local font stacks only; nothing is
+ * fetched from any font CDN or external asset at runtime.
+ *
+ * The accent is a KASIB-inspired deep red with a restrained muted-gold
+ * supporting cue, visually inferred from the public KASIB site
+ * (kasib.co.ke, observed 24 September 2026) — not an official brand
+ * specification. The red (#c82f35) meets WCAG AA by calculation (>= 4.5:1)
+ * both as accent text on paper and as the button label on red; the button
+ * hover fill is the same hue darkened and opaque (#b52b31, 5.90:1). The gold
+ * (#d0ae56) measures ~1.95:1 on paper and is decorative only — it never
+ * carries text or state information.
  */
 
 :root {
@@ -14,7 +23,7 @@
   --card-foreground: oklch(0.245 0.014 65);
   --popover: oklch(0.977 0.009 95);
   --popover-foreground: oklch(0.245 0.014 65);
-  --primary: oklch(0.512 0.125 36);
+  --primary: #c82f35;
   --primary-foreground: oklch(0.98 0.008 95);
   --secondary: oklch(0.937 0.013 93);
   --secondary-foreground: oklch(0.245 0.014 65);
@@ -26,7 +35,8 @@
   --destructive-foreground: oklch(0.98 0.008 95);
   --border: oklch(0.858 0.014 88);
   --input: oklch(0.858 0.014 88);
-  --ring: oklch(0.512 0.125 36);
+  --ring: #c82f35;
+  --kasib-gold: #d0ae56;
   --radius: 0.375rem;
   --status-ok: oklch(0.46 0.09 155);
   --status-warn: oklch(0.5 0.09 75);
@@ -89,6 +99,10 @@
 }
 
 @layer components {
+  [data-slot="card"] {
+    border-top: 3px solid var(--kasib-gold);
+  }
+
   .status-ok {
     color: var(--status-ok);
   }
@@ -100,4 +114,15 @@
   .status-error {
     color: var(--status-error);
   }
+}
+
+/*
+ * Primary-button hover fill: opaque and slightly darker than #c82f35 so the
+ * near-white label keeps >= 4.5:1 on hover (5.90:1). This rule is
+ * deliberately unlayered: the vendored Button's `hover:bg-primary/80` utility
+ * lives in the utilities cascade layer, and layer order outranks specificity,
+ * so a components-layer override would lose.
+ */
+[data-slot="button"][data-variant="default"]:hover {
+  background-color: #b52b31;
 }

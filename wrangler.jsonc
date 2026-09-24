@@ -10,5 +10,9 @@
   ],
   "assets": {
     "directory": "./dist"
+  },
+  "vars": {
+    "VITE_SUPABASE_URL": "https://eaveywzurnrqyeejlapl.supabase.co",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_RsAFCOOfy-zWfQWO7B_pcQ_BEYmORKU"
   }
 }
