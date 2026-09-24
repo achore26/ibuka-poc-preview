@@ -13,7 +13,7 @@ This repository is currently the **B04 staging foundation plus a demo-only revie
 | Static staging shell (Vite + React + TypeScript) | Implemented |
 | Daraja editorial visual identity (Tailwind CSS v4 + shadcn/ui Button and Card) | Implemented |
 | Read-only Supabase connectivity diagnostic | Implemented (reachability only) |
-| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented (this revision) — demo only, not validated, not saved |
+| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented (this revision; deployed and observed live with `54f4ae6`, 24 Sep 2026) — demo only, not validated, not saved |
 | Company registration / magic-link sign-in | Not implemented (B05, pending) |
 | Saved sample assessment (real entries, save/resume) | Not implemented — depends on C03 validation and B05 sign-in |
 | Readiness scoring / dashboard (saved, company-scoped) | Not implemented |
@@ -141,7 +141,9 @@ Remaining dependencies before any real assessment: Trevor's C03 validation of th
 sample/wording/scoring, B05 sign-in, and the B06 Supabase data model (company
 ownership, RLS). Nothing here should be presented as a saved company record or a
 validated regulatory interpretation. The full field dictionary is later scope and
-is deliberately not included.
+is deliberately not included. This revision is deployed and observed live at
+`https://ibuka.co.ke/` (`54f4ae6`, 24 September 2026 — evidence and limits in the
+Cloudflare section below); client approval is pending.
 
 
 
@@ -197,8 +199,8 @@ this repository.
   whole hostname with no path — a Custom Domain matches all paths of that exact hostname
   (`www.ibuka.co.ke` would be a separate hostname). Static-assets-only: no Worker
   script and no path routes; the only `vars` are the two **public** `VITE_`
-  Supabase values (see "Environment variables" — added on the pending demo
-  branch, not yet deployed), and there are no secrets in the config. `"keep_vars": true` preserves
+  Supabase values (see "Environment variables" — deployed and live with `54f4ae6`),
+  and there are no secrets in the config. `"keep_vars": true` preserves
   dashboard-configured plain variables, which a deploy would otherwise delete as the
   config's source of truth (encrypted secrets are never deleted by a deploy); the
   existing settings cannot be inspected from here. Cloudflare syncs the declared
@@ -222,11 +224,18 @@ this repository.
   for this static-assets-only Worker. Use `NODE_VERSION=22` if the build image
   does not already provide a compatible Node 22 version.
 - The client confirms `ibuka.co.ke` is already a Custom Domain on the Worker and the
-  zone is Active. **Deployment observed:** the build of main `83c62d5` (the B05
-  `wrangler.jsonc` revision) **succeeded in Cloudflare Workers Builds on
-  24 September 2026**, and `https://ibuka.co.ke/` served the Daraja page — the
-  Daraja title plus its JS/CSS assets over HTTPS 200. The email sender is not yet
-  selected.
+  zone is Active. **Deployments observed:** main `83c62d5` (B05 `wrangler.jsonc`
+  revision) succeeded in Cloudflare Workers Builds on 24 September 2026 and served the
+  Daraja title plus JS/CSS assets over HTTPS 200; the demo branch commit `54f4ae6`
+  (review preview + public `wrangler.jsonc` vars + Vite bridge) was then served at
+  `https://ibuka.co.ke/` the same day: served HTML referenced
+  `assets/index-oI3vXnm2.js` and `assets/index-DulRP2WL.css`, both matching a clean
+  local build of that commit byte for byte; a live 390px browser showed no horizontal
+  overflow, the initial `0/4 = 0.00%`, the worked example `2/3 = 66.67%` with the
+  Q-ISS-01 gap, and reset after reload; the read-only Supabase diagnostic returned
+  HTTP 200. This does not verify Supabase Auth, publishable-key validity, RLS,
+  company isolation, Trevor's validation, or contractual acceptance. The email sender
+  is not yet selected.
 
 ### Why the first build failed (observed on commit `f0ae346`)
 
@@ -271,8 +280,8 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 1. Open the staging URL: the page shows the **Daraja** heading and tagline, the
    review-preview section, and the phase list. View-source confirms
    `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
-   (Observed on 24 September 2026 for the `83c62d5` deployment, before the
-   review-preview revision.)
+   (Both the `83c62d5` and `54f4ae6` deployments were observed live on
+   24 September 2026; see the deployment-evidence bullet above.)
 2. **Primary revision check:** in the Cloudflare Workers dashboard, record the
    deployment's revision metadata — deployment ID and the linked commit SHA — when
    available. That metadata, not a local artifact, identifies what was actually deployed.
@@ -308,7 +317,7 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
   are no repo-managed GitHub Actions workflows.
 - The connectivity check is a diagnostic, not an access-control or tenant-isolation test.
 - The `ibuka.co.ke` Custom Domain and Active zone are user-confirmed; deploy and live
-  serving were observed on 24 September 2026 for `83c62d5`, and the page remains
+  serving were observed on 24 September 2026 for `83c62d5` and `54f4ae6`, and the page remains
   `noindex`. The email sender is unconfirmed.
 
 ## Project layout
