@@ -2,8 +2,9 @@
 
 **Daraja** is the confirmed working product name (Barak, 23 September 2026) for the IBUKA
 Phase 1 proof of concept, with the line **"Bridging business and capital"**. This private
-KASIB repository holds the static frontend that builds to `dist/` for KASIB Cloudflare
-Pages. `ibuka-poc` remains the working repository name; IBUKA remains the project context.
+KASIB repository holds the static frontend that builds to `dist/` for the KASIB
+Cloudflare Worker `ibuka-poc` (Workers Builds with static assets). `ibuka-poc` remains
+the working repository name; IBUKA remains the project context.
 
 This repository is currently the **B04 staging foundation only**:
 
@@ -20,7 +21,7 @@ No feature on the page collects company information or produces results.
 
 ## Requirements
 
-- Node.js ≥ 18 for the pinned packages; use Node.js 22 for local and Pages builds. Check the existing Pages build image before setting `NODE_VERSION`.
+- Node.js ≥ 18 for the pinned packages; use Node.js 22 for local and Workers Builds builds. Check the existing build image before setting `NODE_VERSION`.
 - npm (a lockfile, `package-lock.json`, is committed; installs must use it).
 
 ## Commands
@@ -39,8 +40,8 @@ diagnostic in the "Not configured" state at runtime.
 ## Environment variables
 
 Copy `.env.example` to `.env` (git-ignored) for local development; set the same names as
-variables in the Cloudflare Pages project for deployments. These are the **only** variables
-this app reads.
+build variables in the Cloudflare Workers Builds settings for deployments. These are the
+**only** variables this app reads.
 
 | Variable | Purpose | Visibility |
 | --- | --- | --- |
@@ -49,7 +50,7 @@ this app reads.
 
 Both values are browser-safe by design, but they must still be the **publishable pair
 only**. Never place the Supabase service-role key, database password, SMTP credentials or
-provider tokens in `.env`, Pages variables, or any file in this repository — see the
+provider tokens in `.env`, the Cloudflare build variables, or any file in this repository — see the
 architecture boundary in `AGENTS.md`. The database, not this frontend, enforces company
 ownership and row-level security.
 
@@ -78,14 +79,42 @@ style through the theme tokens.
 
 `src/config.ts` and `src/lib/supabase-status.ts` are unchanged by the visual revision.
 
-## Cloudflare Pages settings (client-created project — do not recreate or mutate from here)
+## Cloudflare Workers Builds settings (client-created Worker; operator-managed settings)
 
-- **Framework preset:** None (plain Vite output works)
-- **Build command:** `npm run build`
-- **Build output directory:** `dist`
-- **Environment variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. Use `NODE_VERSION=22` if the existing build image does not already provide a compatible Node 22 version.
-- The staging URL is a temporary provider URL until the client selects a name/domain and
-  email sender.
+The staging host is the client-created Worker **`ibuka-poc`**; the client has also added
+`ibuka.co.ke` in Cloudflare settings. The resources remain client-created and owned — do
+not provision or recreate them — and the client has authorised the project operator to
+update the existing Worker's build settings and retry deployments. These settings live in
+the Cloudflare dashboard, not in this repository.
+
+- **Committed Wrangler config:** `wrangler.jsonc` — `name: ibuka-poc`,
+  `compatibility_date: 2026-09-24`, `assets.directory: ./dist`. Static-assets-only: no
+  Worker script, no routes, no vars or secrets. `"keep_vars": true` makes deploys
+  preserve the dashboard-configured plain variables, which a Wrangler deploy would
+  otherwise delete as the config's source of truth (encrypted secrets are never deleted
+  by a deploy); this Worker's existing runtime settings cannot be inspected from here.
+- **Build command (dashboard setting):** `npm run build`. This must be set in the
+  dashboard: Workers Builds does not honor build commands from the Wrangler config.
+- **Deploy command (existing dashboard setting):** `npx wrangler deploy`.
+- **Build variables:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (public;
+  inlined at build time). Use `NODE_VERSION=22` if the build image does not already
+  provide a compatible Node 22 version.
+- The client has selected and added the `ibuka.co.ke` domain in Cloudflare settings;
+  DNS activation and serving state are **not yet verified**, so no live-URL claim is
+  made here. The email sender is not yet selected.
+
+### Why the first build failed (observed on commit `f0ae346`)
+
+Workers Builds ran `npx wrangler deploy` with no Wrangler config committed and no
+separately executed `npm run build` step (the log went straight from dependency install
+to deploy). With no config, Wrangler attempted automatic framework setup, detected
+Vite 5.4.21 and stopped: `The version of Vite used in the project ("5.4.21") cannot be
+automatically configured. Please update the Vite version to at least "6.0.0" and try
+again.` Automatic setup supports only Vite ≥ 6. Committing `wrangler.jsonc` prevents
+automatic framework setup entirely: with an explicit config and an explicit dashboard
+build command of `npm run build`, the Vite 5 output in `dist/` is uploaded as plain
+static assets and no framework detection runs, so no Vite upgrade is needed. Whether the
+retried Cloudflare build actually succeeds is **not yet observed**.
 
 ## Supabase connectivity check
 
@@ -115,9 +144,9 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 
 1. Open the staging URL: the page shows the **Daraja** heading and tagline, and says the sample assessment is still being prepared. View-source confirms
    `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
-2. **Primary revision check:** in the Cloudflare Pages dashboard, record the deployment's
-   revision metadata — deployment ID and the linked commit SHA — when available. That
-   metadata, not a local artifact, identifies what was actually deployed.
+2. **Primary revision check:** in the Cloudflare Workers dashboard, record the
+   deployment's revision metadata — deployment ID and the linked commit SHA — when
+   available. That metadata, not a local artifact, identifies what was actually deployed.
 3. **Optional local cross-check:** the served bundle hash (e.g. `assets/index-<hash>.js`)
    matches a local `npm run build` output **only when the build inputs match**: the same
    code revision *and* the same public environment values, because Vite inlines `VITE_`
@@ -127,10 +156,10 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
    string at all — Vite inlines the unset values as `undefined` and the minifier then folds
    the check to the honest static "Not configured" result. The fetch path
    (`/auth/v1/health`, `apikey` header, `cache: "no-store"`) is only present in builds
-   where the public values were provided at build time, which is the case for Pages
-   deployments that set the variables.
+    where the public values were provided at build time, which is the case for
+    Workers Builds deployments that set the variables.
 5. In the visible **Service diagnostics** card, choose **Run connectivity check**:
-   - Pages variables set → "Reachable — HTTP 200".
+   - Build variables set → "Reachable — HTTP 200".
    - Variables missing → "Not configured" (page still renders normally).
 6. With the public values configured, optionally run the `curl` above from a terminal and record its actual status (a healthy endpoint normally returns `200`).
 
@@ -141,9 +170,11 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
   components is a reviewed decision, not a default.
 - Visual acceptance is manual (browser review); there are no visual-regression tests.
 - No automated tests yet; acceptance is the command sequence and checks above.
-- No CI pipeline; builds are run locally or by Cloudflare Pages.
+- Cloudflare Workers Builds on the connected repository is the CI/deployment path; there
+  are no repo-managed GitHub Actions workflows.
 - The connectivity check is a diagnostic, not an access-control or tenant-isolation test.
-- Staging uses a temporary provider URL and `noindex` until the client confirms naming.
+- The client has added `ibuka.co.ke` in Cloudflare settings, but DNS activation and
+  serving state are unverified; the page remains `noindex`. The email sender is unconfirmed.
 
 ## Project layout
 
