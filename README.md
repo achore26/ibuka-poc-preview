@@ -11,9 +11,9 @@ This repository is currently the **B04 staging foundation plus a demo-only revie
 | Area | Status |
 | --- | --- |
 | Static staging shell (Vite + React + TypeScript) | Implemented |
-| Daraja editorial visual identity (Tailwind CSS v4 + shadcn/ui Button and Card) | Implemented |
+| Daraja application UI (Tailwind CSS v4 + shadcn/ui Button/Card/Badge/Input/Textarea/Progress) | Implemented (restyled this revision; locally tested — not yet deployed) |
 | Read-only Supabase connectivity diagnostic | Implemented (reachability only) |
-| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented (this revision; deployed and observed live with `54f4ae6`, 24 Sep 2026) — demo only, not validated, not saved |
+| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented — demo only, not validated, not saved (the earlier `54f4ae6` revision was deployed and observed live on 24 Sep 2026; this restyle is not yet deployed) |
 | Company registration / magic-link sign-in | Not implemented (B05, pending) |
 | Saved sample assessment (real entries, save/resume) | Not implemented — depends on C03 validation and B05 sign-in |
 | Readiness scoring / dashboard (saved, company-scoped) | Not implemented |
@@ -149,38 +149,48 @@ Cloudflare section below); client approval is pending.
 
 ## Visual identity and styling
 
-The page uses an editorial Daraja identity defined in `src/index.css` as a Tailwind CSS v4
-CSS-first theme: warm off-white paper, deep ink, and one considered accent — a
-KASIB-inspired deep red (`#c82f35`) reserved for the tagline, the bridge-motif water line,
-phase numerals in preparation, focus rings and the primary button, with a restrained
-muted-gold (`#d0ae56`) keyline along the top of card panels. Both tones are **visually
-inferred from the public KASIB site (kasib.co.ke, observed 24 September 2026); they are not
-an official KASIB brand specification.** There is no official KASIB logo file; the
-repo-native bridge motif and wordmark are retained and no logo is fetched or invented.
-The red was verified by WCAG relative-luminance calculation to meet AA for normal text
-(>= 4.5:1) both as accent text on the paper background (4.92:1) and as the near-white
-button label on red (5.06:1). The button's hover fill is overridden by a narrowly scoped
-unlayered theme rule in `src/index.css`
-(`[data-slot="button"][data-variant="default"]:hover`) to stay opaque at a darker red
-(`#b52b31`, 5.90:1) — the vendored shadcn `hover:bg-primary/80` would otherwise lighten
-the label to 3.77:1, and an override inside `@layer components` could not win because
-cascade layer order outranks specificity. The gold measures ~1.95:1 on paper and is
-therefore decorative only — it never carries text or state. Typography uses local font
-stacks only (an `Iowan Old Style`/Palatino/Georgia serif stack for display text, system
-sans for body, system mono for meta labels) — **no font or asset is fetched from any CDN
-or external origin at runtime**. The bridge elevation under the masthead and the favicon
-are repo-native inline SVG.
+The page uses a restrained shadcn-style application layout defined in `src/index.css`
+as a Tailwind CSS v4 CSS-first theme: a compact header bar with the Daraja wordmark,
+neutral near-white surfaces, white cards with a subtle 1px ring and 12px radii,
+system sans for all text (system mono only for the supplied field IDs and source
+references), and one KASIB-inspired deep red (`#c82f35`) used sparingly — the
+primary action ("Load worked example"), the progress fill and focus rings. The tone
+is **visually inferred from the public KASIB site (kasib.co.ke, observed 24 September
+2026); it is not an official brand specification.** There is no official KASIB logo
+file; none is fetched or invented, and the repo-native bridge favicon is retained.
+
+The earlier editorial identity — serif display hero, inline bridge elevation,
+muted-gold card keyline, uppercased letter-spaced microcopy — was replaced by this
+revision (branch `task/demo-ui-refine`) after the first live demo read as "generic";
+see `AGENTS.md` for the dated history. The red still meets WCAG AA by
+relative-luminance calculation: the near-white button label on red measures 5.06:1
+and the button hover fill is kept opaque at a darker red (`#b52b31`, 5.90:1) by the
+narrowly scoped unlayered theme rule in `src/index.css`
+(`[data-slot="button"][data-variant="default"]:hover`) — the vendored shadcn
+`hover:bg-primary/80` would otherwise lighten the label to 3.77:1, and an override
+inside `@layer components` could not win because cascade layer order outranks
+specificity. Muted foreground (neutral-500) measures 4.74:1 on the white card
+surface. Typography uses local font stacks only — **no font or asset is fetched
+from any CDN or external origin at runtime.**
 
 Interactive/accessibility primitives come from **shadcn/ui** via the official CLI
-(`components.json`, `style: radix-nova`): exactly two components are vendored into
-`src/components/ui/` — `button.tsx` and `card.tsx` — and both are used by the staging
-page (`src/App.tsx` and `src/components/review-preview.tsx`; Button drives the
-diagnostics check and the demo reset). No other shadcn components, icon library or font
-package is installed. Keeping the components in-repo is the documented shadcn model: they
-are plain source you own and style through the theme tokens.
+(`components.json`, `style: radix-nova`). Six components are vendored into
+`src/components/ui/` — `button.tsx` and `card.tsx` (foundation) plus `badge.tsx`,
+`input.tsx`, `textarea.tsx` and `progress.tsx` (added by this revision through the
+same CLI) — and all are used by the staging page (`src/App.tsx` and
+`src/components/review-preview.tsx`). `Progress` uses the `Progress` primitive from
+the already-pinned `radix-ui` package; `Badge` uses its `Slot`. No new npm package,
+icon library or font was added. Keeping the components in-repo is the documented
+shadcn model: they are plain source you own and style through the theme tokens.
+The vendored files are unmodified CLI copies; page-level needs (such as the taller
+`h-9` on the native date input, or the `h-2` progress track) are applied through
+`className` props at the call site.
 
-`src/config.ts` and `src/lib/supabase-status.ts` are unchanged by the visual revision and
-the review-preview revision.
+`src/config.ts` and `src/lib/supabase-status.ts` are unchanged by the visual revision,
+the review-preview revision and this UI refinement; the connectivity diagnostic keeps
+its read-only logic and is only presented more subordinately (small card, outline
+button). `wrangler.jsonc`, `vite.config.ts` and the two versioned public Supabase
+values are likewise untouched by the UI refinement.
 
 ## Cloudflare Workers Builds settings (client-created Worker; operator-managed settings)
 
@@ -277,11 +287,14 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 
 ## Verifying a deployed revision
 
-1. Open the staging URL: the page shows the **Daraja** heading and tagline, the
-   review-preview section, and the phase list. View-source confirms
-   `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
-   (Both the `83c62d5` and `54f4ae6` deployments were observed live on
-   24 September 2026; see the deployment-evidence bullet above.)
+1. Open the staging URL: the page shows the Daraja header wordmark, the
+    "Sample Market listing assessment" page title with a small "Review preview" badge,
+    the four question cards with the progress summary, and the collapsed "About this
+    preview" disclosure (the phase list lives inside it). View-source confirms
+    `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
+    (The `83c62d5` and `54f4ae6` deployments were observed live on
+    24 September 2026 with the earlier editorial layout; see the deployment-evidence
+    bullet above.)
 2. **Primary revision check:** in the Cloudflare Workers dashboard, record the
    deployment's revision metadata — deployment ID and the linked commit SHA — when
    available. That metadata, not a local artifact, identifies what was actually deployed.
@@ -308,7 +321,8 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 - Single static page; no routing, no sign-in. The assessment surface is the demo-only
   review preview (in-memory, resets on reload); saved assessment, scoring and
   dashboard code are not implemented.
-- The shadcn/ui surface is deliberately limited to `Button` and `Card`; adding more
+- The shadcn/ui surface is deliberately limited to the six vendored components
+  (`Button`, `Card`, `Badge`, `Input`, `Textarea`, `Progress`); adding more
   components is a reviewed decision, not a default.
 - Visual acceptance is manual (browser review); there are no visual-regression tests.
 - Automated tests cover only the pure progress calculator (`npm test`); the review
@@ -325,9 +339,9 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
 ```
 index.html                  # document shell (title, meta, noindex)
 src/main.tsx                # React entry point
-src/App.tsx                 # visible staging page: review preview + phases + diagnostics
-src/components/review-preview.tsx  # demo-only interactive review preview (four proposed fields)
-src/index.css               # Tailwind v4 theme: Daraja editorial tokens, KASIB-inspired red/gold
+src/App.tsx                 # app shell: header, page title + note, About disclosure, diagnostics, footer
+src/components/review-preview.tsx  # demo-only review preview: progress summary first on mobile / sticky side rail on desktop, per-question cards
+src/index.css               # Tailwind v4 theme: neutral application tokens, KASIB-inspired red accent
 src/config.ts               # public runtime config reader (URL/key presence only)
 src/lib/supabase-status.ts  # read-only connectivity check
 src/lib/sample-progress.ts  # pure self-reported sample-progress calculator (no DOM)
@@ -335,6 +349,10 @@ src/lib/sample-progress.test.ts  # built-in Node fixtures for the calculator (np
 src/lib/demo-sample.ts      # the four proposed demo fields: IDs, verbatim prompts, sources
 src/components/ui/button.tsx  # shadcn/ui Button (official CLI copy, MIT-derived)
 src/components/ui/card.tsx    # shadcn/ui Card (official CLI copy, MIT-derived)
+src/components/ui/badge.tsx   # shadcn/ui Badge (official CLI copy, MIT-derived)
+src/components/ui/input.tsx   # shadcn/ui Input (official CLI copy, MIT-derived)
+src/components/ui/textarea.tsx # shadcn/ui Textarea (official CLI copy, MIT-derived)
+src/components/ui/progress.tsx # shadcn/ui Progress (official CLI copy, MIT-derived)
 src/vite-env.d.ts           # typed import.meta.env for the two public variables
 components.json             # shadcn CLI configuration (radix-nova, css variables)
 public/favicon.svg          # bridge mark (paper, ink, KASIB-red water line)
@@ -345,8 +363,11 @@ public/favicon.svg          # bridge mark (paper, ink, KASIB-red water line)
 
 Direct dependencies, with licences read from each installed package's own declared
 `license` field at the pinned version in `package-lock.json` (all versions are pinned
-exactly, no ranges). **The review-preview revision added no packages**: the calculator
-tests run on Node's built-in TypeScript type-stripping with no test framework.
+exactly, no ranges). **The review-preview revision and the UI refinement revision
+added no packages**: the calculator tests run on Node's built-in TypeScript
+type-stripping with no test framework, and the newly vendored shadcn components
+(Badge/Input/Textarea/Progress) are source files using the existing pinned
+dependencies.
 
 | Package | Version | Declared licence | Role |
 | --- | --- | --- | --- |
@@ -356,15 +377,16 @@ tests run on Node's built-in TypeScript type-stripping with no test framework.
 | `@tailwindcss/vite` | 4.3.3 | MIT | Tailwind v4 Vite plugin |
 | `class-variance-authority` | 0.7.1 | Apache-2.0 | Button variant typing (shadcn) |
 | `cn` | 0.4.0 | MIT | Class-name merge utility used by the shadcn components |
-| `radix-ui` | 1.6.7 | MIT | Provides `Slot` for the Button `asChild` prop |
+| `radix-ui` | 1.6.7 | MIT | Provides `Slot` (Button/Badge `asChild`) and the `Progress` primitive |
 | `typescript` | 5.6.3 | Apache-2.0 | Type checking (`tsc --noEmit`) |
 | `vite` | 5.4.21 | MIT | Build tool and dev/preview server |
 | `@vitejs/plugin-react` | 4.3.4 | MIT | Vite ↔ React integration |
 | `@types/react` | 18.3.12 | MIT | Type definitions |
 | `@types/react-dom` | 18.3.1 | MIT | Type definitions |
 
-`src/components/ui/button.tsx` and `src/components/ui/card.tsx` are derived from the
-MIT-licensed shadcn/ui component source as fetched by the official CLI; per shadcn's
+`src/components/ui/` holds six files derived from the MIT-licensed shadcn/ui
+component source as fetched by the official CLI (`button.tsx`, `card.tsx`,
+`badge.tsx`, `input.tsx`, `textarea.tsx`, `progress.tsx`); per shadcn's
 model they are owned code in this repository.
 
 The full installed tree (157 packages, including transitive dependencies pinned in

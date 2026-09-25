@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,6 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import {
   answerAdequate,
   demoFields,
@@ -37,13 +41,7 @@ function makeInitialAnswers(): Answers {
   return answers;
 }
 
-const inputClass =
-  "mt-1.5 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40";
-
-const hintClass = "mt-1.5 text-xs leading-relaxed text-muted-foreground";
-
-const legendClass =
-  "font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground";
+const hintClass = "text-xs leading-relaxed text-muted-foreground";
 
 const radioClass = "size-4 accent-primary";
 
@@ -80,6 +78,41 @@ function gapStatusLabel(status: Exclude<SampleReadinessStatus, "ready">): string
   }
 }
 
+/*
+ * Small status chip per item so the four readiness states stay scannable
+ * without reading each control. Neutral variants only: the red accent stays
+ * reserved for the primary action, the progress fill and focus.
+ */
+function StatusBadge({ field, answer }: { field: DemoFieldSpec; answer: DemoAnswer }) {
+  const naValid = isValidNa({
+    id: field.id,
+    status: answer.status,
+    allowsNa: field.allowsNa,
+    naReason: answer.naReason,
+  });
+  if (answer.status === "na") {
+    return naValid ? (
+      <Badge variant="secondary">N/A</Badge>
+    ) : (
+      <Badge variant="outline" className="text-muted-foreground">
+        N/A — reason required
+      </Badge>
+    );
+  }
+  switch (answer.status) {
+    case "ready":
+      return <Badge variant="secondary">Ready</Badge>;
+    case "in_progress":
+      return <Badge variant="outline">In progress</Badge>;
+    default:
+      return (
+        <Badge variant="outline" className="text-muted-foreground">
+          Not started
+        </Badge>
+      );
+  }
+}
+
 function ReadinessGroup({
   field,
   answer,
@@ -107,9 +140,9 @@ function ReadinessGroup({
   ];
 
   return (
-    <fieldset className="mt-5">
-      <legend className={legendClass}>Readiness state</legend>
-      <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+    <fieldset className="mt-5 border-t pt-4">
+      <legend className="text-sm font-medium">Readiness</legend>
+      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
         {options.map((option) => (
           <label key={option.value} className="flex items-center gap-2 text-sm">
             <input
@@ -129,35 +162,32 @@ function ReadinessGroup({
           </label>
         ))}
       </div>
-      {!adequate ? (
-        <p className={hintClass}>
-          Ready is unavailable until an adequate demo answer is recorded. A
-          recorded answer and its readiness state are separate data.
+      {!adequate && answer.status !== "na" ? (
+        <p className={`${hintClass} mt-2`}>
+          Ready becomes available once an adequate answer is recorded above.
         </p>
       ) : null}
       {answer.status === "na" && field.allowsNa ? (
-        <div className="mt-3">
+        <div className="mt-3 flex flex-col gap-1.5">
           <label htmlFor={`${field.id}-na-reason`} className="text-sm font-medium">
-            Recorded reason this is not a foreign listing — required for a valid
-            N/A (demo placeholder)
+            Reason this is not a foreign listing
           </label>
-          <textarea
+          <Textarea
             id={`${field.id}-na-reason`}
             rows={2}
             value={answer.naReason}
             onChange={(event) => onTypedChange({ naReason: event.target.value })}
-            placeholder="Demo placeholder — reason text"
-            className={inputClass}
+            placeholder="Record why this item does not apply"
           />
           {answer.naReason.trim() === "" ? (
             <p className={hintClass}>
-              Until a reason is recorded, this N/A is not valid: the item stays
-              in the denominator and remains a gap.
+              A recorded reason is required for a valid N/A — until then the
+              item stays in the progress denominator and counts as a gap.
             </p>
           ) : (
             <p className={hintClass}>
-              Reason recorded — this N/A is valid and is excluded from the
-              progress denominator.
+              Reason recorded — this item is excluded from the progress
+              calculation.
             </p>
           )}
         </div>
@@ -180,126 +210,121 @@ function DemoField({
   const adequate = answerAdequate(field, answer);
 
   return (
-    <li className="border-t border-foreground/10 pt-6 first:border-t-0 first:pt-0">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-primary">
-          {field.id}
-        </span>
-        <span className="font-mono text-[11px] tracking-[0.02em] text-muted-foreground">
-          Source: {field.source}
-        </span>
-      </div>
-      <p className="mt-2 text-pretty text-[15px] font-medium leading-relaxed text-foreground">
-        {field.prompt}
-      </p>
-
-      {field.control === "date" ? (
-        <div className="mt-3">
-          <label htmlFor={`${field.id}-date`} className="text-sm font-medium">
-            Date (demo placeholder — do not enter a real company&rsquo;s date)
-          </label>
-          <input
-            type="date"
-            id={`${field.id}-date`}
-            value={answer.dateValue}
-            onChange={(event) => onTypedChange({ dateValue: event.target.value })}
-            className={inputClass}
-          />
-          <p className={hintClass}>A recorded date is required before Ready.</p>
-        </div>
-      ) : null}
-
-      {field.control === "yes-no" ? (
-        <div className="mt-3">
-          <fieldset>
-            <legend className={legendClass}>Response</legend>
-            <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2">
-              {(["yes", "no"] as const).map((value) => (
-                <label key={value} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    name={`${field.id}-yesno`}
-                    value={value}
-                    checked={answer.yesNo === value}
-                    onChange={() => onTypedChange({ yesNo: value })}
-                    className={radioClass}
-                  />
-                  <span className="capitalize">{value}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          {answer.yesNo === "yes" ? (
-            <div className="mt-3">
-              <label htmlFor={`${field.id}-details`} className="text-sm font-medium">
-                Circumstances and any concerns raised — required when Yes is
-                recorded (demo placeholder)
+    <li>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            <span className="font-mono text-xs font-medium text-muted-foreground">
+              {field.id}
+            </span>
+            <StatusBadge field={field} answer={answer} />
+          </div>
+          <CardTitle className="mt-1 text-pretty leading-snug">
+            {field.prompt}
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Source: {field.source}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {field.control === "date" ? (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={`${field.id}-date`} className="text-sm font-medium">
+                {field.shortLabel}
               </label>
-              <textarea
-                id={`${field.id}-details`}
-                rows={3}
-                value={answer.text}
-                onChange={(event) => onTypedChange({ text: event.target.value })}
-                placeholder="Demo placeholder — circumstances and concerns text"
-                className={inputClass}
+              <Input
+                type="date"
+                id={`${field.id}-date`}
+                value={answer.dateValue}
+                onChange={(event) => onTypedChange({ dateValue: event.target.value })}
+                className="h-9 sm:max-w-56"
               />
             </div>
           ) : null}
-          <p className={hintClass}>
-            A recorded No is a complete answer by itself; Yes requires the
-            circumstances/details text before Ready.
-          </p>
-        </div>
-      ) : null}
 
-      {field.control === "narrative" ? (
-        <div className="mt-3">
-          <label htmlFor={`${field.id}-narrative`} className="text-sm font-medium">
-            Narrative (demo placeholder — do not enter real company information)
-          </label>
-          <textarea
-            id={`${field.id}-narrative`}
-            rows={3}
-            value={answer.text}
-            onChange={(event) => onTypedChange({ text: event.target.value })}
-            placeholder="Demo placeholder — narrative text"
-            className={inputClass}
+          {field.control === "yes-no" ? (
+            <div className="flex flex-col gap-1.5">
+              <fieldset>
+                <legend className="text-sm font-medium">{field.shortLabel}</legend>
+                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+                  {(["yes", "no"] as const).map((value) => (
+                    <label key={value} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name={`${field.id}-yesno`}
+                        value={value}
+                        checked={answer.yesNo === value}
+                        onChange={() => onTypedChange({ yesNo: value })}
+                        className={radioClass}
+                      />
+                      <span className="capitalize">{value}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              {answer.yesNo === "yes" ? (
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`${field.id}-details`} className="text-sm font-medium">
+                    Circumstances and any concerns raised
+                  </label>
+                  <Textarea
+                    id={`${field.id}-details`}
+                    rows={3}
+                    value={answer.text}
+                    onChange={(event) => onTypedChange({ text: event.target.value })}
+                    placeholder="Describe the circumstances and any concerns raised"
+                  />
+                </div>
+              ) : null}
+              <p className={hintClass}>
+                A recorded No is a complete answer; Yes requires the
+                circumstances above.
+              </p>
+            </div>
+          ) : null}
+
+          {field.control === "narrative" ? (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={`${field.id}-narrative`} className="text-sm font-medium">
+                {field.shortLabel}
+              </label>
+              <Textarea
+                id={`${field.id}-narrative`}
+                rows={4}
+                value={answer.text}
+                onChange={(event) => onTypedChange({ text: event.target.value })}
+                placeholder="Describe the principal objects and activities"
+              />
+            </div>
+          ) : null}
+
+          {field.control === "conditional-text" ? (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={`${field.id}-text`} className="text-sm font-medium">
+                {field.shortLabel}
+              </label>
+              <Textarea
+                id={`${field.id}-text`}
+                rows={3}
+                value={answer.text}
+                onChange={(event) => onTypedChange({ text: event.target.value })}
+                placeholder="Describe the arrangements, or record N/A with a reason below"
+              />
+              <p className={hintClass}>
+                N/A with a recorded reason is offered only for this item.
+              </p>
+            </div>
+          ) : null}
+
+          <ReadinessGroup
+            field={field}
+            answer={answer}
+            adequate={adequate}
+            onStatusChange={onStatusChange}
+            onTypedChange={onTypedChange}
           />
-          <p className={hintClass}>
-            Narrative text is required before Ready; adequacy of real narrative
-            answers is a later review concern.
-          </p>
-        </div>
-      ) : null}
-
-      {field.control === "conditional-text" ? (
-        <div className="mt-3">
-          <label htmlFor={`${field.id}-text`} className="text-sm font-medium">
-            Exchange-traded call option arrangements, if applicable (demo
-            placeholder)
-          </label>
-          <textarea
-            id={`${field.id}-text`}
-            rows={3}
-            value={answer.text}
-            onChange={(event) => onTypedChange({ text: event.target.value })}
-            placeholder="Demo placeholder — arrangement description"
-            className={inputClass}
-          />
-          <p className={hintClass}>
-            Proposed paths: describe the arrangements (Ready), or record N/A
-            with a reason below. N/A is proposed only for this item.
-          </p>
-        </div>
-      ) : null}
-
-      <ReadinessGroup
-        field={field}
-        answer={answer}
-        adequate={adequate}
-        onStatusChange={onStatusChange}
-        onTypedChange={onTypedChange}
-      />
+        </CardContent>
+      </Card>
     </li>
   );
 }
@@ -332,152 +357,111 @@ export function ReviewPreview() {
   const validNaIds = demoFields
     .filter((field) => isValidNa(itemStates.find((item) => item.id === field.id)!))
     .map((field) => field.id);
+  const percent = summary.kind === "ok" ? (100 * summary.ready) / summary.applicable : 0;
 
   return (
-    <section aria-labelledby="review-preview-heading" className="mt-16">
-      <h2
-        id="review-preview-heading"
-        className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground"
-      >
-        Review preview — proposed sample
-      </h2>
-
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">
-            Sample Market listing assessment — review preview
-          </CardTitle>
-          {/*
-           * Badge and actions are a full-width block below the description
-           * (not CardAction): the vendored CardHeader would otherwise force a
-           * [1fr auto] two-column grid that squeezes the title/description to
-           * ~90px on a 390px viewport.
-           */}
-          <CardDescription className="max-w-[38em] leading-relaxed">
-            A proposed four-item sample from the B02 sample and acceptance
-            proposal, shown here with its supplied field IDs, verbatim prompts
-            and source references for inspection. The sample, wording, typed
-            controls and scoring rule are proposals awaiting Trevor&rsquo;s
-            validation (ClickUp C03). All entries are demo placeholders held
-            only in this page&rsquo;s memory: nothing is saved or sent, there
-            is no sign-in, and answers reset on reload. No real company data is
-            requested. This is not a saved company record and produces no
-            regulatory, listing-eligibility or approval finding.
-          </CardDescription>
-          <div className="mt-3 flex flex-col gap-3 border-t border-foreground/10 pt-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">
-              For review · not validated · not saved
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={loadWorkedExample}>
-                Load worked example
-              </Button>
-              <Button variant="outline" onClick={resetDemo}>
-                Reset demo
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ol className="flex flex-col gap-6">
-            {demoFields.map((field) => (
-              <DemoField
-                key={field.id}
-                field={field}
-                answer={answers[field.id]}
-                onTypedChange={(patch) => updateField(field.id, patch, true)}
-                onStatusChange={(patch) => updateField(field.id, patch, false)}
-              />
-            ))}
-          </ol>
-        </CardContent>
-      </Card>
-
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="font-serif text-lg">
-            Self-reported sample progress
-          </CardTitle>
-          <CardDescription className="max-w-[38em] leading-relaxed">
-            Derived live from the four demo entries as
-            100 × ready ÷ (4 − valid N/A), rounded only for display. It
-            measures which demo items are marked ready — it is not a regulatory
-            pass/fail result, listing eligibility, or approval, and no score is
-            saved anywhere.
-          </CardDescription>
-          {/* Full-width line, not CardAction, to keep this header one column
-           * on narrow viewports (same mobile fix as the card above). */}
-          <span className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-            Derived live · not saved
-          </span>
-        </CardHeader>
-        <CardContent>
-          {summary.kind === "ok" ? (
-            <div role="status" aria-live="polite">
-              <p className="font-serif text-3xl leading-tight text-foreground">
-                {summary.ready} / {summary.applicable} = {summary.displayPercent}%
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                items marked ready ÷ applicable items ({summary.total} configured
-                {summary.validNa > 0
-                  ? `, ${summary.validNa} valid N/A excluded`
-                  : ", none excluded"}
-                )
-              </p>
-              <h3 className="mt-5 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                Gaps in source order
-              </h3>
-              {summary.gaps.length > 0 ? (
-                <ol className="mt-2 flex flex-col gap-1.5">
-                  {summary.gaps.map((gap, index) => (
-                    <li key={gap.id} className="text-sm">
-                      <span className="font-mono text-muted-foreground">
-                        {index + 1}.
-                      </span>{" "}
-                      <span className="font-mono text-[12px] text-foreground">
-                        {gap.id}
-                      </span>{" "}
-                      — {fieldById.get(gap.id as DemoFieldId)?.shortLabel} —{" "}
-                      <span className="text-muted-foreground">
-                        {gapStatusLabel(gap.status)}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
+    <section aria-label="Sample assessment" className="mt-6 lg:mt-8">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-6">
+        <div className="lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">
+                Self-reported sample progress
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Not a listing eligibility or approval result.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {summary.kind === "ok" ? (
+                <div role="status" aria-live="polite" className="flex flex-col gap-4">
+                  <div>
+                    <p className="text-3xl font-semibold tracking-tight tabular-nums">
+                      {summary.displayPercent}%
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {summary.ready} of {summary.applicable} applicable items
+                      marked ready
+                      {summary.validNa > 0
+                        ? ` · ${summary.validNa} valid N/A excluded`
+                        : ""}
+                    </p>
+                  </div>
+                  <Progress
+                    value={percent}
+                    aria-valuenow={Number(percent.toFixed(2))}
+                    className="h-2"
+                    aria-label="Self-reported sample progress"
+                  />
+                </div>
+              ) : summary.kind === "not_applicable" ? (
+                <p role="status" className="text-sm leading-relaxed text-muted-foreground">
+                  Not applicable — every configured item is a valid N/A, so no
+                  percentage is shown.
+                </p>
               ) : (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  No gaps: every applicable item is marked ready.
+                <p role="status" className="text-sm leading-relaxed text-muted-foreground">
+                  No sample items are configured — no score is shown.
                 </p>
               )}
-              {validNaIds.length > 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Excluded as valid N/A (reason recorded):{" "}
-                  <span className="font-mono text-[12px] text-foreground">
-                    {validNaIds.join(", ")}
-                  </span>
+              <div className="flex flex-col gap-2.5 border-t pt-4">
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={loadWorkedExample}>Load worked example</Button>
+                  <Button variant="outline" onClick={resetDemo}>
+                    Reset
+                  </Button>
+                </div>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Entries are held in this page only and reset on reload.
                 </p>
+              </div>
+              {summary.kind === "ok" ? (
+                <div>
+                  <h3 className="text-xs font-medium text-muted-foreground">
+                    Gaps
+                  </h3>
+                  {summary.gaps.length > 0 ? (
+                    <ul className="mt-1.5 flex flex-col gap-1">
+                      {summary.gaps.map((gap) => (
+                        <li key={gap.id} className="text-xs leading-relaxed">
+                          <span className="font-mono font-medium">{gap.id}</span>{" "}
+                          <span className="text-muted-foreground">
+                            —{" "}
+                            {fieldById.get(gap.id as DemoFieldId)?.shortLabel} ·{" "}
+                            {gapStatusLabel(gap.status)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                      No gaps — every applicable item is marked ready.
+                    </p>
+                  )}
+                  {validNaIds.length > 0 ? (
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                      Excluded as valid N/A (reason recorded):{" "}
+                      <span className="font-mono">{validNaIds.join(", ")}</span>
+                    </p>
+                  ) : null}
+                </div>
               ) : null}
-            </div>
-          ) : summary.kind === "not_applicable" ? (
-            <p role="status" className="text-sm text-muted-foreground">
-              Not applicable — every configured item is a valid N/A, so no
-              percentage is shown. (Not reachable from the four fields above,
-              where only Q-OFR-03 has the N/A path.)
-            </p>
-          ) : (
-            <p role="status" className="text-sm text-muted-foreground">
-              Configuration error — no sample items are configured. A score is
-              never shown in this state.
-            </p>
-          )}
-          <p className="mt-5 max-w-[46em] text-xs leading-relaxed text-muted-foreground">
-            Answers reset on reload. The proposed wording, controls, N/A path
-            and this progress rule await Trevor&rsquo;s validation (ClickUp
-            C03); the saved assessment (B06) additionally depends on sign-in
-            (B05) and the Supabase data model.
-          </p>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        <ol className="flex flex-col gap-4 lg:col-start-1 lg:row-start-1">
+          {demoFields.map((field) => (
+            <DemoField
+              key={field.id}
+              field={field}
+              answer={answers[field.id]}
+              onTypedChange={(patch) => updateField(field.id, patch, true)}
+              onStatusChange={(patch) => updateField(field.id, patch, false)}
+            />
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
