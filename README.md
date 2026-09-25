@@ -11,9 +11,9 @@ This repository is currently the **B04 staging foundation plus a demo-only revie
 | Area | Status |
 | --- | --- |
 | Static staging shell (Vite + React + TypeScript) | Implemented |
-| Daraja application UI (Tailwind CSS v4 + shadcn/ui Button/Card/Badge/Input/Textarea/Progress) | Implemented (restyled this revision; locally tested — not yet deployed) |
+| Daraja application UI (Tailwind CSS v4 + shadcn/ui Button/Card/Badge/Input/Textarea/Progress) | Implemented (restyled this revision; deployed and observed live with `1025994` on 25 Sep 2026) |
 | Read-only Supabase connectivity diagnostic | Implemented (reachability only) |
-| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented — demo only, not validated, not saved (the earlier `54f4ae6` revision was deployed and observed live on 24 Sep 2026; this restyle is not yet deployed) |
+| Sample assessment **review preview** (four proposed fields, in-memory demo state, live self-reported sample progress) | Implemented — demo only, not validated, not saved (the `54f4ae6` review-preview revision was deployed and observed live on 24 Sep 2026; the restyle was deployed and observed live with `1025994` on 25 Sep 2026) |
 | Company registration / magic-link sign-in | Not implemented (B05, pending) |
 | Saved sample assessment (real entries, save/resume) | Not implemented — depends on C03 validation and B05 sign-in |
 | Readiness scoring / dashboard (saved, company-scoped) | Not implemented |
@@ -243,7 +243,17 @@ this repository.
   local build of that commit byte for byte; a live 390px browser showed no horizontal
   overflow, the initial `0/4 = 0.00%`, the worked example `2/3 = 66.67%` with the
   Q-ISS-01 gap, and reset after reload; the read-only Supabase diagnostic returned
-  HTTP 200. This does not verify Supabase Auth, publishable-key validity, RLS,
+  HTTP 200. main `1025994` (shadcn app layout, mobile summary placement, `#fafafa`
+  theme color) was then deployed and observed live at `https://ibuka.co.ke/` on
+  25 September 2026: Codex independently verified at approximately 10:27 EAT that the
+  live `dist/index.html`, `assets/index-BcJcyHZm.js` and `assets/index-Bx5Sbk72.css`
+  each matched the local build byte for byte, and live 390px/1280px Chrome checks
+  reproduced the layout and demo behavior (`scrollWidth=390`, initial `0.00%`,
+  worked-example button top 461px and first question top 726px, worked example
+  `66.67%` with Q-ISS-01 the only gap, Reset back to `0.00%`, no overflow at 1280px
+  with the summary right of the questions). This observes the visual/demo build
+  only — not Trevor's content approval, sign-in, save/persistence, or database
+  security. This does not verify Supabase Auth, publishable-key validity, RLS,
   company isolation, Trevor's validation, or contractual acceptance. The email sender
   is not yet selected.
 
@@ -293,7 +303,8 @@ curl -s -o /dev/null -w '%{http_code}\n' "$VITE_SUPABASE_URL/auth/v1/health" \
     preview" disclosure (the phase list lives inside it). View-source confirms
     `<title>Daraja · IBUKA Phase 1 (staging)</title>` and `<meta name="robots" content="noindex">`.
     (The `83c62d5` and `54f4ae6` deployments were observed live on
-    24 September 2026 with the earlier editorial layout; see the deployment-evidence
+    24 September 2026 with the earlier editorial layout, and `1025994` was observed
+    live on 25 September 2026 with the current layout; see the deployment-evidence
     bullet above.)
 2. **Primary revision check:** in the Cloudflare Workers dashboard, record the
    deployment's revision metadata — deployment ID and the linked commit SHA — when
