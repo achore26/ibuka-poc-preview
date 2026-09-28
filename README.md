@@ -25,7 +25,9 @@ listing-eligibility or approval finding.
 
 ## Requirements
 
-- Node.js ≥ 18 for the pinned packages; use Node.js 22 for local and Workers Builds builds. Check the existing build image before setting `NODE_VERSION`.
+- Node.js ≥ 22 for the pinned packages (`wrangler` 4.142.0 requires Node ≥ 22; the
+  Cloudflare Workers Builds image currently provides Node 24). Check the existing build
+  image before setting `NODE_VERSION`.
 - npm (a lockfile, `package-lock.json`, is committed; installs must use it).
 
 ## Commands
@@ -85,7 +87,11 @@ Note the mechanism split (per the official Cloudflare and Vite docs): Wrangler `
 **runtime** Worker config; the Vite build does not see Wrangler runtime vars or dashboard
 Runtime variables — the `vite.config.ts` bridge reads the JSON directly, and only
 **Build variables**/`.env` files can override it. This Worker serves static assets only
-(no script runs), so runtime vars are inert here anyway.
+(no script runs), so runtime vars are inert here anyway. The committed `previews.vars`
+block repeats the same two public values for non-production previews — top-level
+`vars` are not inherited by previews (`assets` and `build` are shared); it is
+equally inert at runtime — it exists so
+`npx wrangler preview` accepts the configuration.
 
 ## Sample assessment review preview (demo only)
 
@@ -203,7 +209,12 @@ the Cloudflare dashboard; the Custom Domain route is declared in `wrangler.jsonc
 this repository.
 
 - **Committed Wrangler config:** `wrangler.jsonc` — `name: ibuka-poc`,
-  `compatibility_date: 2026-09-24`, `assets.directory: ./dist`, `keep_vars: true`, and
+  `account_id: b28def861e066a2b8467af3e80e33ddc` (the observed KASIB account owning
+  the existing Worker; pinning it stops an accidental deploy/preview through a
+  different personal account — a disposable personal-account preview was created
+  once by mistake and removed; CI already uses a KASIB token),
+  `compatibility_date: 2026-09-24`, `assets.directory: ./dist`, `keep_vars: true`, a
+  `build` block and a `previews` block (both detailed below), and
   the Custom Domain route declared as code:
   `routes: [{ "pattern": "ibuka.co.ke", "custom_domain": true }]`. The pattern is the
   whole hostname with no path — a Custom Domain matches all paths of that exact hostname
@@ -218,12 +229,45 @@ this repository.
   (neither enabled nor disabled); none is claimed. The Custom Domain and Active zone
   are user-confirmed — and the `83c62d5` deploy was observed live on 24 September
   2026 (Daraja title and assets served over HTTPS 200).
-- **Build command (dashboard setting, user-confirmed by screenshot):** `npm run build`.
-  This must stay in the dashboard: Workers Builds does not honor build commands from
-  the Wrangler config, and the route in `wrangler.jsonc` is not a way to set the build
-  command.
-- **Deploy command (dashboard setting, user-confirmed by screenshot):**
+- **Custom build as code:** `wrangler.jsonc` commits a `build` block
+  (`command: "npm run build"`, `watch_dir: "src"`). Verified against the Wrangler
+  4.142.0 source and reproduced locally: `npx wrangler deploy` and
+  `npx wrangler preview` both resolve their entry through the same `getEntry()`
+  helper, which executes `build.command` in a fresh shell before bundling/upload.
+  With `dist/` deleted, `npx wrangler deploy --dry-run --outdir <tmp>` ran
+  `npm run build` itself and rebuilt `dist/` byte-identically (no credentials, no
+  cloud calls). The earlier claim that build commands from the Wrangler config are
+  ignored was wrong and is retracted.
+- **Build command (dashboard setting, production):** `npm run build`
+  (user-confirmed by screenshot) **or empty** — with the committed `build` block a
+  fresh `npm run build` runs inside `npx wrangler deploy` either way; when both the
+  dashboard command and the Wrangler build block are set, the build simply runs
+  twice (harmless, slower).
+- **Deploy command (dashboard setting, production, user-confirmed by screenshot):**
   `npx wrangler deploy`.
+- **Non-production (previews) pipeline:** dependency install (`npm ci`) then
+  `npx wrangler preview` with no separate build step; Wrangler's `build.command`
+  supplies the fresh build. The observed release-preview failure (Wrangler 4.142.0)
+  was the missing `previews` block: top-level `vars` are not inherited by previews
+  (`assets` and `build` are shared), so `wrangler preview` proposed `previews.vars`
+  for the two public
+  `VITE_` values and errored in CI. `wrangler.jsonc` now commits `previews.vars`
+  with the **same two public synthetic staging values** as production. Sharing the
+  existing synthetic staging Supabase project (`eaveywzurnrqyeejlapl`) between
+  production and previews is intentional: no real customer data and no new
+  resources are involved. Limits: hosted email-link login remains blocked until
+  the Auth site URL and the exact allowed redirect are set to
+  `https://ibuka.co.ke/` (the hosted Auth site URL is still
+  `http://localhost:3000` with an empty redirect allowlist, and updates currently
+  fail with a Supabase Management API 403); previews are not approved login
+  origins; and as in production, `vars`/`previews.vars` are
+  inert at runtime for this static-assets-only Worker — the values reach the
+  browser only via the Vite build, whose `vite.config.ts` bridge reads the
+  top-level `vars`.
+- **Wrangler pinned:** `wrangler` 4.142.0 is an exact-pinned devDependency, so
+  `npx wrangler …` in any pipeline (including Workers Builds) uses the inspected
+  version instead of floating to the latest release. Local config/build validation
+  without cloud mutation: `npx wrangler deploy --dry-run --outdir <tmp>`.
 - **Build variables (optional since this revision):** `VITE_SUPABASE_URL`,
   `VITE_SUPABASE_PUBLISHABLE_KEY` are **no longer mandatory** — the same two
   public values are versioned as `vars` in `wrangler.jsonc`, and the
@@ -378,7 +422,9 @@ exactly, no ranges). **The review-preview revision and the UI refinement revisio
 added no packages**: the calculator tests run on Node's built-in TypeScript
 type-stripping with no test framework, and the newly vendored shadcn components
 (Badge/Input/Textarea/Progress) are source files using the existing pinned
-dependencies.
+dependencies. The 28 September 2026 release-build fix added one exact-pinned
+devDependency: `wrangler` (the deploy/preview CLI), so `npx wrangler …` in any
+pipeline uses the inspected version.
 
 | Package | Version | Declared licence | Role |
 | --- | --- | --- | --- |
@@ -394,17 +440,21 @@ dependencies.
 | `@vitejs/plugin-react` | 4.3.4 | MIT | Vite ↔ React integration |
 | `@types/react` | 18.3.12 | MIT | Type definitions |
 | `@types/react-dom` | 18.3.1 | MIT | Type definitions |
+| `wrangler` | 4.142.0 | MIT OR Apache-2.0 | Cloudflare deploy/preview CLI (devDependency; pinned exact for reproducible hosted `npx wrangler` behavior) |
 
 `src/components/ui/` holds six files derived from the MIT-licensed shadcn/ui
 component source as fetched by the official CLI (`button.tsx`, `card.tsx`,
 `badge.tsx`, `input.tsx`, `textarea.tsx`, `progress.tsx`); per shadcn's
 model they are owned code in this repository.
 
-The full installed tree (157 packages, including transitive dependencies pinned in
-`package-lock.json`) declares only permissive licences — MIT (142), ISC (6), Apache-2.0
-(4), MPL-2.0 (2, both `lightningcss`, pulled in by Tailwind v4), CC-BY-4.0 (1),
-BSD-3-Clause (1) and 0BSD (1) at the time this inventory was generated. No transitive
-licence audit beyond those declarations has been performed and no deeper claim is made.
+The full installed tree (322 packages, including transitive dependencies pinned in
+`package-lock.json` after the 28 September 2026 wrangler pin) declares — MIT (256),
+Apache-2.0 (26), ISC (7), MPL-2.0 (12), MIT OR Apache-2.0 (3), LGPL-3.0-or-later
+components (14: the `@img/sharp-*` libvips platform binaries pulled in by wrangler's
+local CLI tree; development tooling only, never part of the static browser bundle),
+CC0-1.0 (1), CC-BY-4.0 (1), BSD-3-Clause (1) and 0BSD (1) at the time this inventory
+was generated. No transitive licence audit beyond those declarations has been
+performed and no deeper claim is made.
 
 This repository's own code is private KASIB property; no open-source licence is granted
 for it.
