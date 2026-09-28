@@ -425,3 +425,29 @@ claim that the advisories are harmless.
 
 `@tailwindcss/vite` declares Vite as a peer dependency, so `npm audit --omit=dev` still
 reports this build-tooling chain. Vite is not imported into the browser bundle.
+
+## Saved assessment recovery — 28 September 2026
+
+Barak authorised provisional implementation of the existing sample/scoring before client validation. The application now implements PKCE email-link sign-in, one-company onboarding, explicit typed answer saves, reload/resume, saved-only progress and a company dashboard. The anonymous review preview remains transient. This section supersedes older statements that authentication/persistence are unimplemented; it does not assert hosted deployment or client approval.
+
+Entry points: `src/lib/auth-session.ts` handles one callback exchange per client and session events; `supabase-client.ts` creates the public auth client and an identity-bound data client. `Workspace` and `SavedAssessment` are keyed by user/company; async loads/writes are invalidated on unmount. Data access lives in `src/lib/app-data`, with ownership enforced by the companion database's RLS and column grants. Sign-out warns about unsaved changes. Saved-only dashboard scoring uses the existing proposed rules and four source IDs.
+
+### Verification and development
+
+```sh
+npm ci
+npm test
+npm run build
+# Start/reset/test the companion database first, then:
+npm run test:browser
+```
+
+Browser tests require installed Google Chrome and the local Supabase stack. `tests/run-local.mjs` reads public local configuration from the sibling `../ibuka-recovery-db` worktree; override its location with `DARAJA_DB_WORKTREE`. It launches Vite on loopback port 5173. Real synthetic email links are retrieved only from local Mailpit. Tests cover typed save/reload, saved-only 66.67% example, failed save/retry, unsaved signout warning, a second account, invalid/wrong-browser links, delayed onboarding/save callbacks during identity switches, expiry recovery, and 390/1280px layouts. Error cases use injected network responses; they do not establish live SMTP delivery. Test screenshots are ignored under `test-results/`.
+
+Dependencies: supabase-js 2.117.2, Playwright 1.63.0, existing exact pins retained. Node 22.18+ is needed for TypeScript-strip unit tests. The existing Vite 5 development-server advisories remain; bind development to loopback. Do not use `npm audit fix --force` without a separate upgrade review.
+
+### Release and remaining decisions
+
+Apply companion migrations 20260927000100/20260927000200 before releasing this app. Existing Cloudflare Workers Builds deploys from main using `wrangler.jsonc`; no new hosting resources are required. Verify deployed assets and real hosted access policies after release. Record local versus hosted checks separately. Roll back the frontend to its preceding revision if needed; preserve database answers and use forward migrations, as documented in the database README.
+
+The sample/scoring remain provisional; Trevor's regulatory-content validation and formal contractual acceptance are separate. Hosted email sender/provider selection and actual external email delivery remain pending. Only synthetic company data is permitted. A functioning login form is not evidence of a delivered hosted email.
