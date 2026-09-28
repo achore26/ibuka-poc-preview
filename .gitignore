@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.wrangler/
 
 .env
 .env.*
@@ -11,3 +12,6 @@ npm-debug.log*
 .DS_Store
 .vscode/
 .idea/
+
+test-results/
+playwright-report/

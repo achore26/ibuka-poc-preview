@@ -89,8 +89,13 @@ export function initialDemoAnswer(): DemoAnswer {
  * ready. A recorded No to Q-DIR-01 is a complete answer on its own; Yes
  * requires the circumstances/details text. Text adequacy in this demo means
  * non-empty; real adequacy review is Trevor's (C03), not this rule.
+ * (The parameter is structurally typed so the saved assessment, whose field
+ * ids are validated server-supplied strings, can share this exact rule.)
  */
-export function answerAdequate(field: DemoFieldSpec, answer: DemoAnswer): boolean {
+export function answerAdequate(
+  field: Pick<DemoFieldSpec, "control">,
+  answer: DemoAnswer,
+): boolean {
   switch (field.control) {
     case "date":
       return answer.dateValue.trim() !== "";

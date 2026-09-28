@@ -1,5 +1,6 @@
 {
   "name": "ibuka-poc",
+  "account_id": "b28def861e066a2b8467af3e80e33ddc",
   "compatibility_date": "2026-09-24",
   "keep_vars": true,
   "routes": [
@@ -11,8 +12,18 @@
   "assets": {
     "directory": "./dist"
   },
+  "build": {
+    "command": "npm run build",
+    "watch_dir": "src"
+  },
   "vars": {
     "VITE_SUPABASE_URL": "https://eaveywzurnrqyeejlapl.supabase.co",
     "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_RsAFCOOfy-zWfQWO7B_pcQ_BEYmORKU"
+  },
+  "previews": {
+    "vars": {
+      "VITE_SUPABASE_URL": "https://eaveywzurnrqyeejlapl.supabase.co",
+      "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_RsAFCOOfy-zWfQWO7B_pcQ_BEYmORKU"
+    }
   }
 }

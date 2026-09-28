@@ -5,15 +5,17 @@
   "description": "Daraja (working name) - static staging frontend for the IBUKA Phase 1 proof of concept by KASIB.",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts"
+    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts && node --experimental-strip-types src/lib/app-data/answer-state.test.ts",
+    "test:browser": "node tests/run-local.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "@tailwindcss/vite": "4.3.3",
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",
@@ -23,10 +25,12 @@
     "tailwindcss": "4.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "4.3.4",
     "typescript": "5.6.3",
-    "vite": "5.4.21"
+    "vite": "5.4.21",
+    "wrangler": "4.142.0"
   }
 }
