@@ -1,17 +1,21 @@
 # CMP Kenya — IBUKA Phase 1 staging frontend
 
+## Current release — 30 September 2026
+
+<!-- CMP live release checkpoint: 30 September 2026 -->
+CMP Kenya selected-question release is live at https://cmpkenya.co.ke; https://ibuka.co.ke remains available. Verified runtime app `336c2314...`, DB `411f672b...`: hosted 53 access checks, local 16 populated-upgrade checks, 8 mock UI / 6 real-stack browser tests, and real SMTP/PKCE + autosave/reload on both origins. Current architecture and live evidence: [technical guide](docs/technical-guide.md) · [release runbook](docs/release-runbook.md). Earlier unshipped/blocked notes below are historical. Question-content validation, matrix and formal client acceptance remain open.
+
 **CMP Kenya** is the current application identity for the IBUKA Phase 1 proof of concept.
 This private KASIB repository holds the static frontend that builds to `dist/` for the
 KASIB Cloudflare Worker `ibuka-poc` (Workers Builds with static assets). The earlier
 **Daraja** product name and the four-item review preview are **historical** — see the
 historical-evidence sections below; the top-of-file status they describe is superseded.
 
-## Current status — CMP workspace redesign, 30 September 2026 (UNSHIPPED)
+## CMP workspace features
 
 The application is now the CMP Kenya listing-preparation workspace: a light workspace
 composed with a deep navy section rail and restrained red accents, leading with the
-assessment itself. **This redesign is implemented, locally built and locally tested only —
-not deployed, not client-approved, and no cloud write or deployment has been made.**
+assessment itself. **This redesign is deployed and verified live. The selected questions remain proposed pending client content validation.**
 
 | Area | Status |
 | --- | --- |
@@ -21,7 +25,7 @@ not deployed, not client-approved, and no cloud write or deployment has been mad
 | Saved assessment + autosave | Implemented (28 September recovery basis); redesign preserves autosave, explicit Ready/draft, stale-ack guards, dirty-signout warning |
 | Correctness fixes D1–D5 (30 Sept) | Implemented + unit regressions: stable invalid state (no retry loop), textual UI-change detection, unique compound-control error ids, describedby-only-when-rendered, checklist `allows_na` drift rejection |
 | Scoring | Self-reported prepared-for-review only; never a listing eligibility or approval finding |
-| Deployment | **Not deployed.** `wrangler.jsonc` now declares `cmpkenya.co.ke` as an additional Custom Domain route alongside `ibuka.co.ke` (same pinned KASIB account/Worker/public vars; existing resources only, no deploy performed) |
+| Deployment | **Verified live.** `wrangler.jsonc` attaches `cmpkenya.co.ke` alongside `ibuka.co.ke` on the same existing KASIB Worker; production build and both served asset hashes were checked. |
 
 Sample-denominator history: the earlier deployed review preview used a **four-item**
 sample (ids CP-07, Q-DIR-01, Q-ISS-01, Q-OFR-03); only **CP-07** is also part of the
