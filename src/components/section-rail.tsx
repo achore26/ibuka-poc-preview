@@ -37,20 +37,6 @@ export function useReportSectionNav(): ReportSectionNav {
   return useContext(SectionNavContext);
 }
 
-/** Small local marker for a group's state (optical alignment, no font icon). */
-function GroupDot({ ready, total }: { ready: number; total: number }) {
-  const done = total > 0 && ready === total;
-  const started = ready > 0;
-  return (
-    <span
-      aria-hidden="true"
-      className={`size-1.5 shrink-0 rounded-full ${
-        done ? "bg-primary" : started ? "bg-rail-foreground" : "bg-transparent ring-1 ring-rail-muted"
-      }`}
-    />
-  );
-}
-
 export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
   const groups: SectionNavGroup[] =
     nav?.groups ??
@@ -64,9 +50,10 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
   return (
     <nav
       aria-label="Assessment sections"
-      className="sticky top-16 hidden h-[calc(100svh-4rem)] w-56 shrink-0 flex-col bg-rail lg:flex"
+      className="fixed inset-y-0 left-0 z-50 hidden overflow-y-auto w-[232px] flex-col bg-rail lg:flex"
     >
-      <p className="px-5 pb-2 pt-5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-rail-muted">
+      <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6"><span className="border-b-[3px] border-primary pb-1 text-xl font-semibold tracking-tight text-white">CMP</span><span className="text-sm text-rail-foreground">Kenya</span></div>
+      <p className="px-5 pb-3 pt-8 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-rail-muted">
         Sections
       </p>
       <ul className="flex flex-col gap-0.5 px-3">
@@ -80,15 +67,15 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
                 disabled={disabled}
                 aria-current={isActive ? "true" : undefined}
                 onClick={() => nav?.onSelect(group.key)}
-                className={`group flex min-h-11 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors ${
+                className={`group flex min-h-11 w-full items-center gap-2.5 rounded-r-md border-l-[3px] px-3 py-3 text-left text-sm transition-colors ${
                   isActive
-                    ? "bg-rail-raised font-medium text-white"
+                    ? "border-l-primary bg-rail-raised font-medium text-white"
                     : disabled
-                      ? "cursor-default text-rail-muted"
-                      : "text-rail-foreground hover:bg-rail-raised/70 hover:text-white"
+                      ? "border-l-transparent cursor-default text-rail-muted"
+                      : "border-l-transparent text-rail-foreground hover:bg-rail-raised/70 hover:text-white"
                 }`}
               >
-                <GroupDot ready={group.ready} total={group.total} />
+
                 <span className="min-w-0 flex-1">
                   <span className="me-1.5 font-mono text-[0.7rem] text-rail-muted">
                     {String(index + 1).padStart(2, "0")}
@@ -100,18 +87,14 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
                     {group.ready}/{group.total}
                   </span>
                 ) : null}
-                <span
-                  aria-hidden="true"
-                  className={`-me-1 h-4 w-0.5 rounded-full bg-primary transition-opacity ${
-                    isActive ? "opacity-100" : "opacity-0"
-                  }`}
-                />
+
               </button>
             </li>
           );
         })}
       </ul>
-      <p className="mt-auto px-5 pb-5 text-[0.68rem] leading-relaxed text-rail-muted">
+      <div id="rail-progress" className="mt-auto border-t border-white/15 px-5 py-6" />
+      <p className="px-5 pb-5 text-[0.68rem] leading-relaxed text-rail-muted">
         CMP Kenya · IBUKA Phase 1
         <br />
         proof of concept

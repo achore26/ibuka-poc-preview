@@ -15,6 +15,7 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { WorkspaceUtility, WorkspaceProgress } from "@/components/workspace-slots";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -454,37 +455,16 @@ export function SavedAssessment({
       : [];
 
   return (
-    <section aria-label="Saved sample assessment" className="flex flex-col gap-4">
-      <div>
-        <p className="text-sm font-medium text-muted-foreground">Listing assessment</p>
-        <h1 title={company.name} className="mt-1 line-clamp-2 text-2xl font-semibold leading-8 tracking-tight sm:line-clamp-none sm:text-[30px] sm:leading-9">{company.name}</h1>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">Proposed sample pending validation</p>
-      </div>
-      <div
-        role="status"
-        aria-live="polite"
-        className="panel flex flex-wrap items-center gap-x-3 gap-y-2 px-3.5 py-2.5 text-sm"
-      >
-        <span
-          className={
-            anyFailed || aggregate.invalid > 0
-              ? "font-medium text-destructive"
-              : anySaving || anyDirty
-                ? "font-medium"
-                : "text-muted-foreground"
-          }
-        >
-          {globalStatus}
-        </span>
-        {(anyDirty || anyFailed) && !anySaving ? (
-          <Button
-            className="ms-auto h-11 sm:h-9"
-            onClick={() => flushIds(Object.keys(dirtyMap).filter((key) => dirtyMap[key]), loadEpochRef.current)}
-          >
-            Save now
-          </Button>
-        ) : null}
-      </div>
+    <section aria-label="Saved sample assessment" className="flex flex-col gap-3 lg:gap-4">
+      <WorkspaceUtility>
+        <div className="workspace-context flex min-w-0 flex-1 items-center justify-between gap-6">
+          <h1 title={company.name} className="min-w-0 max-w-full truncate text-base font-medium">{company.name}</h1>
+          <div role="status" aria-live="polite" className="flex min-w-0 max-w-full items-center gap-3 text-xs text-muted-foreground">
+            <span title={globalStatus} className={`truncate ${anyFailed || aggregate.invalid > 0 ? "text-destructive" : ""}`}>{globalStatus}</span>
+          </div>
+        </div>
+      </WorkspaceUtility>
+      <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-muted-foreground">Proposed sample pending validation</p>{(anyDirty || anyFailed) && !anySaving ? <Button variant="outline" className="h-11" onClick={() => flushIds(Object.keys(dirtyMap).filter((key) => dirtyMap[key]), loadEpochRef.current)}>Save now</Button> : null}</div>
       {Object.keys(invalidDrafts).length > 0 ? (
         <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/5 px-3.5 py-2.5 text-sm">
           {Object.entries(invalidDrafts).map(([id, message]) => (
@@ -494,7 +474,7 @@ export function SavedAssessment({
         </div>
       ) : null}
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,720px)_264px]">
+      <div className="flex flex-col gap-6">
         <SavedForm
           sections={sections}
           activeKey={activeKey}
@@ -505,10 +485,9 @@ export function SavedAssessment({
           invalidDrafts={invalidDrafts}
           items={items}
           progressPanel={
-            <details className="text-sm">
-              <summary className="flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Progress and remaining items</summary>
-              <PreparedPanel summary={summary} gaps={gaps} savedNote={anyDirty || anySaving ? "Progress reflects the last saved answers." : "Saved entries only."} onNavigate={navigateTo} completeAllowed={!anyDirty && !anySaving && !anyFailed && aggregate.invalid === 0} firstId={enabledFields[0].id} />
-            </details>
+            <WorkspaceProgress>
+              <PreparedPanel summary={summary} gaps={gaps} savedNote={anyDirty || anySaving ? "Based on saved answers · changes pending." : "Based on saved answers."} onNavigate={navigateTo} completeAllowed={!anyDirty && !anySaving && !anyFailed && aggregate.invalid === 0} firstId={enabledFields[0].id} />
+            </WorkspaceProgress>
           }
           onUpdate={updateDraft}
           onRetry={(id) => {
@@ -519,17 +498,6 @@ export function SavedAssessment({
         />
 
         <div className="flex flex-col gap-4">
-          <div className="hidden lg:sticky lg:top-20 lg:block">
-            <PreparedPanel
-              summary={summary}
-              gaps={gaps}
-              savedNote={anyDirty || anySaving ? "Progress reflects the last saved answers." : "Saved entries only."}
-              onNavigate={navigateTo}
-              completeAllowed={!anyDirty && !anySaving && !anyFailed && aggregate.invalid === 0}
-              firstId={enabledFields[0].id}
-            />
-          </div>
-
           <DashboardPanel
             company={company}
             items={items}

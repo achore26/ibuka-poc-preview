@@ -1,14 +1,6 @@
-/*
- * Shared "prepared for review" progress panel (accepted redesign,
- * 30 September 2026): one narrow right-rail panel (~280px desktop) used by
- * both the anonymous preview and the saved assessment, plus a compact
- * variant for phones. It leads with the actual count ("7 of 10 prepared for
- * review"), a refined segmented bar (one segment per applicable selected
- * item), the percentage at a modest size, and the remaining gaps behind a
- * disclosure so the panel stays quiet. Figures derive from the caller's
- * summary — client state for the preview, server-confirmed rows for the
- * saved form. The note stays truthful: self-reported preparation, never a
- * listing approval.
+/* Saved-only preparation count, linear track and remaining-item links.
+ * Desktop presentation lives in the navy rail; mobile uses a compact row.
+ * Preview is separately labelled and cannot imply persistence or approval.
  */
 
 import { Button } from "@/components/ui/button";
@@ -22,19 +14,7 @@ export interface PreparedGap {
 
 function SegmentedBar({ ready, applicable }: { ready: number; applicable: number }) {
   if (applicable <= 0) return null;
-  const segments = Array.from({ length: applicable }, (_, index) => index < ready);
-  return (
-    <div aria-hidden="true" className="flex gap-1">
-      {segments.map((filled, index) => (
-        <span
-          key={index}
-          className={`h-1.5 flex-1 rounded-full transition-colors duration-150 ${
-            filled ? "bg-primary" : "bg-border"
-          }`}
-        />
-      ))}
-    </div>
-  );
+  return <div aria-hidden="true" className="progress-track h-1 overflow-hidden rounded-full bg-border"><div className="h-full bg-primary" style={{ width: `${ready / applicable * 100}%` }} /></div>;
 }
 
 export function PreparedMetric({
@@ -47,13 +27,7 @@ export function PreparedMetric({
   if (summary?.kind === "ok") {
     return (
       <div role="status" aria-live="polite" className="flex flex-col gap-2">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className={`${compact ? "text-xl" : "text-2xl"} font-semibold tracking-tight tabular-nums`}>
-            {summary.ready} of {summary.applicable}
-            <span className="ms-1 text-sm font-normal text-muted-foreground">prepared</span>
-          </p>
-          <p className="text-sm tabular-nums text-muted-foreground">{summary.displayPercent}%</p>
-        </div>
+        <p className={`${compact ? "text-sm" : "text-base"} font-medium leading-6 tabular-nums`}>{summary.ready} of {summary.applicable} ready for review</p>
         <SegmentedBar ready={summary.ready} applicable={summary.applicable} />
       </div>
     );
@@ -93,6 +67,7 @@ export function GapDisclosure({ gaps, onNavigate }: { gaps: PreparedGap[]; onNav
           </li>
         ))}
       </ol>
+      <p className="mt-3 text-xs leading-5 text-muted-foreground lg:hidden">Self-reported preparation, not eligibility or approval.</p>
     </details>
   );
 }
@@ -109,30 +84,25 @@ export function PreparedPanel({ summary, gaps, savedNote, onNavigate, completeAl
   const allReady = summary?.kind === "ok" && summary.ready === summary.applicable && summary.applicable > 0;
   const reviewReady = allReady && completeAllowed && !preview;
   return (
-    <aside aria-label="Assessment progress" className="panel flex flex-col gap-4 p-5">
-      <div>
-        <h3 className="text-sm font-semibold">{preview ? "Preview progress" : "Your progress"}</h3>
+    <aside aria-label="Assessment progress" className="progress-block flex flex-col gap-3">
+      <div className="progress-intro">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em]">{preview ? "Preview progress" : "Your progress"}</h3>
         <p className="mt-1 text-sm leading-5 text-muted-foreground">{savedNote}</p>
       </div>
       <PreparedMetric summary={summary} />
-      <div className="border-t pt-4">
+      <div className="progress-actions pt-1">
         {reviewReady ? (
           <>
             <p className="text-base font-semibold leading-6">Your sample answers are ready for review.</p>
             <Button variant="outline" className="mt-3 h-11 w-full" onClick={() => onNavigate(firstId)}>Review answers</Button>
           </>
         ) : gaps.length > 0 ? (
-          <>
-            <p className="text-sm text-muted-foreground">Next</p>
-            <p className="mt-1 text-base font-semibold leading-6">{gaps[0].shortLabel}</p>
-            <Button className="mt-3 h-11 w-full" onClick={() => onNavigate(gaps[0].id)}>Continue</Button>
-            <GapDisclosure gaps={gaps} onNavigate={onNavigate} />
-          </>
+          <GapDisclosure gaps={gaps} onNavigate={onNavigate} />
         ) : allReady ? (
           <p className="text-sm leading-6">{preview ? "All preview items are marked ready. Sign in to start a saved assessment." : "Finish saving your latest changes before reviewing your answers."}</p>
         ) : null}
       </div>
-      <p className="border-t pt-4 text-sm leading-5 text-muted-foreground">This records your preparation; it is not a listing eligibility or approval result.</p>
+      <p className={`${gaps.length > 0 ? "hidden lg:block" : "col-span-2"} text-xs leading-5 text-muted-foreground`}>Self-reported preparation, not eligibility or approval.</p>
     </aside>
   );
 }

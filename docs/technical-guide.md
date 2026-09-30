@@ -73,7 +73,7 @@ Pure logic: [`src/lib/autosave.ts`](../src/lib/autosave.ts) and [`src/lib/app-da
 
 Host `smtp.resend.com`, port `465`, user `resend`, sender `CMP Kenya <no-reply@cmpkenya.co.ke>`; the API key was entered by the user directly in the dashboard and must never appear in this repo, the browser or logs. Verified by dashboard readback: Resend shows `cmpkenya.co.ke` status Verified with a Domain verified event, and Supabase custom SMTP is enabled, persisting after reload with the stored password masked. Verified live on both origins: email received from the configured CMP Kenya sender, same-browser PKCE exchange, correct-origin redirect, credentials removed from the callback URL, typed-answer and Ready-state reload persistence, and sign-out clearing the workspace. Test data was synthetic; keys, links and tokens were kept out of logs.
 
-## 6. Verification status
+## 6. Earlier baseline verification (before the issuer design refinement)
 
 Verified on 30 September 2026:
 
@@ -87,7 +87,7 @@ Open business work: Trevor's validation of the selected questions/content and ag
 
 ## Issuer journey and guidance refinement — 30 September 2026
 
-Release candidate: local implementation; hosted release is pending parent verification. Astra supplied the design; GLM-5.3 produced the initial guidance/target-guard draft. Its correction attempt hit the Coding Plan five-hour quota limit, so Codex completed implementation under the bounded failure fallback. Barak explicitly waived the independent GLM candidate review **for this current UI/guidance/test-workspace pass only**. Review is waived, not completed; all source, regression, visual and live checks remain required.
+Design v2 release candidate: source/build/UI/local integration checks and hosted publication are tracked separately; do not infer a hosted release from the working tree. Astra supplied the design; GLM-5.3 produced the initial guidance/target-guard draft. Its correction attempt hit the Coding Plan five-hour quota limit, so Codex completed implementation under the bounded failure fallback. Barak explicitly waived the independent GLM candidate review **for this current UI/guidance/test-workspace pass only**. Review is waived, not completed; all source, regression, visual and live checks remain required.
 
 ### Permanent source rule
 
@@ -108,9 +108,9 @@ Sources checked: CMP Kenya Review and Confirmations v2, Trevor review D02/D03 an
 
 `src/lib/selected-guidance.ts` contains help for only the ten enabled IDs. CP-13 displays full MIMS/SMEMS names with unchanged stored values and no automatic choice. `assessment-fields.tsx` associates help and distinct compound errors with their inputs; source disclosures remain available. Ready is one explicit action after an adequate answer; edits demote it to Draft. Clean per-item saved chips and the repeated ready paragraph have been removed; the aggregate acknowledgement is authoritative.
 
-`use-question-navigation.ts` switches to the containing section and focuses the chosen input after rendering. `prepared-panel.tsx` offers the next unresolved question and linked remaining items. A saved all-ready summary offers review only when there are no dirty, pending, failed or invalid changes; preview completion has separate temporary wording. Mobile progress is collapsed, leaving the first drafting input visible at 390×844; action targets remain at least44px. Preview tools are disclosed, and temporary/nontransfer/reload behaviour stays visible. Onboarding's test-company display name does not auto-fill the legal-name answer.
+`use-question-navigation.ts` switches to the containing section and focuses the chosen input after rendering. `prepared-panel.tsx` provides linked remaining items, integrated into the desktop navy rail. A saved all-ready summary offers review only when there are no dirty, pending, failed or invalid changes; preview completion has separate temporary wording. Mobile progress remains compact, with remaining items disclosed; the first drafting input is checked at 390×844 and action targets remain at least 44px. Preview tools are disclosed, and temporary/nontransfer/reload behaviour stays visible. Onboarding's test-company display name does not auto-fill the legal-name answer.
 
-The existing debounce, validation, serialization, stale-response guards, identity-bound API and dirty-exit warnings remain intact. `playwright.ui.config.ts` takes optional `CMP_UI_PORT` (default55473); this worktree uses55483. `playwright.config.ts` excludes **all** `ui-*.spec.ts` so the real-stack suite remains separate from mocked tests.
+The existing debounce, validation, serialization, stale-response guards, identity-bound API and dirty-exit warnings remain intact. `playwright.ui.config.ts` takes optional `CMP_UI_PORT` (default 55473); this worktree uses 55483. `playwright.config.ts` excludes **all** `ui-*.spec.ts` so the real-stack suite remains separate from mocked tests.
 
 ### Test backend and later production
 
@@ -124,4 +124,15 @@ Supabase supports separate projects and isolated branches; persistent branches c
 
 The full template engine, repeatable entities, signed-document vault, expert Verified status, adviser/admin collaboration, client content validation and formal acceptance remain open. Template/dictionary conflicts include SH-02 (nationality vs share counts), CP-18 (confirmation date vs dividend-waiver flag), Q-OFR-02/03 (proceeds/foreign-listing options vs allocation/sensitisation), absent Q-DIV-01/02 and undefined subfields. The sample's unselected allocation choices conflict with the library's default; financial periods and statutory responsibility/disclaimer text also require reconciliation before generation. These tags must not repurpose historical answers.
 
-Design reference: [Jakub Krehel, Details that make interfaces feel better](https://jakub.kr/writing/details-that-make-interfaces-feel-better), read30September2026. The existing antialiased type, stable tabular figures, subtle layered shadows, restrained transitions and44px hit areas follow those details. The issuer information hierarchy and source constraints come from this project's design/source review. No third-party assets or skills were installed.
+Design reference: [Jakub Krehel, Details that make interfaces feel better](https://jakub.kr/writing/details-that-make-interfaces-feel-better), read 30 September 2026. The existing antialiased type, stable tabular figures, subtle layered shadows, restrained transitions and 44px hit areas follow those details. The issuer information hierarchy and source constraints come from this project's design/source review. No third-party assets or skills were installed.
+
+The screenshot review added a quieter guidance hierarchy: questions remain primary; only a short subtitle is visible by default, with secondary entry tips disclosed on demand. Financial amount/date inputs share a desktop row; numeric placeholders indicate an empty amount instead of looking like a entered example. Readiness uses an outline action and missing-input hints appear after interaction; actual typed-value errors remain visible and associated with their controls. This fills unspecified presentation gaps; source wording, adequacy, stored values and scoring remain unchanged.
+
+
+### Section-led document composition (Astra v2)
+
+The desktop workspace has a full-height 232px navy rail and a white utility header. Company identity is contextual; the active section title leads at 40px. One continuous white document has ruled 32/68 prompt/answer rows, larger 52px controls and a section continuation footer. Business/risk narrative rows stack the exact prompt over a full-width 180px textarea. Source IDs remain visible; secondary guidance and provenance share a disclosure. Essential numeric-format requirements, amount/date pairing and validation errors remain visible.
+
+CP-13 uses native radio rows with both full segment names visible and no default, storing the existing MIMS/SMEMS enum. Narrative controls are labelled by their exact prompt rather than a duplicated short heading. Readiness appears once below the input; empty entries have no redundant Not started badge. Progress is a saved-ready count and linear track in the navy rail, with remaining-item focus links; there is no separate right-hand progress card or percentage hero. Review completion remains gated on acknowledged answers with no pending/failed/invalid edits.
+
+`workspace-slots.tsx` moves presentation into utility/rail slots using React portals. It retains the assessment's state/handlers and changes location on the 1024px media query, with listener cleanup. It does not alter Auth, persistence, API requests or ownership. Header context truncates long names; mobile rows stack, and section navigation stays in normal flow. Local system fonts and existing accessible primitives are used; no dependency/service additions.

@@ -73,22 +73,20 @@ export const selectedGuidance: Readonly<Record<SelectedGuidanceId, SelectedField
       SMEMS: "SMEMS — Small and Medium Enterprises Market Segment",
     },
     controlNote: [
-      "MIMS — Main Investment Market Segment.",
-      "SMEMS — Small and Medium Enterprises Market Segment.",
       "If you are unsure which segment applies, leave this as a Draft and confirm with your adviser — this form does not determine eligibility or recommend a segment.",
     ],
   },
   "SC-03": {
     intro:
-      "The paid-up amount: what shareholders have actually paid for the issued shares — not the authorised share capital and not unpaid amounts.",
-    bullets: CURRENCY_BULLETS,
+      "Enter the amount shareholders have actually paid for issued shares.",
+    bullets: ["Exclude authorised share capital and unpaid amounts.", ...CURRENCY_BULLETS],
   },
   "CP-16": {
     intro:
-      "From the statement of financial position you choose: the total-assets figure, entered together with that same statement’s as-at date.",
+      "Use the figure and date from the same statement of financial position.",
     bullets: CURRENCY_BULLETS,
     controlNote: [
-      "Use the figures of one chosen statement and its own statement date, so the amount and the as-at date always belong together.",
+      "Use the same statement for both values.",
     ],
   },
   "Q-BUS-01": {

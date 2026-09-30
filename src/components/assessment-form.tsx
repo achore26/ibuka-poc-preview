@@ -93,7 +93,7 @@ export function AssessmentForm({
   }, []);
 
   return (
-    <div className="flex min-w-0 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-3 lg:gap-4">
       {/* Mobile section selector + compact selected-sample summary */}
       <div className="lg:hidden">
         <label htmlFor="section-select" className="text-sm font-medium">
@@ -117,14 +117,12 @@ export function AssessmentForm({
         {mobileSummary ? <div className="mt-2">{mobileSummary}</div> : null}
       </div>
 
-      <section aria-label={active.title} className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-0.5">
-          <h3 className="text-[22px] font-semibold leading-7 tracking-tight">{active.title}</h3>
-          <p className="font-mono text-xs tabular-nums text-muted-foreground">
-            {progress(active.key).ready}/{progress(active.key).total} prepared for review
-          </p>
+      <section aria-label={active.title} className="flex flex-col gap-3 lg:gap-4">
+        <div className="section-heading">
+          <p className="mb-4 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground"><span aria-hidden="true" className="h-0.5 w-7 bg-primary" />Assessment / {String(activeIndex + 1).padStart(2, "0")} of {String(sections.length).padStart(2, "0")}</p>
+          <h3 className="text-[28px] font-semibold leading-[34px] tracking-tight lg:text-[40px] lg:leading-[46px]">{active.title}</h3>
+          <p className="mt-3 max-w-prose text-sm leading-6 text-muted-foreground lg:text-base">{SECTION_HELP[active.key]}</p>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground">{SECTION_HELP[active.key]}</p>
         <details aria-label="How answer status works" className="text-sm text-muted-foreground">
           <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded focus-visible:outline-2 focus-visible:outline-ring">How Draft and Ready work</summary>
           <p className="max-w-prose pb-3 leading-relaxed">
@@ -134,9 +132,9 @@ export function AssessmentForm({
             not a submission, approval or listing eligibility decision. Editing a Ready answer returns it to Draft.
           </p>
         </details>
-        <div className="panel flex flex-col gap-0 px-4 sm:px-6">
+        <div className="assessment-document overflow-hidden rounded-lg border bg-white">
           {active.items.map((field, index) => (
-            <div key={field.id} className={index > 0 ? "border-t py-6" : "py-6"}>
+            <div key={field.id} className={index > 0 ? "border-t px-5 py-6 lg:p-8" : "px-5 py-6 lg:p-8"}>
               <AssessmentField
                 field={field}
                 answer={answers[field.id]}
@@ -149,31 +147,13 @@ export function AssessmentForm({
               />
             </div>
           ))}
+          <nav aria-label="Section navigation" className="grid grid-cols-2 items-center gap-3 border-t bg-background/50 px-5 py-5 sm:flex sm:justify-between lg:px-8">
+            <Button variant="ghost" className="h-11 min-w-0 whitespace-normal text-xs leading-4 sm:text-sm" disabled={activeIndex === 0} onClick={() => onSelectSection(sections[activeIndex - 1].key)}>← Previous section</Button>
+            {activeIndex < sections.length - 1 ? <Button className="h-11 min-w-0 whitespace-normal text-xs leading-4 sm:text-sm" onClick={() => onSelectSection(sections[activeIndex + 1].key)}>Next: {sections[activeIndex + 1].title} →</Button> : <span className="text-xs text-muted-foreground">Final section</span>}
+          </nav>
         </div>
       </section>
 
-      {/* Mobile previous/next */}
-      <nav aria-label="Section navigation" className="flex items-center justify-between gap-3 lg:hidden">
-        <Button
-          variant="outline"
-          className="h-11"
-          disabled={activeIndex === 0}
-          onClick={() => onSelectSection(sections[activeIndex - 1].key)}
-        >
-          ← Previous
-        </Button>
-        <span className="font-mono text-xs tabular-nums text-muted-foreground">
-          {activeIndex + 1} / {sections.length}
-        </span>
-        <Button
-          variant="outline"
-          className="h-11"
-          disabled={activeIndex === sections.length - 1}
-          onClick={() => onSelectSection(sections[activeIndex + 1].key)}
-        >
-          Next →
-        </Button>
-      </nav>
       {navSuffix}
     </div>
   );

@@ -161,11 +161,11 @@ export default function App() {
 
   return (
     <SectionNavProvider value={setNav}>
-      <div className="flex min-h-svh flex-col bg-background font-sans text-foreground">
-        <header className="sticky top-0 z-40 shrink-0 bg-rail text-white">
-          <div className="mx-auto flex h-16 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <BrandMark />
+      <div className="flex min-h-svh flex-col bg-background font-sans text-foreground lg:pl-[232px]">
+        <header className="sticky top-0 z-40 shrink-0 border-b bg-white text-foreground">
+          <div className="mx-auto flex h-14 lg:h-16 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
+            <div id="workspace-utility" className="flex min-w-0 flex-1 items-center gap-6"><div className="workspace-brand flex min-w-0 items-center gap-2.5">
+              <BrandMark className="lg:hidden" />
               <span className="min-w-0">
                 <span className="block text-sm font-semibold leading-none tracking-tight">
                   CMP Kenya
@@ -174,16 +174,16 @@ export default function App() {
                   Listing preparation · KASIB
                 </span>
               </span>
-            </div>
+            </div></div>
             <div className="flex min-w-0 items-center gap-3">
               {signedIn && userEmail ? (
                 <>
-                  <span className="hidden max-w-48 truncate text-xs text-rail-foreground sm:block" title={userEmail}>
+                  <span className="hidden max-w-48 truncate text-xs text-muted-foreground sm:block" title={userEmail}>
                     {userEmail}
                   </span>
                   <Button
                     variant="outline"
-                    className="h-11 border-white/25 bg-transparent text-rail-foreground hover:bg-rail-raised hover:text-white sm:h-8"
+                    className="h-11 border-border bg-transparent text-foreground hover:bg-muted"
                     onClick={() => {
                       const event = new Event("cmp-before-signout", { cancelable: true });
                       if (window.dispatchEvent(event)) void auth.signOut();
@@ -201,7 +201,7 @@ export default function App() {
                   onOpenChange={setSignInOpen}
                   notice={auth.notice}
                   onSignIn={auth.signIn}
-                  triggerClassName="h-11 border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white sm:h-8"
+                  triggerClassName="h-11 border-border bg-transparent text-foreground hover:bg-muted"
                 />
               ) : null}
             </div>
@@ -221,8 +221,8 @@ export default function App() {
         <div className="mx-auto flex w-full max-w-[90rem] flex-1 items-stretch">
           <SectionRail nav={nav} />
 
-          <main className="min-w-0 flex-1 px-4 pb-16 pt-6 sm:px-8 lg:px-8 lg:pt-8">
-            <div className="mx-auto flex w-full max-w-[71.5rem] flex-col">
+          <main className="min-w-0 flex-1 px-4 pb-16 pt-5 sm:px-8 lg:px-12 lg:pt-10">
+            <div className="mx-auto flex w-full max-w-[1000px] flex-col">
               {auth.phase === "restoring" ? (
                 <p role="status" className="text-sm text-muted-foreground">
                   Restoring your session…

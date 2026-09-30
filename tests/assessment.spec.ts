@@ -126,7 +126,7 @@ test('real email link, typed autosave, ready count of 10, reload, held response,
   // Company details section: one of every short typed shape.
   await article(page, 'Legal name').locator('#CP-01-text').fill('Synthetic A Legal Name');
   await article(page, 'Date of incorporation').locator('#CP-07-date').fill('1995-06-15');
-  await article(page, 'Listing segment').locator('#CP-13-select').selectOption('MIMS');
+  await article(page, 'Listing segment').locator('#CP-13-MIMS').check();
   // Financial position section: currency and currency_date shapes.
   await railSection(page, 'Financial position').click();
   await article(page, 'Paid-up amount').locator('#SC-03-amount').fill('5000000');
@@ -136,36 +136,36 @@ test('real email link, typed autosave, ready count of 10, reload, held response,
   // Autosave without any manual Save action.
   await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
   await expect(progressAside(page).getByText('0 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('0.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 0%;');
 
   // Explicit "Ready for review" actions persist and count against denominator 10.
   await readyButton(page, 'Paid-up amount').click();
   await readyButton(page, 'Total assets').click();
   await expect(progressAside(page).getByText('2 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('20.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 20%;');
   await railSection(page, 'Company details').click();
   await readyButton(page, 'Legal name').click();
   await readyButton(page, 'Date of incorporation').click();
   await readyButton(page, 'Listing segment').click();
   await expect(progressAside(page).getByText('5 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('50.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 50%;');
   await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
 
   // Reload retains typed values and recorded statuses.
   await page.reload();
   await expect(page.locator('#CP-01-text')).toHaveValue('Synthetic A Legal Name');
   await expect(page.locator('#CP-07-date')).toHaveValue('1995-06-15');
-  await expect(page.locator('#CP-13-select')).toHaveValue('MIMS');
+  await expect(page.locator('#CP-13-MIMS')).toBeChecked();
   await expect(page.getByText('Ready for review', { exact: true })).toHaveCount(3);
   await expect(railSection(page, 'Company details')).toContainText('3/3');
   await expect(progressAside(page).getByText('5 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('50.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 50%;');
 
   // Editing a Ready item demotes it to draft and the autosave persists that.
   await article(page, 'Legal name').locator('#CP-01-text').fill('Synthetic A Legal Name amended');
   await expect(article(page, 'Legal name').getByText('Draft', { exact: true })).toBeVisible();
   await expect(progressAside(page).getByText('4 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('40.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 40%;');
   await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
 
   // Hold an actual response after route.fetch: server-confirmed figures must
@@ -185,10 +185,10 @@ test('real email link, typed autosave, ready count of 10, reload, held response,
   await expect(article(page, 'Legal name').getByText('Saving…', { exact: true })).toBeVisible();
   await page.waitForTimeout(700);
   await expect(progressAside(page).getByText('4 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('40.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 40%;');
   releaseHeld();
   await expect(progressAside(page).getByText('5 of 10')).toBeVisible();
-  await expect(progressAside(page).getByText('50.00%')).toBeVisible();
+  await expect(progressAside(page).locator('.progress-track > div')).toHaveAttribute('style', 'width: 50%;');
   await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
   await page.unroute('**/rest/v1/assessment_answer*');
 
