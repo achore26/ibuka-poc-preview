@@ -192,7 +192,7 @@ async function openSection(page: Page, key: string, title: string) {
 const CONTROL_ID_SUFFIX: Record<string, string> = {
   text: 'text',
   date: 'date',
-  select: 'select',
+  select: 'MIMS',
   currency: 'amount',
   currency_date: 'amount',
   narrative: 'narrative',
@@ -262,43 +262,22 @@ test.describe('guidance and test-workspace wiring', () => {
     await expect(page.locator('#CP-01-text')).toBeVisible();
 
     await openSection(page, 'company', 'Company details');
-    const listing = page.locator('article', { has: page.locator('#CP-13-select') });
+    const listing = page.locator('#question-CP-13');
 
-    // Expanded visible labels; underlying option VALUES stay exactly MIMS/SMEMS.
-    await expect(listing.locator('#CP-13-select option[value="MIMS"]')).toHaveText(
-      'MIMS — Main Investment Market Segment',
-    );
-    await expect(listing.locator('#CP-13-select option[value="SMEMS"]')).toHaveText(
-      'SMEMS — Small and Medium Enterprises Market Segment',
-    );
-
-    // Both definitions + the adviser note are visible near the control BEFORE
-    // any selection is made, and stay visible after each selection.
-    const note = listing.locator('#CP-13-note');
-    for (const selection of ['', 'MIMS', 'SMEMS']) {
-      if (selection === '') {
-        await expect(listing.locator('#CP-13-select')).toHaveValue('');
-      } else {
-        await listing.locator('#CP-13-select').selectOption(selection);
-      }
-      await expect(note.getByText('MIMS — Main Investment Market Segment.')).toBeVisible();
-      await expect(note.getByText('SMEMS — Small and Medium Enterprises Market Segment.')).toBeVisible();
-      await expect(note.getByText(/leave this as a Draft and confirm with your adviser/)).toBeVisible();
+    const mims = listing.getByRole('radio', { name: 'MIMS — Main Investment Market Segment', exact: true });
+    const smems = listing.getByRole('radio', { name: 'SMEMS — Small and Medium Enterprises Market Segment', exact: true });
+    await expect(mims).not.toBeChecked();
+    await expect(smems).not.toBeChecked();
+    await expect(mims).toHaveValue('MIMS');
+    await expect(smems).toHaveValue('SMEMS');
+    for (const radio of [smems, mims]) {
+      await radio.check();
+      await expect(mims).toBeVisible();
+      await expect(smems).toBeVisible();
+      await expect(listing.locator('#CP-13-note').getByText(/leave this as a Draft and confirm with your adviser/)).toBeVisible();
+      const value = await radio.inputValue();
+      await expect.poll(() => adapter.writes.filter(write => write.itemId === 'CP-13' && write.body.answer_select === value).length, { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
     }
-
-    // Choosing by expanded LABEL stores the exact short value.
-    await listing.locator('#CP-13-select').selectOption({ label: 'SMEMS — Small and Medium Enterprises Market Segment' });
-    await expect
-      .poll(() => adapter.writes.filter((write) => write.itemId === 'CP-13').length, { timeout: 10_000 })
-      .toBeGreaterThanOrEqual(1);
-    expect(adapter.writes.filter((write) => write.itemId === 'CP-13').at(-1)!.body.answer_select).toBe('SMEMS');
-    await listing.locator('#CP-13-select').selectOption('MIMS');
-    await expect
-      .poll(
-        () => adapter.writes.filter((write) => write.itemId === 'CP-13' && write.body.answer_select === 'MIMS').length,
-        { timeout: 10_000 },
-      )
-      .toBeGreaterThanOrEqual(1);
 
     expect(adapter.unexpected).toEqual([]);
   });
@@ -339,15 +318,15 @@ test.describe('guidance and test-workspace wiring', () => {
     await expect(page.locator('#CP-16-amount-issue')).toHaveCount(1);
     await expect(page.locator('#CP-16-as-at-issue')).toHaveCount(0);
     expect(await page.locator('#CP-16-amount').getAttribute('aria-describedby')).toBe(
-      'CP-16-help CP-16-note CP-16-amount-issue',
+      'CP-16-help CP-16-note CP-16-format CP-16-amount-issue',
     );
-    expect(await page.locator('#CP-16-as-at').getAttribute('aria-describedby')).toBe('CP-16-help CP-16-note');
+    expect(await page.locator('#CP-16-as-at').getAttribute('aria-describedby')).toBe('CP-16-help CP-16-note CP-16-format');
     // The CP-16 control note (statement pairing) is part of the description.
     await expect(page.locator('#CP-16-note')).toBeVisible();
 
     await assets.locator('#CP-16-amount').fill('120000000');
     await expect(page.locator('#CP-16-amount-issue')).toHaveCount(0);
-    expect(await page.locator('#CP-16-amount').getAttribute('aria-describedby')).toBe('CP-16-help CP-16-note');
+    expect(await page.locator('#CP-16-amount').getAttribute('aria-describedby')).toBe('CP-16-help CP-16-note CP-16-format');
 
     expect(adapter.unexpected).toEqual([]);
   });
@@ -398,6 +377,11 @@ test.describe('guidance and test-workspace wiring', () => {
     for (const section of enabled.sections) {
       await openSection(page, section.key, section.title);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+      const clippedNavigation = await page.getByRole('navigation', { name: 'Section navigation' }).evaluate(nav => Array.from(nav.querySelectorAll('button')).filter(button => {
+        const b = button.getBoundingClientRect(), n = nav.getBoundingClientRect();
+        return b.right > n.right || b.left < n.left || button.scrollWidth > button.clientWidth || button.scrollHeight > button.clientHeight;
+      }).map(button => button.textContent));
+      expect(clippedNavigation).toEqual([]);
     }
     const shortTargets = await page.evaluate(() => {
       const out: { text: string; height: number }[] = [];
@@ -417,4 +401,55 @@ test.describe('guidance and test-workspace wiring', () => {
     });
     expect(shortTargets, JSON.stringify(shortTargets)).toEqual([]);
   });
+});
+
+test('financial working document: answer column, quiet guidance, paired inputs and integrated rail progress', async ({ page }) => {
+  const adapter = await installSyntheticApi(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await signInSynthetic(page);
+  await openSection(page, 'financial', 'Financial position');
+  const paidUp = page.locator('#question-SC-03');
+  const assets = page.locator('#question-CP-16');
+  await expect(paidUp.locator('#SC-03-help')).toBeVisible();
+  await expect(paidUp.getByText(/Plain number in full units/)).toBeHidden();
+  await expect(paidUp.locator('#SC-03-amount')).toHaveAttribute('placeholder', 'Enter amount');
+  await expect(paidUp.locator('#SC-03-missing')).toHaveCount(0);
+  await expect(paidUp.getByRole('button', { name: 'Mark ready for review' })).toBeDisabled();
+  await expect(paidUp.getByRole('button', { name: 'Mark ready for review' })).toHaveAttribute('data-variant', 'outline');
+  const headingSize = await paidUp.locator('#SC-03-prompt').evaluate(el => Number.parseFloat(getComputedStyle(el).fontSize));
+  const helpSize = await paidUp.locator('#SC-03-help').evaluate(el => Number.parseFloat(getComputedStyle(el).fontSize));
+  expect(headingSize).toBeGreaterThan(helpSize);
+  await expect(page.locator('.assessment-document')).toHaveCSS('box-shadow', 'none');
+  const titleSize = await page.getByRole('heading', { name: 'Financial position', exact: true }).evaluate(el => parseFloat(getComputedStyle(el).fontSize));
+  expect(titleSize).toBe(40);
+  const promptBox = await paidUp.locator('#SC-03-prompt').boundingBox();
+  const inputBox = await paidUp.locator('#SC-03-amount').boundingBox();
+  expect(inputBox!.x).toBeGreaterThan(promptBox!.x + promptBox!.width);
+  expect(inputBox!.height).toBeGreaterThanOrEqual(52);
+  await expect(page.locator('#rail-progress').getByRole('complementary', { name: 'Assessment progress' })).toBeVisible();
+  await expect(paidUp.getByText('Not started', { exact: true })).toHaveCount(0);
+  await expect(paidUp.getByText('Full units · no commas or symbols · 0 is valid')).toBeVisible();
+  const amountBox = await assets.locator('#CP-16-amount').boundingBox();
+  const dateBox = await assets.locator('#CP-16-as-at').boundingBox();
+  expect(Math.abs(amountBox!.y - dateBox!.y)).toBeLessThan(2);
+  await page.screenshot({ path: 'test-results/cmp-financial-desktop.png', fullPage: true });
+  const tips = paidUp.locator('summary', { hasText: 'Guidance and source' });
+  await tips.focus(); await page.keyboard.press('Enter');
+  await expect(paidUp.getByText(/Plain number in full units/)).toBeVisible();
+  await paidUp.locator('#SC-03-amount').fill('abc');
+  await expect(paidUp.locator('#SC-03-amount-issue')).toBeVisible();
+  await expectDescribedByResolves(page, 'SC-03-amount');
+  expect(adapter.writes.filter(write => write.itemId === 'SC-03')).toEqual([]);
+  await page.screenshot({ path: 'test-results/cmp-financial-error-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  const overflow = await page.evaluate(() => Array.from(document.querySelectorAll('body *')).filter(el => el.checkVisibility() && el.getBoundingClientRect().right > 390).map(el => ({ tag: el.tagName, cls: el.className, right: el.getBoundingClientRect().right, text: el.textContent?.slice(0, 55) })));
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth), { message: JSON.stringify(overflow) }).toBeLessThanOrEqual(390);
+  await page.screenshot({ path: 'test-results/cmp-financial-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openSection(page, 'business', 'Business');
+  const narrative = page.locator('#Q-BUS-01-narrative');
+  await expect(narrative).toHaveAccessibleName(enabled.sections.find(section => section.key === 'business')!.items[0].prompt);
+  expect((await narrative.boundingBox())!.height).toBeGreaterThanOrEqual(180);
+  await page.screenshot({ path: 'test-results/cmp-business-desktop.png', fullPage: true });
+  expect(adapter.unexpected).toEqual([]);
 });

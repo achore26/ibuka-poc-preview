@@ -24,7 +24,7 @@
 
 :root {
   /* Canvas and ink */
-  --background: #f6f7f8;
+  --background: #f4f5f6;
   --foreground: #202833;
   --card: #ffffff;
   --card-foreground: oklch(0.25 0.015 255);
@@ -43,7 +43,7 @@
   --secondary: oklch(0.955 0.004 250);
   --secondary-foreground: oklch(0.29 0.015 255);
   --muted: oklch(0.955 0.004 250);
-  --muted-foreground: oklch(0.5 0.014 255);
+  --muted-foreground: #596473;
   --accent: oklch(0.955 0.004 250);
   --accent-foreground: oklch(0.29 0.015 255);
   --destructive: oklch(0.505 0.19 27);
@@ -200,3 +200,32 @@
     min-height: 2.75rem;
   }
 }
+
+#workspace-utility:has(.workspace-context) > .workspace-brand { display: none; }
+#rail-progress .progress-block { color: #c7d0dc; }
+#rail-progress .text-muted-foreground { color: #a5b1c2; }
+#rail-progress .progress-track { background: #304158; }
+#rail-progress button { color: #fff; }
+#rail-progress [data-variant="outline"] { background: transparent; border-color: #526278; }
+@media (max-width: 1023px) {
+ .workspace-context { flex-direction: column; align-items: flex-start; gap: 0; }
+ .workspace-context [role="status"] { font-size: 11px; line-height: 16px; }
+ .section-heading p:first-child { margin-bottom: 8px; }
+}
+
+:where(button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+@media (max-width: 1023px) {
+  .progress-block { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .progress-intro { grid-column: 1 / -1; }
+  .progress-intro h3 { display: none; }
+  .progress-intro p { margin: 0; font-size: 11px; line-height: 16px; }
+  .progress-block > [role="status"] { justify-content: center; }
+  .progress-block > [role="status"] p { font-size: 12px; }
+  .progress-block .progress-track { display: none; }
+  .progress-actions { padding: 0; }
+  .progress-actions summary { font-size: 12px; }
+  .progress-actions:has(details[open]) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 1023px) { .progress-actions:has(> button) { grid-column: 1 / -1; } }

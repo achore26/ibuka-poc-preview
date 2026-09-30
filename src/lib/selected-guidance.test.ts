@@ -63,12 +63,12 @@ if (cp13 && cp13.control === "select" && cp13.selectOptions) {
 // The acronym expansions are present and visible regardless of selection.
 const cp13Note = getSelectedGuidance("CP-13")?.controlNote ?? [];
 check(
-  cp13Note.some((line) => line.includes("Main Investment Market Segment")),
-  "CP-13 control note does not spell out MIMS",
+  Object.values(getSelectedGuidance("CP-13")?.selectOptionLabels ?? {}).some((line) => line.includes("Main Investment Market Segment")),
+  "CP-13 visible option label does not spell out MIMS",
 );
 check(
-  cp13Note.some((line) => line.includes("Small and Medium Enterprises Market Segment")),
-  "CP-13 control note does not spell out SMEMS",
+  Object.values(getSelectedGuidance("CP-13")?.selectOptionLabels ?? {}).some((line) => line.includes("Small and Medium Enterprises Market Segment")),
+  "CP-13 visible option label does not spell out SMEMS",
 );
 check(
   cp13Note.some((line) => /draft/i.test(line) && /adviser/i.test(line)),

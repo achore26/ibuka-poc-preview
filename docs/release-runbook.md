@@ -1,6 +1,6 @@
 # CMP Kenya release runbook
 
-Scope: selected-question sample v2 (app + DB), verified live on 30 September 2026. Runtime app revision `336c2314ebf2f5e84e0dfbac09ca159392fe77ac`; database source revision `411f672bb971c021226228aa81b4837ddd17d187`. Documentation-only follow-ups preserve that runtime. Architecture and current evidence: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
+Earlier sample-v2 baseline (app + DB), verified live on 30 September 2026. The later issuer design refinement below requires its own version-specific release evidence. Runtime app revision `336c2314ebf2f5e84e0dfbac09ca159392fe77ac`; database source revision `411f672bb971c021226228aa81b4837ddd17d187`. Documentation-only follow-ups preserve that runtime. Architecture and current evidence: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
 
 ## 1. Local verification (app repo)
 

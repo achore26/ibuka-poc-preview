@@ -132,6 +132,7 @@ interface CapturedWrite {
 
 interface Adapter {
   rows: Map<string, StoredRow>;
+  companyName?: string;
   writes: CapturedWrite[];
   failWrites: boolean;
   holdWrites?: Promise<void>;
@@ -168,7 +169,7 @@ async function installSyntheticApi(page: Page): Promise<Adapter> {
     const method = route.request().method();
     const eq = (key: string) => (url.searchParams.get(key) ?? '').replace(/^eq\./, '');
 
-    if (table === 'company_account' && method === 'GET') return json(route, [COMPANY]);
+    if (table === 'company_account' && method === 'GET') return json(route, [{ ...COMPANY, name: adapter.companyName ?? COMPANY.name }]);
     if (table === 'checklist_item' && method === 'GET') return json(route, checklistRows);
 
     if (table === 'assessment_answer') {
@@ -628,8 +629,9 @@ test('one visible label per short typed field with programmatic association; sou
   // only the active section is mounted).
   await openSection(page, 'business', 'Business');
   const products = page.locator('article', { has: page.locator('#Q-BUS-01-narrative') });
-  await expect(products.getByLabel('Principal products and services', { exact: true })).toBeVisible();
-  expect(await products.locator('label[for="Q-BUS-01-narrative"]').count()).toBe(1);
+  await expect(products.locator('#Q-BUS-01-narrative')).toHaveAttribute('aria-labelledby', 'Q-BUS-01-prompt');
+  await expect(products.locator('#Q-BUS-01-narrative')).toHaveAccessibleName(enabled.sections.find(section => section.key === 'business')!.items[0].prompt);
+  expect(await products.locator('label[for="Q-BUS-01-narrative"]').count()).toBe(0);
 
   // Compound currency_date keeps exactly one visible extra label for the
   // second input; the amount input is associated with the prompt heading.
@@ -639,10 +641,10 @@ test('one visible label per short typed field with programmatic association; sou
   await openSection(page, 'financial', 'Financial position');
   const assets = page.locator('article', { has: page.locator('#CP-16-amount') });
   const visibleTotalAssets = await assets
-    .getByText('Total assets')
+    .getByRole('heading', { name: 'Total assets (as at date)', exact: true })
     .evaluateAll((els) => els.filter((el) => el.checkVisibility()).length);
   expect(visibleTotalAssets).toBe(1);
-  expect(await page.locator('#CP-16-amount').getAttribute('aria-labelledby')).toBe('CP-16-prompt');
+  expect(await page.locator('#CP-16-amount').getAttribute('aria-labelledby')).toBe('CP-16-prompt CP-16-amount-label');
   await expect(page.locator('#CP-16-as-at')).toBeVisible();
   expect(await assets.locator('label[for="CP-16-as-at"]').count()).toBe(1);
 
@@ -665,7 +667,7 @@ test('one visible label per short typed field with programmatic association; sou
 });
 
 
-test('Continue and remaining-item links switch section and focus the unresolved input', async ({ page }) => {
+test('Remaining-item links switch section and focus the unresolved input', async ({ page }) => {
   const adapter = await installSyntheticApi(page);
   for (const id of ['CP-01', 'CP-07', 'CP-13']) {
     adapter.seedAnswer(id, { ...EMPTY_ANSWER, status: 'ready',
@@ -678,9 +680,9 @@ test('Continue and remaining-item links switch section and focus the unresolved 
   await waitForSavedAssessment(page);
   const panel = page.getByRole('complementary', { name: 'Assessment progress' });
   await expect(panel.getByText('3 of 10')).toBeVisible();
-  await panel.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page.locator('#SC-03-amount')).toBeFocused();
   await panel.getByText('View remaining items (7)', { exact: true }).click();
+  await panel.getByRole('button', { name: /Paid-up amount/ }).click();
+  await expect(page.locator('#SC-03-amount')).toBeFocused();
   await panel.getByRole('button', { name: /Principal products and services/ }).click();
   await expect(page.locator('#Q-BUS-01-narrative')).toBeFocused();
   expect(adapter.unexpected).toEqual([]);
@@ -706,18 +708,19 @@ test('review-ready is withheld during a held edit even when saved progress is 10
     await page.locator('#CP-01-text').fill('Synthetic changed legal name');
     await expect(panel.getByText('10 of 10')).toBeVisible();
     await expect(panel.getByText('Your sample answers are ready for review.')).toHaveCount(0);
-    await expect(panel.getByText('Progress reflects the last saved answers.')).toBeVisible();
+    await expect(panel.getByText('Based on saved answers · changes pending.')).toBeVisible();
     await expect(panel.getByRole('button', { name: 'Review answers' })).toHaveCount(0);
     await expect(page.getByText('Saving…', { exact: true }).first()).toBeVisible();
   } finally { release(); adapter.holdWrites = undefined; }
   await waitForAllSaved(page);
   await expect(panel.getByText('9 of 10')).toBeVisible();
-  await expect(panel.getByRole('button', { name: 'Continue' })).toBeVisible();
+  await expect(panel.getByText('View remaining items (1)', { exact: true })).toBeVisible();
   expect(adapter.unexpected).toEqual([]);
 });
 
-test('drafting mobile first input is above the fold; desktop/mobile screenshots retain the workspace hierarchy', async ({ page }) => {
+test('drafting with a long company name: mobile first input is above the fold; desktop/mobile screenshots retain the workspace hierarchy', async ({ page }) => {
   const adapter = await installSyntheticApi(page);
+  adapter.companyName = 'Synthetic CMP Kenya Financial and Investment Services Limited ' + 'Long company name '.repeat(7);
   await page.setViewportSize({ width: 390, height: 844 });
   await signInSynthetic(page);
   await waitForSavedAssessment(page);

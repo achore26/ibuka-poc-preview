@@ -8,6 +8,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { WorkspaceProgress } from "@/components/workspace-slots";
 import { Button } from "@/components/ui/button";
 import { AssessmentForm, type FormSection } from "@/components/assessment-form";
 import { PreparedPanel, type PreparedGap } from "@/components/prepared-panel";
@@ -98,7 +99,7 @@ export function ReviewPreview() {
           </div>
         </details>
       </div>
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,720px)_264px]">
+      <div className="flex flex-col gap-5">
         <AssessmentForm
           sections={sections}
           progress={sectionProgress}
@@ -111,23 +112,13 @@ export function ReviewPreview() {
           onMarkNotApplicable={(id) => update(id, { status: "na" }, false)}
           onUndoNotApplicable={(id) => update(id, { status: "in_progress" }, false)}
           mobileSummary={
-            <details className="text-sm">
-              <summary className="flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Progress and remaining items</summary>
+            <WorkspaceProgress>
               <PreparedPanel summary={summary} gaps={gaps} savedNote="In-memory figures — nothing saved." onNavigate={navigateTo} preview firstId={enabledFields[0].id} />
-            </details>
+            </WorkspaceProgress>
           }
         />
 
-        <div className="hidden lg:sticky lg:top-20 lg:block">
-            <PreparedPanel
-              summary={summary}
-              gaps={gaps}
-              savedNote="In-memory figures — nothing saved."
-              onNavigate={navigateTo}
-              preview
-              firstId={enabledFields[0].id}
-            />
-        </div>
+
       </div>
     </div>
   );
