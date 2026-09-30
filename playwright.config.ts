@@ -31,5 +31,5 @@ export default defineConfig({
   // The real-stack suite keeps its own command/config; the synthetic-adapter
   // UI suite is additional and runs only through playwright.ui.config.ts
   // (`npm run test:ui`).
-  testIgnore: '**/ui-milestone.spec.ts',
+  testIgnore: '**/ui-*.spec.ts',
 });

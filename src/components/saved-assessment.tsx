@@ -18,9 +18,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuestionNavigation } from "@/components/use-question-navigation";
 import { AssessmentForm, type FormSection } from "@/components/assessment-form";
 import { DashboardPanel } from "@/components/dashboard-panel";
-import { PreparedGap, PreparedMetric, PreparedPanel } from "@/components/prepared-panel";
+import { PreparedGap, PreparedPanel } from "@/components/prepared-panel";
 import {
   enabledFields,
   enabledSections,
@@ -41,7 +42,7 @@ import {
   answerWriteIssue,
   rowToSampleAnswer,
 } from "@/lib/app-data/answer-state";
-import { summarizeSampleProgress, type SampleProgress } from "@/lib/sample-progress";
+import { summarizeSampleProgress } from "@/lib/sample-progress";
 import { fetchAnswers, saveAnswer, updateCompanyName } from "@/lib/app-data/api";
 import { fetchChecklist, type ChecklistResult, type NormalizedChecklistItem } from "@/lib/app-data/checklist";
 import type { AnswerRow, CompanyRow } from "@/lib/app-data/types";
@@ -76,6 +77,7 @@ export function SavedAssessment({
   const [invalidDrafts, setInvalidDrafts] = useState<Record<string, string>>({});
   const ids = useMemo(() => enabledFields.map((field) => field.id), []);
   const [autosave, dispatchAutosave] = useReducer(autosaveReducer, ids, initialAutosaveState);
+  const { activeKey, setActiveKey, navigateTo } = useQuestionNavigation();
   const [renameBusy, setRenameBusy] = useState(false);
   const [renameError, setRenameError] = useState<string | null>(null);
 
@@ -425,7 +427,7 @@ export function SavedAssessment({
   const globalStatus = anySaving
     ? "Saving…"
     : anyFailed
-      ? "Could not save — check the marked entries and retry."
+      ? "Some changes could not be saved — check the marked entries and retry."
       : aggregate.invalid > 0
         ? "Some entries need attention before they can be saved."
         : anyDirty
@@ -452,7 +454,12 @@ export function SavedAssessment({
       : [];
 
   return (
-    <section aria-label="Saved sample assessment" className="mt-6 flex flex-col gap-5">
+    <section aria-label="Saved sample assessment" className="flex flex-col gap-4">
+      <div>
+        <p className="text-sm font-medium text-muted-foreground">Listing assessment</p>
+        <h1 className="mt-1 text-2xl font-semibold leading-8 tracking-tight sm:text-[30px] sm:leading-9">{company.name}</h1>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">Proposed sample pending validation</p>
+      </div>
       <div
         role="status"
         aria-live="polite"
@@ -487,15 +494,22 @@ export function SavedAssessment({
         </div>
       ) : null}
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,720px)_264px]">
         <SavedForm
           sections={sections}
+          activeKey={activeKey}
+          onSelectSection={setActiveKey}
           drafts={drafts}
           savedRows={savedRows}
           autosave={autosave}
           invalidDrafts={invalidDrafts}
           items={items}
-          summary={summary}
+          progressPanel={
+            <details className="text-sm">
+              <summary className="flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Progress and remaining items</summary>
+              <PreparedPanel summary={summary} gaps={gaps} savedNote={anyDirty || anySaving ? "Progress reflects the last saved answers." : "Saved entries only."} onNavigate={navigateTo} completeAllowed={!anyDirty && !anySaving && !anyFailed && aggregate.invalid === 0} firstId={enabledFields[0].id} />
+            </details>
+          }
           onUpdate={updateDraft}
           onRetry={(id) => {
             setInvalidDrafts((previous) => Object.fromEntries(Object.entries(previous).filter(([key]) => key !== id)));
@@ -509,29 +523,10 @@ export function SavedAssessment({
             <PreparedPanel
               summary={summary}
               gaps={gaps}
-              savedNote="Saved entries only · confirmed by the database."
-              footer={
-                <div className="flex flex-wrap items-center gap-2">
-                  {anySaving ? (
-                    <Badge variant="outline">Saving…</Badge>
-                  ) : anyDirty ? (
-                    <Badge variant="outline">Unsaved changes</Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-muted-foreground">
-                      {savedTime ? `Saved ${savedTime}` : "No saved entries yet"}
-                    </Badge>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-11 sm:h-7"
-                    disabled={!anyDirty || anySaving}
-                    onClick={() => flushIds(Object.keys(dirtyMap).filter((key) => dirtyMap[key]), loadEpochRef.current)}
-                  >
-                    Save now
-                  </Button>
-                </div>
-              }
+              savedNote={anyDirty || anySaving ? "Progress reflects the last saved answers." : "Saved entries only."}
+              onNavigate={navigateTo}
+              completeAllowed={!anyDirty && !anySaving && !anyFailed && aggregate.invalid === 0}
+              firstId={enabledFields[0].id}
             />
           </div>
 
@@ -562,27 +557,29 @@ export function SavedAssessment({
  */
 function SavedForm({
   sections,
+  activeKey,
+  onSelectSection,
   drafts,
   savedRows,
   autosave,
   invalidDrafts,
   items,
-  summary,
+  progressPanel,
   onUpdate,
   onRetry,
 }: {
   sections: FormSection[];
+  activeKey: string;
+  onSelectSection: (key: string) => void;
+  progressPanel: React.ReactNode;
   drafts: Record<string, SampleAnswer>;
   savedRows: Record<string, AnswerRow | null>;
   autosave: ReturnType<typeof autosaveReducer>;
   invalidDrafts: Record<string, string>;
   items: NormalizedChecklistItem[];
-  summary: SampleProgress | null;
   onUpdate: (field: NormalizedChecklistItem, patch: Partial<SampleAnswer>, typed: boolean) => void;
   onRetry: (id: string) => void;
 }) {
-  const [activeKey, setActiveKey] = useState(sections[0].key);
-
   const sectionProgress = (key: string) => {
     const sectionItems = items.filter((item) => item.sectionKey === key);
     return {
@@ -615,24 +612,17 @@ function SavedForm({
         </span>
       );
     }
-    const savedAt = formatSavedAt(savedRows[id]?.updated_at ?? null);
-    if (savedAt) {
-      return (
-        <Badge variant="outline" className="text-muted-foreground">
-          Saved {savedAt}
-        </Badge>
-      );
-    }
     return null;
   };
 
   return (
     <AssessmentForm
+      persisted
       sections={sections}
       progress={sectionProgress}
       answers={drafts}
       activeKey={activeKey}
-      onSelectSection={setActiveKey}
+      onSelectSection={onSelectSection}
       onTypedChange={(id, patch) => {
         const field = items.find((item) => item.id === id);
         if (field) onUpdate(field, patch, true);
@@ -654,11 +644,7 @@ function SavedForm({
         if (field) onUpdate(field, { status: "in_progress" }, false);
       }}
       statusSlot={itemStatusSlot}
-      mobileSummary={
-        <div className="panel p-4">
-          <PreparedMetric summary={summary} compact />
-        </div>
-      }
+      mobileSummary={progressPanel}
       navSuffix={
         Object.keys(invalidDrafts).length > 0 ? (
           <p className={hintClass}>Some entries have validation messages — see the marked questions.</p>

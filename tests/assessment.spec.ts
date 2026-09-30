@@ -14,7 +14,7 @@ import { test, expect, type Page } from '@playwright/test';
  * field controls (#CP-01-text, #CP-07-date, #CP-13-select, #SC-03-amount,
  * #CP-16-amount/#CP-16-as-at, …-narrative), one section mounted at a time,
  * "Ready for review" BUTTONS gated on adequacy, autosave with server-
- * confirmed-only figures ("N of 10" + percent), per-item Saved chips, the
+ * confirmed-only figures ("N of 10" + percent), one aggregate saved acknowledgement, the
  * sign-in DIALOG opened from the header, and no old *-saved radio selectors.
  */
 
@@ -68,10 +68,10 @@ async function login(page: Page, address = email()) {
 }
 
 async function onboard(page: Page, name: string) {
-  await page.getByLabel('Company name', { exact: true }).fill(name);
-  await page.getByRole('button', { name: 'Create company', exact: true }).click();
-  await expect(page.getByText(name, { exact: true })).toBeVisible();
-  await expect(page.getByText('No saved entries yet', { exact: false })).toBeVisible();
+  await page.getByLabel('Test company display name', { exact: true }).fill(name);
+  await page.getByRole('button', { name: 'Create test workspace', exact: true }).click();
+  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+  await expect(page.getByText('Autosaves a few moments after you stop typing.', { exact: true })).toBeVisible();
   await expect(savedSection(page).locator('#CP-01-text')).toBeVisible();
 }
 
@@ -88,7 +88,7 @@ const cleanStrip = (page: Page) => page.getByText(/^All changes saved \(last sav
  */
 const savedSection = (page: Page) => page.getByRole('region', { name: 'Saved sample assessment' });
 const readyButton = (page: Page, shortLabel: string) =>
-  article(page, shortLabel).getByRole('button', { name: 'Ready for review', exact: true });
+  article(page, shortLabel).getByRole('button', { name: 'Mark ready for review', exact: true });
 
 /** Counts real POST/PATCH writes to assessment_answer (optionally one item_id). */
 function trackWrites(page: Page, itemId?: string) {
@@ -196,7 +196,7 @@ test('real email link, typed autosave, ready count of 10, reload, held response,
   await railSection(page, 'Financial position').click();
   const sc03Writes = trackWrites(page, 'SC-03');
   await article(page, 'Paid-up amount').locator('#SC-03-amount').fill('1.00');
-  await expect(article(page, 'Paid-up amount').getByText(/^Saved \d/)).toBeVisible({ timeout: 20_000 });
+  await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
   await expect(cleanStrip(page)).toBeVisible({ timeout: 20_000 });
   const settledWrites = sc03Writes();
   await page.waitForTimeout(2500);
@@ -260,7 +260,7 @@ test('write outage keeps drafts, bounded retries end clearly, Retry saves, signo
   await article(page, 'Legal name').locator('#CP-01-text').fill('Synthetic outage draft');
   await expect(article(page, 'Legal name').getByText('Could not save', { exact: true })).toBeVisible({ timeout: 20_000 });
   await expect(article(page, 'Legal name').getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
-  await expect(page.getByText('Could not save — check the marked entries and retry.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Some changes could not be saved — check the marked entries and retry.', { exact: true })).toBeVisible();
   await expect(article(page, 'Legal name').locator('#CP-01-text')).toHaveValue('Synthetic outage draft');
   await expect.poll(() => allWrites(), { timeout: 20_000 }).toBe(3);
   const restedWrites = allWrites();
@@ -304,7 +304,7 @@ test('write outage keeps drafts, bounded retries end clearly, Retry saves, signo
   // A second synthetic account is blank and never sees the first company's values.
   await login(page);
   await onboard(page, 'Synthetic Browser B');
-  await expect(page.getByText('Synthetic Outage', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Synthetic Outage', exact: true })).toHaveCount(0);
   await expect(article(page, 'Legal name').locator('#CP-01-text')).toHaveValue('');
   await expect(progressAside(page).getByText('0 of 10')).toBeVisible();
 
@@ -371,16 +371,16 @@ test('late onboarding and save responses cannot replace a different account', as
     await gate;
     await route.fulfill({ response });
   });
-  await page.getByLabel('Company name', { exact: true }).fill('Synthetic Late A');
-  await page.getByRole('button', { name: 'Create company', exact: true }).click();
+  await page.getByLabel('Test company display name', { exact: true }).fill('Synthetic Late A');
+  await page.getByRole('button', { name: 'Create test workspace', exact: true }).click();
   await expect.poll(() => intercepted).toBe(true);
   await page.evaluate(async session => {
     const module = await import('/src/lib/supabase-client.ts');
     await module.getSupabaseClient().auth.setSession(session);
   }, sessionB);
-  await expect(page.getByText('Synthetic Switch B', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Synthetic Switch B', exact: true })).toBeVisible();
   release();
-  await expect(page.getByText('Synthetic Late A', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Synthetic Late A', exact: true })).toHaveCount(0);
   await page.unroute('**/rest/v1/company_account*');
 
   // Hold B's real first write while switching to C; the queued second write
@@ -410,11 +410,11 @@ test('late onboarding and save responses cannot replace a different account', as
     const module = await import('/src/lib/supabase-client.ts');
     await module.getSupabaseClient().auth.setSession(session);
   }, sessionC);
-  await expect(page.getByText('Synthetic Switch C', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Synthetic Switch C', exact: true })).toBeVisible();
   releaseSave();
   await expect(article(page, 'Legal name').locator('#CP-01-text')).toHaveValue('');
   await expect(article(page, 'Date of incorporation').locator('#CP-07-date')).toHaveValue('');
-  await expect(page.getByText('No saved entries yet', { exact: false })).toBeVisible();
+  await expect(page.getByText('Autosaves a few moments after you stop typing.', { exact: true })).toBeVisible();
   await page.reload();
   await expect(article(page, 'Legal name').locator('#CP-01-text')).toHaveValue('');
   await expect(article(page, 'Date of incorporation').locator('#CP-07-date')).toHaveValue('');
@@ -435,7 +435,7 @@ test('expired session with revoked refresh clears the workspace and explains rec
     await module.getSupabaseClient().auth.refreshSession();
   });
   await expect(page.getByText('Your session has ended. Please sign in again.', { exact: true })).toBeVisible();
-  await expect(page.getByText('Synthetic Expiry', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Synthetic Expiry', exact: true })).toHaveCount(0);
   await expect(savedSection(page)).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
   // The recovery notice is also offered inside the sign-in dialog.

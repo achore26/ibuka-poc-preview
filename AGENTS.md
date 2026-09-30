@@ -117,3 +117,10 @@ All sections above this line are **historical evidence**; their current-status c
 - `wrangler.jsonc` adds `cmpkenya.co.ke` as a Custom Domain route alongside `ibuka.co.ke` (existing KASIB account/Worker/public vars unchanged; no deploy performed).
 - `tests/assessment.spec.ts` (real stack, four-item era) is preserved verbatim and was NOT run — the separate DB-integration phase owns its adaptation. The ADDITIONAL mock suite is `tests/ui-milestone.spec.ts` + `playwright.ui.config.ts` (`npm run test:ui`, Chrome channel on loopback 55473; fully mocked — no DB/RLS/email proof; unknown routes abort).
 - Docs owned elsewhere: `docs/technical-guide.md`, `docs/release-runbook.md` — link, never edit.
+
+
+## Current guidance/journey pass — 30 September 2026
+
+Before every material change to wording, options, status meanings, scoring, onboarding or user flow, read the relevant current Trevor source sections and recorded decisions. Record the source/version/section and classify alignment, an unspecified design choice or a conflict. Preserve source IDs and verbatim prompts; keep product guidance separate. Surface unresolved discrepancies rather than silently choosing. Verify the changed behaviour and update the technical/task evidence. Passing tests or a deployment do not imply content approval.
+
+Astra design / GLM-5.3 initial implementation; Codex bounded fallback after correction quota failure. This task owns the technical guide and release runbook, overriding the earlier historical “link, never edit” note. Barak explicitly waived independent GLM candidate review for this UI/guidance/test-workspace pass only; all remaining verification is required. Changes are local until actual release readback. Both domains remain on one synthetic backend; no real production data or resource provisioning.

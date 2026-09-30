@@ -10,7 +10,7 @@
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AssessmentForm, type FormSection } from "@/components/assessment-form";
-import { PreparedMetric, PreparedPanel, type PreparedGap } from "@/components/prepared-panel";
+import { PreparedPanel, type PreparedGap } from "@/components/prepared-panel";
 import {
   enabledFields,
   enabledSections,
@@ -19,6 +19,7 @@ import {
   workedExampleAnswers,
   type SampleAnswer,
 } from "@/lib/enabled-sample";
+import { useQuestionNavigation } from "@/components/use-question-navigation";
 import { applyAnswerUpdate } from "@/lib/app-data/answer-state";
 import { summarizeSampleProgress, type SampleItemState } from "@/lib/sample-progress";
 
@@ -50,7 +51,7 @@ const GAP_NOTES: Record<string, string> = {
 
 export function ReviewPreview() {
   const [answers, setAnswers] = useState<Record<string, SampleAnswer>>(makeInitialAnswers);
-  const [activeKey, setActiveKey] = useState(sections[0].key);
+  const { activeKey, setActiveKey, navigateTo } = useQuestionNavigation();
 
   const update = (id: string, patch: Partial<SampleAnswer>, typed: boolean) => {
     setAnswers((previous) => ({
@@ -86,36 +87,18 @@ export function ReviewPreview() {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* The single prominent temporary-preview note (stated once here —
-          not repeated per field). The worked-example loader is a secondary
-          action explicitly labelled as sample data. */}
-      <div
-        role="note"
-        aria-label="Temporary preview warning"
-        className="panel flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:gap-4"
-      >
-        <div className="min-w-0">
-          <p className="text-sm font-semibold" style={{ color: "var(--status-warn)" }}>
-            Temporary preview
-          </p>
-          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-            Nothing is saved or sent, and reloading the page resets every
-            entry — entries made here are not transferred. Use the
-            header&rsquo;s <span className="font-medium text-foreground">Sign in</span> action
-            to start a saved assessment for a synthetic test company.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 sm:ms-auto sm:shrink-0">
-          <Button variant="outline" className="h-11 sm:h-9" onClick={() => setAnswers(workedExampleAnswers())}>
-            Load worked example (sample)
-          </Button>
-          <Button variant="ghost" className="h-11 sm:h-9" onClick={() => setAnswers(makeInitialAnswers())}>
-            Reset
-          </Button>
-        </div>
+      <div role="note" aria-label="Temporary preview warning" className="text-sm leading-6 text-muted-foreground">
+        <p><span className="font-semibold text-foreground">Temporary preview.</span> Entries are not saved, sent or transferred when you sign in. Reloading clears them.</p>
+        <details className="mt-1">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Preview tools</summary>
+          <p className="pb-2">The worked example contains fictional company information.</p>
+          <div className="flex flex-wrap gap-2 pb-2">
+            <Button variant="outline" className="h-11" onClick={() => setAnswers(workedExampleAnswers())}>Load worked example (sample)</Button>
+            <Button variant="ghost" className="h-11" onClick={() => setAnswers(makeInitialAnswers())}>Reset</Button>
+          </div>
+        </details>
       </div>
-
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,720px)_264px]">
         <AssessmentForm
           sections={sections}
           progress={sectionProgress}
@@ -128,9 +111,10 @@ export function ReviewPreview() {
           onMarkNotApplicable={(id) => update(id, { status: "na" }, false)}
           onUndoNotApplicable={(id) => update(id, { status: "in_progress" }, false)}
           mobileSummary={
-            <div className="panel p-4">
-              <PreparedMetric summary={summary} compact />
-            </div>
+            <details className="text-sm">
+              <summary className="flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Progress and remaining items</summary>
+              <PreparedPanel summary={summary} gaps={gaps} savedNote="In-memory figures — nothing saved." onNavigate={navigateTo} preview firstId={enabledFields[0].id} />
+            </details>
           }
         />
 
@@ -139,6 +123,9 @@ export function ReviewPreview() {
               summary={summary}
               gaps={gaps}
               savedNote="In-memory figures — nothing saved."
+              onNavigate={navigateTo}
+              preview
+              firstId={enabledFields[0].id}
             />
         </div>
       </div>

@@ -64,7 +64,7 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
   return (
     <nav
       aria-label="Assessment sections"
-      className="sticky top-14 hidden h-[calc(100svh-3.5rem)] w-60 shrink-0 flex-col bg-rail lg:flex"
+      className="sticky top-16 hidden h-[calc(100svh-4rem)] w-56 shrink-0 flex-col bg-rail lg:flex"
     >
       <p className="px-5 pb-2 pt-5 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-rail-muted">
         Sections

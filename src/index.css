@@ -24,8 +24,8 @@
 
 :root {
   /* Canvas and ink */
-  --background: oklch(0.977 0.003 250);
-  --foreground: oklch(0.25 0.015 255);
+  --background: #f6f7f8;
+  --foreground: #202833;
   --card: #ffffff;
   --card-foreground: oklch(0.25 0.015 255);
   --popover: #ffffff;
@@ -33,12 +33,12 @@
 
   /* Navy rail family (shared by the header, the section rail and the phone
      brand strip so the composition reads as one chrome system). */
-  --rail: #142033;
+  --rail: #142236;
   --rail-raised: #1b2a42;
   --rail-foreground: #c7d0dc;
   --rail-muted: #8d99ab;
 
-  --primary: #c82f35;
+  --primary: #bc2936;
   --primary-foreground: oklch(0.98 0.008 95);
   --secondary: oklch(0.955 0.004 250);
   --secondary-foreground: oklch(0.29 0.015 255);
@@ -50,8 +50,8 @@
   --destructive-foreground: oklch(0.98 0.008 95);
   --border: oklch(0.906 0.005 250);
   --input: oklch(0.906 0.005 250);
-  --ring: #c82f35;
-  --radius: 0.5rem;
+  --ring: #bc2936;
+  --radius: 0.625rem;
   --status-ok: oklch(0.46 0.09 155);
   --status-warn: oklch(0.5 0.09 75);
   --status-error: oklch(0.47 0.16 27);

@@ -60,18 +60,17 @@ export function OnboardingPanel({
   return (
     <Card className="mt-6 lg:mt-8" size="sm">
       <CardHeader>
-        <CardTitle className="text-base">Create your company</CardTitle>
+        <CardTitle className="text-base">Create your test workspace</CardTitle>
         <CardDescription className="max-w-[46em] leading-relaxed">
-          One company per account. The name is a display name for this proof
-          of concept — it is not registry-verified, and ownership is assigned
-          and enforced by the database, not by this page.
+          One company per account. Use a fictional company. This display name
+          is separate from the legal-name answer in your assessment.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <div className="flex flex-col gap-1.5 sm:max-w-96 sm:flex-1">
             <label htmlFor="company-name" className="text-sm font-medium">
-              Company name
+              Test company display name
             </label>
             <Input
               id="company-name"
@@ -90,7 +89,7 @@ export function OnboardingPanel({
             className="h-11 sm:mt-6 sm:h-9"
             disabled={!lengthOk || createState.kind === "creating"}
           >
-            {createState.kind === "creating" ? "Creating…" : "Create company"}
+            {createState.kind === "creating" ? "Creating…" : "Create test workspace"}
           </Button>
         </form>
         {!lengthOk && trimmed.length > 0 ? (
