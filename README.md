@@ -468,12 +468,14 @@ pipeline uses the inspected version.
 | Package | Version | Declared licence | Role |
 | --- | --- | --- | --- |
 | `react` | 18.3.1 | MIT | UI runtime |
+| `@supabase/supabase-js` | 2.117.2 | MIT | Browser Auth and data API client |
+| `@playwright/test` | 1.63.0 | Apache-2.0 | Browser verification tooling |
 | `react-dom` | 18.3.1 | MIT | React DOM renderer |
 | `tailwindcss` | 4.3.3 | MIT | Utility CSS engine (v4, CSS-first theme) |
 | `@tailwindcss/vite` | 4.3.3 | MIT | Tailwind v4 Vite plugin |
 | `class-variance-authority` | 0.7.1 | Apache-2.0 | Button variant typing (shadcn) |
 | `cn` | 0.4.0 | MIT | Class-name merge utility used by the shadcn components |
-| `radix-ui` | 1.6.7 | MIT | Provides `Slot` (Button/Badge `asChild`) and the `Progress` primitive |
+| `radix-ui` | 1.6.7 | MIT | Provides `Slot`, `Progress` and the local sign-in `Dialog` primitives |
 | `typescript` | 5.6.3 | Apache-2.0 | Type checking (`tsc --noEmit`) |
 | `vite` | 5.4.21 | MIT | Build tool and dev/preview server |
 | `@vitejs/plugin-react` | 4.3.4 | MIT | Vite ↔ React integration |
@@ -484,7 +486,7 @@ pipeline uses the inspected version.
 `src/components/ui/` holds six files derived from the MIT-licensed shadcn/ui
 component source as fetched by the official CLI (`button.tsx`, `card.tsx`,
 `badge.tsx`, `input.tsx`, `textarea.tsx`, `progress.tsx`); per shadcn's
-model they are owned code in this repository.
+model they are owned code in this repository. The 30 September release adds a local shadcn-style `dialog.tsx` composition using the existing Radix package, and forwards refs in Button/Overlay for React 18. It adds no new runtime package. The two additional direct-package declarations above were read from their installed pinned package metadata; the 28 September transitive-count inventory below is historical.
 
 The full installed tree (322 packages, including transitive dependencies pinned in
 `package-lock.json` after the 28 September 2026 wrangler pin) declares — MIT (256),
