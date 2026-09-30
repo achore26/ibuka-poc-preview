@@ -132,6 +132,7 @@ interface CapturedWrite {
 
 interface Adapter {
   rows: Map<string, StoredRow>;
+  companyName?: string;
   writes: CapturedWrite[];
   failWrites: boolean;
   holdWrites?: Promise<void>;
@@ -168,7 +169,7 @@ async function installSyntheticApi(page: Page): Promise<Adapter> {
     const method = route.request().method();
     const eq = (key: string) => (url.searchParams.get(key) ?? '').replace(/^eq\./, '');
 
-    if (table === 'company_account' && method === 'GET') return json(route, [COMPANY]);
+    if (table === 'company_account' && method === 'GET') return json(route, [{ ...COMPANY, name: adapter.companyName ?? COMPANY.name }]);
     if (table === 'checklist_item' && method === 'GET') return json(route, checklistRows);
 
     if (table === 'assessment_answer') {
@@ -716,8 +717,9 @@ test('review-ready is withheld during a held edit even when saved progress is 10
   expect(adapter.unexpected).toEqual([]);
 });
 
-test('drafting mobile first input is above the fold; desktop/mobile screenshots retain the workspace hierarchy', async ({ page }) => {
+test('drafting with a long company name: mobile first input is above the fold; desktop/mobile screenshots retain the workspace hierarchy', async ({ page }) => {
   const adapter = await installSyntheticApi(page);
+  adapter.companyName = 'Synthetic CMP Kenya Financial and Investment Services Limited ' + 'Long company name '.repeat(7);
   await page.setViewportSize({ width: 390, height: 844 });
   await signInSynthetic(page);
   await waitForSavedAssessment(page);

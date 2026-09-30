@@ -457,7 +457,7 @@ export function SavedAssessment({
     <section aria-label="Saved sample assessment" className="flex flex-col gap-4">
       <div>
         <p className="text-sm font-medium text-muted-foreground">Listing assessment</p>
-        <h1 className="mt-1 text-2xl font-semibold leading-8 tracking-tight sm:text-[30px] sm:leading-9">{company.name}</h1>
+        <h1 title={company.name} className="mt-1 line-clamp-2 text-2xl font-semibold leading-8 tracking-tight sm:line-clamp-none sm:text-[30px] sm:leading-9">{company.name}</h1>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Proposed sample pending validation</p>
       </div>
       <div

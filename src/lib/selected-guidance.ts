@@ -60,7 +60,7 @@ const CURRENCY_BULLETS: readonly string[] = [
 export const selectedGuidance: Readonly<Record<SelectedGuidanceId, SelectedFieldGuidance>> = {
   "CP-01": {
     intro:
-      "The company’s exact registered legal name as recorded on its incorporation documents — for this test workspace, use a fictional equivalent rather than any real company.",
+      "Enter the exact legal name from the incorporation documents. Use a fictional equivalent in this test workspace.",
   },
   "CP-07": {
     intro: "Enter the incorporation date. This is separate from continuous operating history.",
