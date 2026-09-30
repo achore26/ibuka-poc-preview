@@ -1,17 +1,21 @@
 # CMP Kenya — IBUKA Phase 1 staging frontend
 
+## Current release — 30 September 2026
+
+<!-- CMP live release checkpoint: 30 September 2026 -->
+CMP Kenya selected-question release is live at https://cmpkenya.co.ke; https://ibuka.co.ke remains available. Verified runtime app `336c2314...`, DB `411f672b...`: hosted 53 access checks, local 16 populated-upgrade checks, 8 mock UI / 6 real-stack browser tests, and real SMTP/PKCE + autosave/reload on both origins. Current architecture and live evidence: [technical guide](docs/technical-guide.md) · [release runbook](docs/release-runbook.md). Earlier unshipped/blocked notes below are historical. Question-content validation, matrix and formal client acceptance remain open.
+
 **CMP Kenya** is the current application identity for the IBUKA Phase 1 proof of concept.
 This private KASIB repository holds the static frontend that builds to `dist/` for the
 KASIB Cloudflare Worker `ibuka-poc` (Workers Builds with static assets). The earlier
 **Daraja** product name and the four-item review preview are **historical** — see the
 historical-evidence sections below; the top-of-file status they describe is superseded.
 
-## Current status — CMP workspace redesign, 30 September 2026 (UNSHIPPED)
+## CMP workspace features
 
 The application is now the CMP Kenya listing-preparation workspace: a light workspace
 composed with a deep navy section rail and restrained red accents, leading with the
-assessment itself. **This redesign is implemented, locally built and locally tested only —
-not deployed, not client-approved, and no cloud write or deployment has been made.**
+assessment itself. **This redesign is deployed and verified live. The selected questions remain proposed pending client content validation.**
 
 | Area | Status |
 | --- | --- |
@@ -21,7 +25,7 @@ not deployed, not client-approved, and no cloud write or deployment has been mad
 | Saved assessment + autosave | Implemented (28 September recovery basis); redesign preserves autosave, explicit Ready/draft, stale-ack guards, dirty-signout warning |
 | Correctness fixes D1–D5 (30 Sept) | Implemented + unit regressions: stable invalid state (no retry loop), textual UI-change detection, unique compound-control error ids, describedby-only-when-rendered, checklist `allows_na` drift rejection |
 | Scoring | Self-reported prepared-for-review only; never a listing eligibility or approval finding |
-| Deployment | **Not deployed.** `wrangler.jsonc` now declares `cmpkenya.co.ke` as an additional Custom Domain route alongside `ibuka.co.ke` (same pinned KASIB account/Worker/public vars; existing resources only, no deploy performed) |
+| Deployment | **Verified live.** `wrangler.jsonc` attaches `cmpkenya.co.ke` alongside `ibuka.co.ke` on the same existing KASIB Worker; production build and both served asset hashes were checked. |
 
 Sample-denominator history: the earlier deployed review preview used a **four-item**
 sample (ids CP-07, Q-DIR-01, Q-ISS-01, Q-OFR-03); only **CP-07** is also part of the
@@ -464,12 +468,14 @@ pipeline uses the inspected version.
 | Package | Version | Declared licence | Role |
 | --- | --- | --- | --- |
 | `react` | 18.3.1 | MIT | UI runtime |
+| `@supabase/supabase-js` | 2.117.2 | MIT | Browser Auth and data API client |
+| `@playwright/test` | 1.63.0 | Apache-2.0 | Browser verification tooling |
 | `react-dom` | 18.3.1 | MIT | React DOM renderer |
 | `tailwindcss` | 4.3.3 | MIT | Utility CSS engine (v4, CSS-first theme) |
 | `@tailwindcss/vite` | 4.3.3 | MIT | Tailwind v4 Vite plugin |
 | `class-variance-authority` | 0.7.1 | Apache-2.0 | Button variant typing (shadcn) |
 | `cn` | 0.4.0 | MIT | Class-name merge utility used by the shadcn components |
-| `radix-ui` | 1.6.7 | MIT | Provides `Slot` (Button/Badge `asChild`) and the `Progress` primitive |
+| `radix-ui` | 1.6.7 | MIT | Provides `Slot`, `Progress` and the local sign-in `Dialog` primitives |
 | `typescript` | 5.6.3 | Apache-2.0 | Type checking (`tsc --noEmit`) |
 | `vite` | 5.4.21 | MIT | Build tool and dev/preview server |
 | `@vitejs/plugin-react` | 4.3.4 | MIT | Vite ↔ React integration |
@@ -480,7 +486,7 @@ pipeline uses the inspected version.
 `src/components/ui/` holds six files derived from the MIT-licensed shadcn/ui
 component source as fetched by the official CLI (`button.tsx`, `card.tsx`,
 `badge.tsx`, `input.tsx`, `textarea.tsx`, `progress.tsx`); per shadcn's
-model they are owned code in this repository.
+model they are owned code in this repository. The 30 September release adds a local shadcn-style `dialog.tsx` composition using the existing Radix package, and forwards refs in Button/Overlay for React 18. It adds no new runtime package. The two additional direct-package declarations above were read from their installed pinned package metadata; the 28 September transitive-count inventory below is historical.
 
 The full installed tree (322 packages, including transitive dependencies pinned in
 `package-lock.json` after the 28 September 2026 wrangler pin) declares — MIT (256),
