@@ -1,45 +1,64 @@
 @import "tailwindcss";
 
 /*
- * Daraja application theme — restrained shadcn-style neutral surfaces with a
- * single KASIB-inspired deep red accent (#c82f35) used sparingly for the
- * primary action, the progress fill and focus rings. Typography uses local
- * font stacks only; nothing is fetched from any font CDN or external asset
- * at runtime.
+ * CMP Kenya workspace theme (accepted redesign direction, 30 September
+ * 2026): a crisp light workspace composed with a deep navy navigation rail
+ * (#142033 vicinity) and one restrained KASIB-inspired red accent (#c82f35)
+ * used for the active navigation marker, the primary action, the progress
+ * fill and focus rings. Cool off-white canvas, white softly elevated
+ * panels, fine separators, coherent nested radii (page 12px, panels 10px,
+ * controls 6px), tabular numerals for counts, and tiny interruptible
+ * opacity/color/transform transitions (120–180ms) that disappear under
+ * prefers-reduced-motion. Local system font stacks only; nothing is fetched
+ * from any CDN or external asset at runtime.
  *
- * The red tone is visually inferred from the public KASIB site
+ * The navy and red tones are visually inferred from the public KASIB site
  * (kasib.co.ke, observed 24 September 2026) — not an official brand
  * specification; no official KASIB logo file exists in this repository.
- * The near-white label on red measures 5.06:1 (WCAG AA, >= 4.5:1) by
- * relative-luminance calculation, and the button hover fill stays opaque at
- * a darker red (#b52b31, 5.90:1) via the unlayered override below.
- * Muted foreground (neutral-500) measures 4.74:1 on the white card surface.
+ * Contrast (WCAG relative luminance): near-white label on red 5.06:1 and on
+ * the opaque darker hover red #b52b31 5.90:1 (both AA >= 4.5:1); rail text
+ * #c7d0dc on #142033 measures ~9.7:1 and muted rail text ~5.9:1; muted
+ * foreground on white ~4.7:1. The gold-free accent discipline stays: red
+ * carries meaning, everything else stays neutral.
  */
 
 :root {
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.205 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.205 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.205 0 0);
+  /* Canvas and ink */
+  --background: oklch(0.977 0.003 250);
+  --foreground: oklch(0.25 0.015 255);
+  --card: #ffffff;
+  --card-foreground: oklch(0.25 0.015 255);
+  --popover: #ffffff;
+  --popover-foreground: oklch(0.25 0.015 255);
+
+  /* Navy rail family (shared by the header, the section rail and the phone
+     brand strip so the composition reads as one chrome system). */
+  --rail: #142033;
+  --rail-raised: #1b2a42;
+  --rail-foreground: #c7d0dc;
+  --rail-muted: #8d99ab;
+
   --primary: #c82f35;
   --primary-foreground: oklch(0.98 0.008 95);
-  --secondary: oklch(0.968 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.968 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.968 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.955 0.004 250);
+  --secondary-foreground: oklch(0.29 0.015 255);
+  --muted: oklch(0.955 0.004 250);
+  --muted-foreground: oklch(0.5 0.014 255);
+  --accent: oklch(0.955 0.004 250);
+  --accent-foreground: oklch(0.29 0.015 255);
   --destructive: oklch(0.505 0.19 27);
   --destructive-foreground: oklch(0.98 0.008 95);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.906 0.005 250);
+  --input: oklch(0.906 0.005 250);
   --ring: #c82f35;
   --radius: 0.5rem;
   --status-ok: oklch(0.46 0.09 155);
   --status-warn: oklch(0.5 0.09 75);
   --status-error: oklch(0.47 0.16 27);
+
+  /* Soft elevation for white panels on the cool canvas. */
+  --shadow-panel: 0 1px 2px rgb(16 24 40 / 0.05), 0 1px 3px rgb(16 24 40 / 0.06);
+  --shadow-panel-raised: 0 4px 14px rgb(16 24 40 / 0.08), 0 1px 3px rgb(16 24 40 / 0.05);
 }
 
 @theme inline {
@@ -68,11 +87,18 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-rail: var(--rail);
+  --color-rail-raised: var(--rail-raised);
+  --color-rail-foreground: var(--rail-foreground);
+  --color-rail-muted: var(--rail-muted);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-panel: var(--shadow-panel);
+  --shadow-panel-raised: var(--shadow-panel-raised);
 }
 
 @layer base {
@@ -92,6 +118,22 @@
   ::selection {
     background: color-mix(in oklch, var(--primary) 22%, transparent);
   }
+
+  /* Counts and scores never shift as digits change. */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tiny, interruptible motion only — removed entirely under reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
 }
 
 @layer components {
@@ -106,6 +148,20 @@
   .status-error {
     color: var(--status-error);
   }
+
+  /* White softly elevated panel (Jakub Krehel's soft-shadow practice,
+     applied through a class so plain Cards and custom panels share it). */
+  .panel {
+    background-color: var(--card);
+    border-radius: calc(var(--radius) + 2px);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .panel-raised {
+    background-color: var(--card);
+    border-radius: calc(var(--radius) + 2px);
+    box-shadow: var(--shadow-panel-raised);
+  }
 }
 
 /*
@@ -117,4 +173,30 @@
  */
 [data-slot="button"][data-variant="default"]:hover {
   background-color: #b52b31;
+}
+
+/*
+ * Controls animate ONLY color-ish properties and transform — never
+ * transition-all, which would animate the layout sizes the 44px mobile
+ * target contract depends on (unlayered for the same cascade reason).
+ */
+[data-slot="button"] {
+  transition-property: color, background-color, border-color, outline-color,
+    box-shadow, translate, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/*
+ * 44px actual touch targets below the `sm` breakpoint (640px) via
+ * min-height, which wins over any height utility from the vendored size
+ * variants in the box model. Covers every button (including the sign-in
+ * dialog close, Retry and the worked-example actions) and every disclosure
+ * summary; radio rows already carry min-h-11 … sm:min-h-0 inline.
+ */
+@media (max-width: 39.99rem) {
+  [data-slot="button"],
+  summary {
+    min-height: 2.75rem;
+  }
 }

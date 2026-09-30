@@ -1,19 +1,14 @@
 import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReviewPreview } from "@/components/review-preview";
-import { AuthPanel } from "@/components/auth-panel";
+import { SignInDialog } from "@/components/sign-in-dialog";
+import { SectionNavProvider, SectionRail, type SectionNavConfig } from "@/components/section-rail";
 import { Workspace } from "@/components/workspace";
 import { useAuthSession } from "@/lib/auth-session";
 import { getAccountDataClient, getSupabaseClient } from "@/lib/supabase-client";
 import { checkSupabaseConnectivity, type ConnectivityResult } from "./lib/supabase-status";
+import { EXPECTED_SAMPLE_VERSION, enabledFields, enabledSections } from "@/lib/enabled-sample";
 
 const statusClassByState: Record<ConnectivityResult["state"], string> = {
   reachable: "status-ok",
@@ -35,24 +30,6 @@ function describeResult(result: ConnectivityResult): string {
   }
 }
 
-const phaseItems = [
-  {
-    number: "01",
-    label: "Company registration and magic-link sign-in",
-    status: "Implemented (provisional, local)",
-  },
-  {
-    number: "02",
-    label: "Sample Market listing assessment",
-    status: "Implemented (provisional, local)",
-  },
-  {
-    number: "03",
-    label: "Readiness summary and dashboard",
-    status: "Implemented (provisional, local)",
-  },
-] as const;
-
 function DiagnosticsCard() {
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<ConnectivityResult | null>(null);
@@ -67,18 +44,17 @@ function DiagnosticsCard() {
   }
 
   return (
-    <Card size="sm" className="mt-4">
+    <Card size="sm" className="shadow-none ring-1 ring-border">
       <CardHeader>
-        <CardTitle>Service diagnostics</CardTitle>
+        <CardTitle className="text-sm">Service diagnostics</CardTitle>
         <CardDescription className="max-w-[46em] leading-relaxed">
           Read-only reachability check against this project&rsquo;s public
-          Supabase API (for the staging team). It reports the observed
-          response only — it does not verify the key, authentication, or
-          data isolation.
+          Supabase API (for the staging team). It reports the observed response
+          only — it does not verify the key, authentication, or data isolation.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button variant="outline" onClick={runCheck} disabled={pending}>
+        <Button variant="outline" className="h-11 sm:h-9" onClick={runCheck} disabled={pending}>
           {pending ? "Checking…" : "Run connectivity check"}
         </Button>
         {result ? (
@@ -94,174 +70,226 @@ function DiagnosticsCard() {
   );
 }
 
+/*
+ * Operator tooling is never product surface: the connectivity check and the
+ * interface-provenance note live behind this collapsed disclosure, rendered
+ * only in local development (import.meta.env.DEV) so diagnostics and
+ * implementation copy never appear in the production flow.
+ */
+function DevelopmentDisclosure() {
+  return (
+    <details className="panel mt-2 text-sm">
+      <summary className="min-h-11 cursor-pointer px-4 py-3 font-medium sm:min-h-0">
+        Development diagnostics (staging team)
+      </summary>
+      <div className="flex flex-col gap-4 border-t px-4 py-4">
+        <DiagnosticsCard />
+        <p className="max-w-[52em] text-xs leading-relaxed text-muted-foreground">
+          Interface tones are visually inferred from the public KASIB site
+          (kasib.co.ke, observed 24 September 2026) — not an official brand
+          specification; this repository contains no official KASIB logo or
+          brand assets.
+        </p>
+      </div>
+    </details>
+  );
+}
+
+/** Repo-native CMP monogram: navy tile, white letters, one red detail. */
+function BrandMark({ className = "" }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-flex size-8 flex-col overflow-hidden rounded-lg bg-rail-raised ring-1 ring-white/15 ${className}`}
+    >
+      <span className="flex flex-1 items-center justify-center text-[0.6rem] font-bold tracking-tight text-white">
+        CMP
+      </span>
+      <span className="h-[3px] w-full bg-primary" />
+    </span>
+  );
+}
+
 export default function App() {
   const client = useMemo(() => getSupabaseClient(), []);
   const auth = useAuthSession(client);
   const sessionUser = auth.phase === "signed-in" ? auth.user : null;
-  const dataClient = useMemo(() => client && sessionUser ? getAccountDataClient(client, sessionUser.id) : null, [client, sessionUser?.id]);
+  const dataClient = useMemo(
+    () => (client && sessionUser ? getAccountDataClient(client, sessionUser.id) : null),
+    [client, sessionUser?.id],
+  );
   const signedIn = sessionUser !== null;
   const userEmail = sessionUser?.email ?? null;
 
+  // Live navy-rail content reported by whichever assessment form is mounted.
+  const [nav, setNav] = useState<SectionNavConfig | null>(null);
+  const [signInOpen, setSignInOpen] = useState(false);
+
+  const showNoticeBar = !signedIn && auth.notice !== null && !signInOpen;
+
   return (
-    <div className="min-h-svh bg-background font-sans text-foreground">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
-          <span className="text-sm font-semibold tracking-tight">Daraja</span>
-          <div className="flex min-w-0 items-center gap-3">
-            {signedIn && userEmail ? (
-              <>
-                <span className="truncate text-xs text-muted-foreground" title={userEmail}>
-                  {userEmail}
+    <SectionNavProvider value={setNav}>
+      <div className="flex min-h-svh flex-col bg-background font-sans text-foreground">
+        <header className="sticky top-0 z-40 shrink-0 bg-rail text-white">
+          <div className="mx-auto flex h-14 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <BrandMark />
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold leading-none tracking-tight">
+                  CMP Kenya
                 </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const event = new Event("daraja-before-signout", { cancelable: true });
-                    if (window.dispatchEvent(event)) void auth.signOut();
-                  }}
-                  disabled={auth.phase === "restoring"}
-                >
-                  Sign out
-                </Button>
-              </>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                IBUKA Phase 1 proof of concept · KASIB
-              </p>
-            )}
+                <span className="mt-1 block text-[0.68rem] leading-none text-rail-muted">
+                  Listing preparation · KASIB
+                </span>
+              </span>
+            </div>
+            <div className="flex min-w-0 items-center gap-3">
+              {signedIn && userEmail ? (
+                <>
+                  <span className="hidden max-w-48 truncate text-xs text-rail-foreground sm:block" title={userEmail}>
+                    {userEmail}
+                  </span>
+                  <Button
+                    variant="outline"
+                    className="h-11 border-white/25 bg-transparent text-rail-foreground hover:bg-rail-raised hover:text-white sm:h-8"
+                    onClick={() => {
+                      const event = new Event("cmp-before-signout", { cancelable: true });
+                      if (window.dispatchEvent(event)) void auth.signOut();
+                    }}
+                    disabled={auth.phase === "restoring"}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              ) : auth.phase === "unconfigured" ? (
+                <span className="text-xs text-rail-muted">Sign-in unavailable</span>
+              ) : auth.phase !== "restoring" ? (
+                <SignInDialog
+                  open={signInOpen}
+                  onOpenChange={setSignInOpen}
+                  notice={auth.notice}
+                  onSignIn={auth.signIn}
+                  triggerClassName="h-11 border-white/25 bg-transparent text-white hover:bg-white/10 hover:text-white sm:h-8"
+                />
+              ) : null}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
-        <main>
-          {auth.phase === "restoring" ? (
-            <p role="status" className="pt-8 text-sm text-muted-foreground sm:pt-10">
-              Restoring your session…
+        {showNoticeBar ? (
+          <div className="shrink-0 border-b border-destructive/25 bg-destructive/5">
+            <p role="alert" className="mx-auto max-w-[90rem] px-4 py-2 text-xs leading-relaxed text-foreground sm:px-6">
+              {auth.notice?.message}
             </p>
-          ) : signedIn && client && sessionUser ? (
-            <>
-              <div className="pt-8 sm:pt-10">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                    Sample Market listing assessment
-                  </h1>
-                  <Badge variant="secondary">Provisional</Badge>
-                </div>
-                <p className="mt-2 max-w-[46em] text-sm leading-relaxed text-muted-foreground">
-                  Saved against your synthetic test company. Entries and their
-                  readiness states are self-reported; the sample and rules
-                  remain proposals pending validation — not a regulatory
-                  finding.
-                </p>
-              </div>
-              {auth.notice ? <p role="alert" className="mt-4 text-sm">{auth.notice.message}</p> : null}
-              <Workspace key={sessionUser.id} client={dataClient!} user={sessionUser} />
-            </>
-          ) : (
-            <>
-              <div className="pt-8 sm:pt-10">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                    Sample Market listing assessment
-                  </h1>
-                  <Badge variant="secondary">Review preview</Badge>
-                </div>
-                <p className="mt-2 max-w-[46em] text-sm leading-relaxed text-muted-foreground">
-                  Sign in below to save entries against a synthetic test
-                  company. Without signing in, the preview further down shows
-                  the proposed four-item sample — not yet validated, nothing is
-                  saved, and entries reset on reload.
-                </p>
-              </div>
+          </div>
+        ) : null}
 
-              {auth.phase === "unconfigured" ? (
-                <Card className="mt-6 lg:mt-8" size="sm">
-                  <CardHeader>
-                    <CardTitle className="text-base">Sign-in unavailable</CardTitle>
-                    <CardDescription className="max-w-[46em] leading-relaxed">
-                      The public Supabase URL or publishable key is not
-                      configured, so magic-link sign-in and the saved
-                      assessment are unavailable in this build. The review
-                      preview below still works.
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+        <div className="mx-auto flex w-full max-w-[90rem] flex-1 items-stretch">
+          <SectionRail nav={nav} />
+
+          <main className="min-w-0 flex-1 px-4 pb-16 pt-6 sm:px-8 lg:px-10 lg:pt-8">
+            <div className="mx-auto flex w-full max-w-[71.5rem] flex-col">
+              {auth.phase === "restoring" ? (
+                <p role="status" className="text-sm text-muted-foreground">
+                  Restoring your session…
+                </p>
+              ) : signedIn && client && sessionUser ? (
+                <>
+                  <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+                    <div>
+                      <h1 className="text-2xl font-semibold tracking-tight sm:text-[1.7rem]">
+                        Listing preparation
+                      </h1>
+                      <p className="mt-1 max-w-[52em] text-sm leading-relaxed text-muted-foreground">
+                        {enabledFields.length} selected questions across{" "}
+                        {enabledSections.length} sections. Entries save
+                        automatically to your synthetic test company; the
+                        content remains proposed pending validation.
+                      </p>
+                    </div>
+                  </div>
+                  <Workspace key={sessionUser.id} client={dataClient!} user={sessionUser} />
+                </>
               ) : (
-                <AuthPanel notice={auth.notice} onSignIn={auth.signIn} />
+                <>
+                  <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+                    <div>
+                      <h1 className="text-2xl font-semibold tracking-tight sm:text-[1.7rem]">
+                        Listing preparation
+                      </h1>
+                      <p className="mt-1 max-w-[52em] text-sm leading-relaxed text-muted-foreground">
+                        {enabledFields.length} selected questions across{" "}
+                        {enabledSections.length} sections. Proposed content
+                        pending validation.
+                      </p>
+                    </div>
+                  </div>
+
+                  {auth.phase === "unconfigured" ? (
+                    <Card className="mt-5 shadow-none ring-1 ring-border" size="sm">
+                      <CardHeader>
+                        <CardTitle className="text-base">Sign-in unavailable</CardTitle>
+                        <CardDescription className="max-w-[46em] leading-relaxed">
+                          The public Supabase URL or publishable key is not
+                          configured, so magic-link sign-in and the saved assessment
+                          are unavailable in this build. The preview below still
+                          works.
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ) : null}
+
+                  <div className="mt-6">
+                    <ReviewPreview />
+                  </div>
+
+                  <details className="panel mt-8 text-sm">
+                    <summary className="min-h-11 cursor-pointer px-4 py-3 font-medium sm:min-h-0">
+                      About this preview
+                    </summary>
+                    <div className="flex flex-col gap-4 border-t px-4 py-4 text-sm leading-relaxed text-muted-foreground">
+                      <p className="max-w-[52em]">
+                        This page previews the selected ten-item sample
+                        ({EXPECTED_SAMPLE_VERSION}) for the IBUKA Phase 1
+                        proof of concept. The selection, prompts, typed
+                        controls and progress rule are proposals shown for
+                        review — they are not validated regulatory content,
+                        and nothing here has been approved.
+                      </p>
+                      <p className="max-w-[52em]">
+                        The sample grew from an earlier four-item preview to
+                        the current ten items, so progress figures are not
+                        comparable across that change: the denominator moved
+                        from 4 to 10. Only one of the four earlier ids
+                        (CP-07) is also part of the selected ten; historical
+                        answers are retained separately by additive database
+                        work. See the repository documentation for the full
+                        id-level history.
+                      </p>
+                      <p className="max-w-[52em]">
+                        The signed-out preview holds entries in memory only; signed-in
+                        entries autosave to the assessment database for the
+                        account&rsquo;s single synthetic company. The progress figure
+                        is self-reported — it counts items marked ready for review
+                        and is not a regulatory pass/fail result, listing
+                        eligibility, or approval.
+                      </p>
+                    </div>
+                  </details>
+                </>
               )}
 
-              <section aria-label="Preview heading" className="mt-10">
-                <h2 className="text-lg font-semibold tracking-tight">
-                  Review preview (signed out)
-                </h2>
-                <p className="mt-1 max-w-[46em] text-sm leading-relaxed text-muted-foreground">
-                  Everything here runs in this page only: entries are held in
-                  memory, nothing is saved or sent anywhere, and answers reset
-                  on reload.
+              {import.meta.env.DEV ? <DevelopmentDisclosure /> : null}
+
+              <footer className="mt-10 border-t pt-5">
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  CMP Kenya · IBUKA Phase 1 proof of concept · KASIB
                 </p>
-              </section>
-
-              <ReviewPreview />
-
-              <details className="mt-10 rounded-xl border bg-card">
-                <summary className="cursor-pointer px-4 py-3 text-sm font-medium">
-                  About this preview
-                </summary>
-                <div className="flex flex-col gap-4 border-t px-4 py-4 text-sm leading-relaxed text-muted-foreground">
-                  <p className="max-w-[52em]">
-                    This page previews a proposed four-item sample for the IBUKA
-                    Phase 1 proof of concept. The sample selection, prompts, typed
-                    controls and progress rule are proposals shown for review —
-                    they are not validated regulatory content, and nothing here
-                    has been approved.
-                  </p>
-                  <p className="max-w-[52em]">
-                    The signed-out preview holds entries in memory only; signed-in
-                    entries are saved to the assessment database for the
-                    account&rsquo;s single synthetic company. The progress figure
-                    is self-reported — it counts items marked ready and is not a
-                    regulatory pass/fail result, listing eligibility, or approval.
-                  </p>
-                  <div>
-                    <h2 className="text-xs font-medium text-foreground">
-                      Phase 1 scope
-                    </h2>
-                    <ol className="mt-2 flex flex-col gap-1.5">
-                      {phaseItems.map((item) => (
-                        <li
-                          key={item.number}
-                          className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5"
-                        >
-                          <span>
-                            <span className="mr-2 font-mono text-xs">
-                              {item.number}
-                            </span>
-                            {item.label}
-                          </span>
-                          <span className="text-xs">{item.status}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              </details>
-            </>
-          )}
-
-          <DiagnosticsCard />
-        </main>
-
-        <footer className="mt-12 border-t pt-5">
-          <p className="max-w-[52em] text-xs leading-relaxed text-muted-foreground">
-            Daraja is the working product name for the IBUKA Phase 1 proof of
-            concept by KASIB — bridging business and capital. Interface tones
-            are visually inferred from the public KASIB site; this repository
-            contains no official KASIB logo or brand assets.
-          </p>
-        </footer>
+              </footer>
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </SectionNavProvider>
   );
 }

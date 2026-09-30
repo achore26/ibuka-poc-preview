@@ -1,0 +1,1779 @@
+{
+  "source_revision": "CMP workbook v2 observed2026-09-30",
+  "source_sha256": "ba138203c0fbfac761c1188913fd60f067a269d833b71c88e7967a6965bb93a8",
+  "entries": [
+    {
+      "id": "CP-01",
+      "label_or_prompt": "Legal name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 3.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-02",
+      "label_or_prompt": "Trading name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 3.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-03",
+      "label_or_prompt": "Registered office address",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Address; required: Y; source ref: 6th 3.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-04",
+      "label_or_prompt": "Head office address",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Address; required: N; source ref: 6th 3.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-05",
+      "label_or_prompt": "Website / digital platforms",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: URL list; required: N; source ref: 6th 3.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-06",
+      "label_or_prompt": "Country of incorporation",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text (lookup); required: Y; source ref: 6th 3.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-07",
+      "label_or_prompt": "Date of incorporation",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 3.3 / A.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-08",
+      "label_or_prompt": "Corporate life duration (indefinite?)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: N; source ref: 6th 3.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-09",
+      "label_or_prompt": "Governing legislation / legal form",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 3.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-10",
+      "label_or_prompt": "Registration number",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 3.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-11",
+      "label_or_prompt": "Place of registration",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 3.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-12",
+      "label_or_prompt": "Proposed name change (flag + details + approval status)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: N; source ref: 6th 3.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-13",
+      "label_or_prompt": "Listing segment",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum: MIMS / SMEMS; required: Y; source ref: Section A",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-14",
+      "label_or_prompt": "Listing route",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum: Capital raise / Introduction; required: Y; source ref: Intro",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-15",
+      "label_or_prompt": "Years in continuous operation",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Calculated (from CP-07); required: auto; source ref: A.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-16",
+      "label_or_prompt": "Total assets (as at date)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency + date; required: Y; source ref: A.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-17",
+      "label_or_prompt": "Dividend policy adopted (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: Y; source ref: A.8 (doc is Tier 2)",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-18",
+      "label_or_prompt": "Solvency / working-capital confirmation date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: A.10",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-19",
+      "label_or_prompt": "Free float percentage",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Calculated (from Shareholders entity); required: auto; source ref: A.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "CP-20",
+      "label_or_prompt": "Board composition (exec / non-exec / independent counts)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: 3 numbers; required: Y; source ref: A.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 1; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-01",
+      "label_or_prompt": "Full name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-02",
+      "label_or_prompt": "Date of birth / age",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-03",
+      "label_or_prompt": "Nationality",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text (lookup); required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-04",
+      "label_or_prompt": "Residential address",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Address; required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-05",
+      "label_or_prompt": "Role / title (director, proposed director, CEO, board secretary, finance director\u2026)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-06",
+      "label_or_prompt": "Appointment date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-07",
+      "label_or_prompt": "Founder flag",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: N; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-08",
+      "label_or_prompt": "Outside business activities / other interests",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 9.1\u20139.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-09",
+      "label_or_prompt": "Former name(s)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 9.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-10",
+      "label_or_prompt": "Planned senior-management change (next 24 months)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-11",
+      "label_or_prompt": "Aggregate remuneration, last 2 financial years",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 9.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-12",
+      "label_or_prompt": "Shareholding (count + %)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Number + %; required: Y; source ref: 6th 9.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-13",
+      "label_or_prompt": "Holds >3% of share capital (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool (auto from DIR-12); required: auto; source ref: 6th 9.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-14",
+      "label_or_prompt": "Unusual/significant transaction with the company (flag + details, or negative statement)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: Y; source ref: 6th 9.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-15",
+      "label_or_prompt": "Outstanding loans/guarantees from the company",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 9.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-16",
+      "label_or_prompt": "Emolument waiver details",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 9.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-17",
+      "label_or_prompt": "Estimated remuneration payable, current financial year",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 9.10",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-18",
+      "label_or_prompt": "Disqualifying conviction / pending bankruptcy or winding-up petition (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: Y; source ref: A.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DIR-19",
+      "label_or_prompt": "Service contract summary (or negative statement)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text / doc ref; required: Y; source ref: 6th 9.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 2; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-01",
+      "label_or_prompt": "Role",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum: Auditor, Legal Adviser, Reporting Accountant, Transaction Advisor/Sponsor, Compliance Officer, Banker, Registrar, Valuer, Competent Person; required: Y; source ref: 6th 1.3\u20131.5, Reg. 32/33",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-02",
+      "label_or_prompt": "Firm / individual name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 1.3\u20131.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-03",
+      "label_or_prompt": "Licence / registration number",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y (Tier 3 roles); source ref: Reg. 19, 32",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-04",
+      "label_or_prompt": "Contact person and address",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text/Address; required: Y; source ref: 6th 1.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-05",
+      "label_or_prompt": "Material interest in the issuer (flag + details, or negative statement)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: Y; source ref: 6th 1.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-06",
+      "label_or_prompt": "Appointment / engagement date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: Reg. 32/33",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-07",
+      "label_or_prompt": "Auditor resignation/removal/non-reappointment in last 3 years (flag + details)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: Y (auditor role); source ref: 6th 1.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-08",
+      "label_or_prompt": "Engagement status",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum: Not started / Engaged / In progress / Deliverable submitted / Verified; required: auto/manual; source ref: platform-only",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "ADV-09",
+      "label_or_prompt": "Deliverable due date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y (Tier 3 roles); source ref: platform-only",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 3; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-01",
+      "label_or_prompt": "Share class",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 5.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-02",
+      "label_or_prompt": "Issued amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Number; required: Y; source ref: 6th 5.1 / A.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-03",
+      "label_or_prompt": "Paid-up amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 5.1 / A.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-04",
+      "label_or_prompt": "Nominal / par value",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 13.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-05",
+      "label_or_prompt": "Voting rights of this class",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 5.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-06",
+      "label_or_prompt": "Partly-paid details",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 5.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-07",
+      "label_or_prompt": "Non-cash consideration >10% of capital (flag + details)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + text; required: Y; source ref: 6th 5.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-08",
+      "label_or_prompt": "Authorised but unissued capital",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Number; required: Y; source ref: 6th 5.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-09",
+      "label_or_prompt": "Pre-emption rights on this class",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 5.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SC-10",
+      "label_or_prompt": "Convertible/exchangeable securities or warrants linked to this class",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 5.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 4; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-01",
+      "label_or_prompt": "Shareholder name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 11.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-02",
+      "label_or_prompt": "Nationality",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 11.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-03",
+      "label_or_prompt": "Shareholding percentage",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: %; required: Y; source ref: 6th 11.1 / A.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-04",
+      "label_or_prompt": "Voting rights (differential, if any)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 11.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-05",
+      "label_or_prompt": "Controlling shareholder (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: Y; source ref: 6th 11.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-06",
+      "label_or_prompt": "24-month lock-in undertaking (flag + end date)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool + date; required: Y (if controlling); source ref: A.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-07",
+      "label_or_prompt": "Change in holding, past 3 years",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 11.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "SH-08",
+      "label_or_prompt": "Related-party flag (director/promoter-linked entity)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 5; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-01",
+      "label_or_prompt": "Subsidiary name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 10.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-02",
+      "label_or_prompt": "Country of incorporation",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 10.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-03",
+      "label_or_prompt": "Ownership percentage",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: %; required: Y; source ref: 6th 10.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-04",
+      "label_or_prompt": "Voting power percentage",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: %; required: Y; source ref: 6th 10.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-05",
+      "label_or_prompt": "Principal activity",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 10.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "GRP-06",
+      "label_or_prompt": "Significant/material subsidiary (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: N; source ref: 6th 10.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 6; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-01",
+      "label_or_prompt": "Counterparty",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-02",
+      "label_or_prompt": "Contract date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-03",
+      "label_or_prompt": "Nature of contract",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-04",
+      "label_or_prompt": "Consideration amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-05",
+      "label_or_prompt": "Linked to controlling shareholder (flag)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Bool; required: Y; source ref: 6th 6.1.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "MC-06",
+      "label_or_prompt": "Contract document upload",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: File; required: Y; source ref: 6th 6.1.1 (inspection)",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 7; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-01",
+      "label_or_prompt": "Counterparty name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-02",
+      "label_or_prompt": "Relationship type (controlling entity / associate / director-owned / shareholder-owned)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-03",
+      "label_or_prompt": "Transaction/loan type",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-04",
+      "label_or_prompt": "Amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-05",
+      "label_or_prompt": "Outstanding balance",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-06",
+      "label_or_prompt": "Terms (rate, tenor, security)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 11.5\u201311.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "RPT-07",
+      "label_or_prompt": "Date entered",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 8; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-01",
+      "label_or_prompt": "Payee name",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 6.2\u20136.3, 14.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-02",
+      "label_or_prompt": "Payee type (director / promoter / vendor)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 6.2, 14.6\u201314.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-03",
+      "label_or_prompt": "Payment type (cash / securities / benefit-in-kind)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 6.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-04",
+      "label_or_prompt": "Amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 6.2\u20136.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-05",
+      "label_or_prompt": "Date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 6.2\u20136.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "PV-06",
+      "label_or_prompt": "Purpose",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 6.2\u20136.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 9; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-01",
+      "label_or_prompt": "Fiscal year",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Year; required: Y; source ref: 6th 12.x",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-02",
+      "label_or_prompt": "Revenue",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 7.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-03",
+      "label_or_prompt": "Profit / (loss)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: A.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-04",
+      "label_or_prompt": "Total assets",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: A.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-05",
+      "label_or_prompt": "Total liabilities",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 12.19",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-06",
+      "label_or_prompt": "Net asset value per share",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 12.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-07",
+      "label_or_prompt": "Dividend paid / dividend per share / dividend cover",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency/ratio; required: Y; source ref: 6th 12.10",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-08",
+      "label_or_prompt": "Earnings per share (own + consolidated)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 12.7\u201312.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-09",
+      "label_or_prompt": "Cash flow: operating / investing / financing",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 12.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-10",
+      "label_or_prompt": "Borrowings outstanding",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 12.19",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-11",
+      "label_or_prompt": "Contingent liabilities / commitments",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency + text; required: Y; source ref: 6th 12.19",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "FIN-12",
+      "label_or_prompt": "Source document (which audited statement this year's figures are drawn from)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: File ref; required: auto; source ref: cross-ref to Tier 3 upload",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 10; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-01",
+      "label_or_prompt": "Description",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 7.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-02",
+      "label_or_prompt": "Year",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Year; required: Y; source ref: 6th 7.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-03",
+      "label_or_prompt": "Amount invested",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 7.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-04",
+      "label_or_prompt": "Geography",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 7.12",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-05",
+      "label_or_prompt": "Financing source",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: Y; source ref: 6th 7.12",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "INV-06",
+      "label_or_prompt": "Status (committed / in progress / completed)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 7.13",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 11; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "EMP-01",
+      "label_or_prompt": "Year",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Year; required: Y; source ref: 6th 9.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 12; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "EMP-02",
+      "label_or_prompt": "Headcount by category",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Number (repeatable by category); required: Y; source ref: 6th 9.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 12; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "COM-01",
+      "label_or_prompt": "Committee type (Audit / Remuneration / Nomination)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum; required: Y; source ref: 6th 9.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 13; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "COM-02",
+      "label_or_prompt": "Members (linked to Directors entity)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: List; required: Y; source ref: 6th 9.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 13; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "COM-03",
+      "label_or_prompt": "Terms of reference document",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: File; required: Y; source ref: 6th 9.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 13; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-01",
+      "label_or_prompt": "Offer method(s)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Enum/list; required: Y; source ref: 6th 2.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-02",
+      "label_or_prompt": "Total issue amount",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 2.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-03",
+      "label_or_prompt": "Issue price and pricing basis",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency + text; required: Y; source ref: 6th 2.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-04",
+      "label_or_prompt": "Number of securities offered",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Number; required: Y; source ref: 6th 2.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-05",
+      "label_or_prompt": "Offer open / close dates",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date range; required: Y; source ref: 6th 2.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-06",
+      "label_or_prompt": "Listing date / trading commencement date",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Date; required: Y; source ref: 6th 13.16",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-07",
+      "label_or_prompt": "Minimum amount to be raised",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Currency; required: Y; source ref: 6th 13.30",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-08",
+      "label_or_prompt": "Green shoe percentage (up to 30%)",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: % ; required: N; source ref: 6th 13.23",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-09",
+      "label_or_prompt": "Target investor groups / country tranches",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 13.21",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-10",
+      "label_or_prompt": "Preferential allocation arrangements",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Text; required: N; source ref: 6th 13.22",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-11",
+      "label_or_prompt": "Immediate dilution percentage",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: % (calculated); required: auto; source ref: 6th 13.27",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "OFR-12",
+      "label_or_prompt": "Itemised offer expenses",
+      "category": "Structured field",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Source type: Table (item, amount, payer); required: Y; source ref: 6th 13.29",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 14; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-01",
+      "label_or_prompt": "Certificate of Incorporation/Registration",
+      "category": "Document: Constitutive & Registration; tier 1 (doc)",
+      "responsible_party": "Company",
+      "source_description": "PDF; metadata auto-extracted (number, date); source ref: B.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-02",
+      "label_or_prompt": "Memorandum & Articles of Association / Constitution",
+      "category": "Document: Constitutive & Registration; tier 1 (doc)",
+      "responsible_party": "Company",
+      "source_description": "PDF; confirm no dual-class clause; source ref: B.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-03",
+      "label_or_prompt": "Corporate resolutions authorising the share issue",
+      "category": "Document: Constitutive & Registration; tier 1 (doc)",
+      "responsible_party": "Company",
+      "source_description": "PDF, signed; source ref: 6th 13.2\u201313.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-04",
+      "label_or_prompt": "Director register / KYC (national ID, CV, signed consent to act)",
+      "category": "Document: Governance & Registers; tier 1 (doc)",
+      "responsible_party": "Company",
+      "source_description": "Per director; source ref: 6th 9.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-05",
+      "label_or_prompt": "Certified copy of the share register",
+      "category": "Document: Governance & Registers; tier 1 (doc)",
+      "responsible_party": "Company secretary",
+      "source_description": "Certified PDF; source ref: 6th 11.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-06",
+      "label_or_prompt": "Board & committee minutes; committee terms of reference",
+      "category": "Document: Governance & Registers; tier 2",
+      "responsible_party": "Company",
+      "source_description": "PDF; source ref: 6th 9.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-07",
+      "label_or_prompt": "Audited IFRS financial statements (3 yrs MIMS / 1 yr SMEMS)",
+      "category": "Document: Financial; tier 3",
+      "responsible_party": "Auditor",
+      "source_description": "PDF, ISA audit opinion, going-concern confirmation; source ref: A.5, First Schedule",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-08",
+      "label_or_prompt": "Interim financial statements (audited or reviewed)",
+      "category": "Document: Financial; tier 3",
+      "responsible_party": "Auditor",
+      "source_description": "Where gap >9 months since year-end; source ref: 6th 12.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-09",
+      "label_or_prompt": "Five-year cash-flow statement",
+      "category": "Document: Financial; tier 3",
+      "responsible_party": "Auditor",
+      "source_description": "Extracted from audited accounts; source ref: 6th 12.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-10",
+      "label_or_prompt": "Reporting Accountant's Report",
+      "category": "Document: Financial; tier 3",
+      "responsible_party": "Reporting Accountant",
+      "source_description": "Independent of the statutory auditor; source ref: B.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-11",
+      "label_or_prompt": "Directors' capital-adequacy statement + supporting report",
+      "category": "Document: Financial; tier 2 + 3",
+      "responsible_party": "Directors + Auditor/Reporting Accountant",
+      "source_description": "Directors' text Tier 2, supporting report Tier 3; source ref: 6th 12.23\u201324",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-12",
+      "label_or_prompt": "Legal Opinion",
+      "category": "Document: Legal; tier 3",
+      "responsible_party": "Advocate",
+      "source_description": "See dedicated legal section, prior document; source ref: B.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-13",
+      "label_or_prompt": "Litigation / arbitration register (source for Legal Opinion and IM 7.9)",
+      "category": "Document: Legal; tier 2 (input)",
+      "responsible_party": "Company legal counsel",
+      "source_description": "Feeds Tier 3 Legal Opinion; not a substitute for it; source ref: 6th 7.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-14",
+      "label_or_prompt": "Material contract copies",
+      "category": "Document: Legal; tier 2 (input)",
+      "responsible_party": "Company",
+      "source_description": "Uploaded per Material Contracts entity; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-15",
+      "label_or_prompt": "Vendor agreements (asset purchase/acquisition)",
+      "category": "Document: Legal; tier 2 (input)",
+      "responsible_party": "Company / vendor",
+      "source_description": "PDF; source ref: Section C.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-16",
+      "label_or_prompt": "Property title documents and certified valuations",
+      "category": "Document: Legal; tier 3",
+      "responsible_party": "Licensed valuer",
+      "source_description": "Independent Valuation Standards (IVS) valuer; source ref: 6th 12.25\u201326",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-17",
+      "label_or_prompt": "Certificate of no objection (foreign regulator)",
+      "category": "Document: Legal; tier 3",
+      "responsible_party": "Foreign regulator",
+      "source_description": "Where already listed/regulated abroad; source ref: A.12",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-18",
+      "label_or_prompt": "Expert consent letters (for reports referenced in the IM)",
+      "category": "Document: Legal; tier 3",
+      "responsible_party": "Each named expert",
+      "source_description": "One per expert whose report is cited; source ref: 6th 11.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-19",
+      "label_or_prompt": "Transaction Advisor engagement/mandate letter",
+      "category": "Document: Transaction & Advisory; tier 3",
+      "responsible_party": "Transaction Advisor",
+      "source_description": "CMA-licensed investment bank/adviser; source ref: B.12, 6th 13.31",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-20",
+      "label_or_prompt": "Underwriting agreement",
+      "category": "Document: Transaction & Advisory; tier 2 (input)",
+      "responsible_party": "Underwriter / legal counsel",
+      "source_description": "Disclosure narrative drafted from this; source ref: B.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-21",
+      "label_or_prompt": "Sponsor due-and-careful-enquiry confirmation (SPAC only)",
+      "category": "Document: Transaction & Advisory; tier 3",
+      "responsible_party": "Sponsor",
+      "source_description": "Where a profit forecast is included; source ref: 6th 8.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-22",
+      "label_or_prompt": "Signed advisory-team agreements (full set) to the Authority",
+      "category": "Document: Transaction & Advisory; tier 3",
+      "responsible_party": "All advisors",
+      "source_description": "Submitted before offer opens; source ref: 6th 13.31",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-23",
+      "label_or_prompt": "Dividend policy",
+      "category": "Document: Policy Documents; tier 2",
+      "responsible_party": "Board (template-assisted)",
+      "source_description": "Board-approved policy document; source ref: A.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-24",
+      "label_or_prompt": "Allocation policy",
+      "category": "Document: Policy Documents; tier 2",
+      "responsible_party": "Transaction Advisor / Board",
+      "source_description": "Template-assisted; source ref: B.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-25",
+      "label_or_prompt": "Competent Person's Report (mineral/oil/gas issuers)",
+      "category": "Document: Sector-specific; tier 3",
+      "responsible_party": "Competent Person",
+      "source_description": "Additional inspection document, SMEMS extractive sector; source ref: 8th E.2 / 9th F.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-26",
+      "label_or_prompt": "Electronic-offer notification to the Authority",
+      "category": "Document: Regulatory Correspondence; tier 2",
+      "responsible_party": "Company / Compliance Officer",
+      "source_description": "Where offer is electronic; source ref: B.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-27",
+      "label_or_prompt": "Notice to Authority/exchange, 24 hrs before publishing offer result",
+      "category": "Document: Regulatory Correspondence; tier 2",
+      "responsible_party": "Compliance Officer",
+      "source_description": "Tracked deadline; source ref: B.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-28",
+      "label_or_prompt": "Draft Information Memorandum (assembled)",
+      "category": "Document: Platform Outputs; tier 1+2+3",
+      "responsible_party": "IBUKA (assembled from Tiers 1+2) + professional sign-off for Tier 3 sections",
+      "source_description": "Watermarked incomplete until all Tier 3 items received; source ref: B.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-29",
+      "label_or_prompt": "Abridged Information Memorandum",
+      "category": "Document: Platform Outputs; tier 2",
+      "responsible_party": "IBUKA template + Transaction Advisor review",
+      "source_description": "For adverts/notices; source ref: B.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "DOC-30",
+      "label_or_prompt": "Supplementary Information Memorandum",
+      "category": "Document: Platform Outputs; tier 2",
+      "responsible_party": "IBUKA template + Transaction Advisor review",
+      "source_description": "Triggered on material change; source ref: B.10",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 15; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-DIR-01",
+      "label_or_prompt": "Has any auditor resigned, been removed, or not been reappointed in the last 3 years? If yes, describe the circumstances and any concerns they raised.",
+      "category": "Narrative prompt: Directors & Advisers",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 1.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-ISS-01",
+      "label_or_prompt": "Describe the company's principal objects and activities. Are there any government protection or investment-encouragement laws that specifically benefit your business?",
+      "category": "Narrative prompt: Information on the Issuer",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 3.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-INS-01",
+      "label_or_prompt": "List any material documents (beyond the standard set) that should be made available for inspection during the offer period.",
+      "category": "Narrative prompt: Documents for Inspection",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 4.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-SC-01",
+      "label_or_prompt": "Summarise what your Articles of Association say about changing share capital and the rights attached to each class.",
+      "category": "Narrative prompt: Share Capital",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 5.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-SC-02",
+      "label_or_prompt": "Has trading in the last 2 years changed direction (e.g., new business lines, discontinued operations)? If results differ materially by segment, describe the breakdown.",
+      "category": "Narrative prompt: Share Capital",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 5.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-SC-03",
+      "label_or_prompt": "Describe the group and where this company sits within it (parent, subsidiaries, joint ventures).",
+      "category": "Narrative prompt: Share Capital",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 5.9",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MC-01",
+      "label_or_prompt": "For each material contract outside the ordinary course of business, summarise the parties, key terms, and consideration.",
+      "category": "Narrative prompt: Material Contracts",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 6.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MC-02",
+      "label_or_prompt": "If a controlling shareholder is involved, what contractual arrangements ensure the company can operate independently of them?",
+      "category": "Narrative prompt: Material Contracts",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 6.1.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MC-03",
+      "label_or_prompt": "If this issue relates to a merger, takeover, or asset acquisition, describe the consideration, how it was satisfied, and any resulting change to director pay.",
+      "category": "Narrative prompt: Material Contracts",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 6.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-01",
+      "label_or_prompt": "In a few paragraphs, describe your principal products/services and which are most important to revenue.",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-02",
+      "label_or_prompt": "Have you introduced any significant new products or activities? What stage of development are they at?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-03",
+      "label_or_prompt": "Describe your principal markets and how revenue breaks down by segment and geography.",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-04",
+      "label_or_prompt": "What material changes or developments has the business been through in the last 5 years?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-05",
+      "label_or_prompt": "Are there any exceptional factors an investor should know about when reading the above?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.6",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-06",
+      "label_or_prompt": "How dependent is the business on specific patents, licences, or key contracts?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.7",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-07",
+      "label_or_prompt": "Has the business had any interruption with a material effect in the last 9 months?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.10",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-08",
+      "label_or_prompt": "Describe your main investments over the last 5 years and this year, with figures.",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.11",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-09",
+      "label_or_prompt": "What future investments are firmly committed, and how will they be financed?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.13",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-10",
+      "label_or_prompt": "Describe your R&D policy over the last 3 financial years.",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.14",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-BUS-11",
+      "label_or_prompt": "If you've made any statements about your competitive position, what is the basis or source for them?",
+      "category": "Narrative prompt: Business Overview",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 7.15",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MDA-01",
+      "label_or_prompt": "What trends have you seen in production, sales, stock levels, order book, costs and prices since your last published accounts?",
+      "category": "Narrative prompt: MD&A / Prospects",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.1.1",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MDA-02",
+      "label_or_prompt": "What are your prospects for at least the current financial year? Note any material trade factors or risks not covered elsewhere.",
+      "category": "Narrative prompt: MD&A / Prospects",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.1.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-RISK-01",
+      "label_or_prompt": "List the key risks specific to your business or industry. For each, describe the mitigation measure your board has put in place.",
+      "category": "Narrative prompt: Risk Factors",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.2",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MDA-03",
+      "label_or_prompt": "Have net revenues changed materially? Describe the impact of inflation, foreign-currency movements (and hedging), and government factors on the business.",
+      "category": "Narrative prompt: MD&A / Prospects",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MDA-04",
+      "label_or_prompt": "If you're including a profit forecast, what are the principal assumptions behind it?",
+      "category": "Narrative prompt: MD&A / Prospects",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MDA-05",
+      "label_or_prompt": "What is the board's opinion, and the grounds for it, on the prospects of the business (and of any entity being acquired)?",
+      "category": "Narrative prompt: MD&A / Prospects",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 8.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-EMP-01",
+      "label_or_prompt": "Describe any staff share-participation scheme.",
+      "category": "Narrative prompt: Directors & Employees",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 9.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-EMP-02",
+      "label_or_prompt": "What does the Articles say about directors voting on contracts they're interested in, or on remuneration without an independent quorum?",
+      "category": "Narrative prompt: Directors & Employees",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 9.12",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-EMP-03",
+      "label_or_prompt": "Are there any arrangements with major shareholders, customers or suppliers relating to how directors or senior managers are selected?",
+      "category": "Narrative prompt: Directors & Employees",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 9.13",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MSH-01",
+      "label_or_prompt": "Are there any known arrangements that could lead to a future change of control?",
+      "category": "Narrative prompt: Major Shareholders",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 11.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-MSH-02",
+      "label_or_prompt": "Describe related-party transactions and loans over the last 5 years \u2014 with controlling entities, associates, or director/shareholder-owned enterprises, including outstanding amounts and terms.",
+      "category": "Narrative prompt: Major Shareholders",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 11.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-FIN-01",
+      "label_or_prompt": "Describe accounting consolidation principles used and which entities are included.",
+      "category": "Narrative prompt: Financial Information",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 12.17",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-FIN-02",
+      "label_or_prompt": "Has there been any significant change in your financial or trading position since the last published statements?",
+      "category": "Narrative prompt: Financial Information",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 12.12\u201313",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-FIN-03",
+      "label_or_prompt": "Are you satisfied your issued capital (including amounts to be raised) is adequate for at least the next 9 months? If not, explain the shortfall and funding plan.",
+      "category": "Narrative prompt: Financial Information",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 12.23\u201324",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-OFR-01",
+      "label_or_prompt": "Summarise the rights attached to the shares being offered (voting, profit-sharing, liquidation) for each class.",
+      "category": "Narrative prompt: The Offer & Listing",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 13.5",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-OFR-02",
+      "label_or_prompt": "Set out the directors' opinion on the minimum amount that must be raised, itemised by purpose (property purchase, expenses, debt repayment, working capital, other).",
+      "category": "Narrative prompt: The Offer & Listing",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 13.13",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-OFR-03",
+      "label_or_prompt": "If applicable to a foreign listing, describe any exchange-traded call option arrangements.",
+      "category": "Narrative prompt: The Offer & Listing",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 13.25",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-VEN-01",
+      "label_or_prompt": "Describe any indemnities, guarantees, warranties, or non-competition restrictions given by or imposed on vendors.",
+      "category": "Narrative prompt: Vendors",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 14.2\u201314.3",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-VEN-02",
+      "label_or_prompt": "How is accrued taxation liability treated under the vendor agreements?",
+      "category": "Narrative prompt: Vendors",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 14.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-VEN-03",
+      "label_or_prompt": "Confirm the assets have been transferred into the issuer's name, and disclose any cession or pledge over them.",
+      "category": "Narrative prompt: Vendors",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 6th 14.8",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    },
+    {
+      "id": "Q-INT-01",
+      "label_or_prompt": "Describe any public takeover offer involving the issuer's shares during the last and current financial year, and its outcome.",
+      "category": "Narrative prompt: Introduction Route (7th/9th Sch.)",
+      "responsible_party": "Company / adviser \u2014 proposed",
+      "source_description": "Applicability to be validated; source wording retained; source ref: 7th D.4",
+      "source_document": "IBUKA_Fields_Documents_UX.docx, table 16; supplied 22 Sep 2026 (undated content). https://app.clickup.com/t/869f4r6ne",
+      "validation": "supplied source; derived mapping draft"
+    }
+  ]
+}

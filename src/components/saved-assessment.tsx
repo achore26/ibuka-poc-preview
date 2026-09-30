@@ -1,349 +1,63 @@
 /*
- * Persisted assessment (B06/B07): the four provisional sample questions with
- * explicit save, load/resume and honest save/dirty state. The anonymous
- * review preview (review-preview.tsx) stays separate and transient; this
- * component is the signed-in, database-backed version.
+ * Persisted assessment (CMP Kenya, 30 September 2026 UX contract): the enabled
+ * ten-item sample with automatic saving. Every meaningful change — typed
+ * answers, Ready/Return-to-draft/N-A state actions and recorded N/A reasons —
+ * autosaves ~800ms after the change; explicit Retry/Save now remains as a
+ * fallback. Saves are serialized per item; a late acknowledgement can never
+ * mark a re-edited draft "Saved" (the current draft is compared with the
+ * acknowledged row and re-dirtied); queued writes stop on reload, account
+ * switch or unmount (epoch guards). Failures keep the latest visible edits,
+ * back off and stop after a bounded budget, and never fake "Saved".
  *
- * Rules implemented here and enforced again by the database:
- *  - typed answers and readiness states are separate data;
- *  - Ready requires an adequate typed answer (a recorded No to Q-DIR-01 is
- *    complete; Yes requires the details);
- *  - N/A is offered only for Q-OFR-03 and is valid only with a recorded
- *    reason;
- *  - success is reported only from server-confirmed rows; unsaved edits are
- *    always distinguishable and are never silently dropped or overwritten;
- *  - writes are serialized; concurrent first inserts are retried as updates.
+ * The dashboard metric derives ONLY from server-confirmed rows and is labelled
+ * self-reported prepared-for-review — not regulatory readiness.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  answerAdequate,
-  initialDemoAnswer,
-  type DemoAnswer,
-} from "@/lib/demo-sample";
-import {
-  isValidNa,
-  summarizeSampleProgress,
-  type SampleItemState,
-} from "@/lib/sample-progress";
-import {
-  answerDirty,
-  answerWriteIssue,
-  applyAnswerUpdate,
-  rowToDemoAnswer,
-} from "@/lib/app-data/answer-state";
-import { fetchAnswers, saveAnswer, updateCompanyName } from "@/lib/app-data/api";
-import {
-  fetchChecklist,
-  type ChecklistResult,
-  type NormalizedChecklistItem,
-} from "@/lib/app-data/checklist";
-import type { AnswerRow, CompanyRow } from "@/lib/app-data/types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AssessmentForm, type FormSection } from "@/components/assessment-form";
 import { DashboardPanel } from "@/components/dashboard-panel";
+import { PreparedGap, PreparedMetric, PreparedPanel } from "@/components/prepared-panel";
+import {
+  enabledFields,
+  enabledSections,
+  initialSampleAnswer,
+  type SampleAnswer,
+} from "@/lib/enabled-sample";
+import {
+  aggregateAutosave,
+  autosaveReducer,
+  dueDirtyItems,
+  dueRequeueItems,
+  initialAutosaveState,
+} from "@/lib/autosave";
+import {
+  applyAnswerUpdate,
+  answerDirty,
+  answerTextChanged,
+  answerWriteIssue,
+  rowToSampleAnswer,
+} from "@/lib/app-data/answer-state";
+import { summarizeSampleProgress, type SampleProgress } from "@/lib/sample-progress";
+import { fetchAnswers, saveAnswer, updateCompanyName } from "@/lib/app-data/api";
+import { fetchChecklist, type ChecklistResult, type NormalizedChecklistItem } from "@/lib/app-data/checklist";
+import type { AnswerRow, CompanyRow } from "@/lib/app-data/types";
 
 const hintClass = "text-xs leading-relaxed text-muted-foreground";
-const radioClass = "size-4 accent-primary";
 
 type LoadState =
   | { kind: "loading" }
   | { kind: "ready" }
   | { kind: "failed"; message: string };
 
-type ItemSaveState =
-  | { kind: "idle" }
-  | { kind: "saving" }
-  | { kind: "saved" }
-  | { kind: "error"; message: string };
-
 function formatSavedAt(updatedAt: string | null): string | null {
   if (!updatedAt) return null;
   const date = new Date(updatedAt);
   if (Number.isNaN(date.getTime())) return null;
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-}
-
-function StatusBadge({ field, answer }: { field: { id: string; allowsNa: boolean }; answer: DemoAnswer }) {
-  const naValid = isValidNa({
-    id: field.id,
-    status: answer.status,
-    allowsNa: field.allowsNa,
-    naReason: answer.naReason,
-  });
-  if (answer.status === "na") {
-    return naValid ? (
-      <Badge variant="secondary">N/A</Badge>
-    ) : (
-      <Badge variant="outline" className="text-muted-foreground">
-        N/A — reason required
-      </Badge>
-    );
-  }
-  switch (answer.status) {
-    case "ready":
-      return <Badge variant="secondary">Ready</Badge>;
-    case "in_progress":
-      return <Badge variant="outline">In progress</Badge>;
-    default:
-      return (
-        <Badge variant="outline" className="text-muted-foreground">
-          Not started
-        </Badge>
-      );
-  }
-}
-
-function ItemSaveBadge({
-  state,
-  dirty,
-  savedAt,
-}: {
-  state: ItemSaveState;
-  dirty: boolean;
-  savedAt: string | null;
-}) {
-  if (state.kind === "saving") {
-    return <Badge variant="outline">Saving…</Badge>;
-  }
-  if (state.kind === "error") {
-    return (
-      <Badge variant="outline" className="border-destructive/40 text-destructive">
-        Save failed
-      </Badge>
-    );
-  }
-  if (dirty) {
-    return <Badge variant="outline">Unsaved changes</Badge>;
-  }
-  return (
-    <Badge variant="outline" className="text-muted-foreground">
-      {savedAt ? `Saved ${savedAt}` : "No saved answer"}
-    </Badge>
-  );
-}
-
-function SavedField({
-  field,
-  answer,
-  dirty,
-  saveState,
-  savedAt,
-  onTypedChange,
-  onStatusChange,
-  onRetry,
-}: {
-  field: NormalizedChecklistItem;
-  answer: DemoAnswer;
-  dirty: boolean;
-  saveState: ItemSaveState;
-  savedAt: string | null;
-  onTypedChange: (patch: Partial<DemoAnswer>) => void;
-  onStatusChange: (patch: Partial<DemoAnswer>) => void;
-  onRetry: () => void;
-}) {
-  const adequate = answerAdequate(field, answer);
-
-  const options: Array<{ value: DemoAnswer["status"]; label: string; disabled: boolean }> = [
-    { value: "not_started", label: "Not started", disabled: false },
-    { value: "in_progress", label: "In progress", disabled: false },
-    { value: "ready", label: "Ready", disabled: !adequate },
-    ...(field.allowsNa
-      ? [{ value: "na" as const, label: "N/A — not a foreign listing", disabled: false }]
-      : []),
-  ];
-
-  return (
-    <li>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-            <span className="font-mono text-xs font-medium text-muted-foreground">
-              {field.id}
-            </span>
-            <StatusBadge field={field} answer={answer} />
-            <span className="ms-auto">
-              <ItemSaveBadge state={saveState} dirty={dirty} savedAt={savedAt} />
-            </span>
-          </div>
-          <CardTitle className="mt-1 text-pretty leading-snug">
-            {field.prompt}
-          </CardTitle>
-          <CardDescription className="text-xs">
-            Source: {field.source}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {field.control === "date" ? (
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`${field.id}-saved-date`} className="text-sm font-medium">
-                {field.shortLabel}
-              </label>
-              <Input
-                type="date"
-                id={`${field.id}-saved-date`}
-                value={answer.dateValue}
-                onChange={(event) => onTypedChange({ dateValue: event.target.value })}
-                className="h-9 sm:max-w-56"
-              />
-            </div>
-          ) : null}
-
-          {field.control === "yes-no" ? (
-            <div className="flex flex-col gap-1.5">
-              <fieldset>
-                <legend className="text-sm font-medium">{field.shortLabel}</legend>
-                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
-                  {(["yes", "no"] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="radio"
-                        name={`${field.id}-saved-yesno`}
-                        value={value}
-                        checked={answer.yesNo === value}
-                        onChange={() => onTypedChange({ yesNo: value })}
-                        className={radioClass}
-                      />
-                      <span className="capitalize">{value}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-              {answer.yesNo === "yes" ? (
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`${field.id}-saved-details`} className="text-sm font-medium">
-                    Circumstances and any concerns raised
-                  </label>
-                  <Textarea
-                    id={`${field.id}-saved-details`}
-                    rows={3}
-                    value={answer.text}
-                    onChange={(event) => onTypedChange({ text: event.target.value })}
-                    placeholder="Describe the circumstances and any concerns raised"
-                  />
-                </div>
-              ) : null}
-              <p className={hintClass}>
-                A recorded No is a complete answer; Yes requires the
-                circumstances above.
-              </p>
-            </div>
-          ) : null}
-
-          {field.control === "narrative" ? (
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`${field.id}-saved-narrative`} className="text-sm font-medium">
-                {field.shortLabel}
-              </label>
-              <Textarea
-                id={`${field.id}-saved-narrative`}
-                rows={4}
-                value={answer.text}
-                onChange={(event) => onTypedChange({ text: event.target.value })}
-                placeholder="Describe the principal objects and activities"
-              />
-            </div>
-          ) : null}
-
-          {field.control === "conditional-text" ? (
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`${field.id}-saved-text`} className="text-sm font-medium">
-                {field.shortLabel}
-              </label>
-              <Textarea
-                id={`${field.id}-saved-text`}
-                rows={3}
-                value={answer.text}
-                onChange={(event) => onTypedChange({ text: event.target.value })}
-                placeholder="Describe the arrangements, or record N/A with a reason below"
-              />
-              <p className={hintClass}>
-                N/A with a recorded reason is offered only for this item.
-              </p>
-            </div>
-          ) : null}
-
-          <fieldset className="mt-1 border-t pt-4">
-            <legend className="text-sm font-medium">Readiness</legend>
-            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
-              {options.map((option) => (
-                <label key={option.value} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    name={`${field.id}-saved-readiness`}
-                    value={option.value}
-                    checked={answer.status === option.value}
-                    disabled={option.disabled}
-                    onChange={() => onStatusChange({ status: option.value })}
-                    className={radioClass}
-                  />
-                  <span
-                    className={option.disabled ? "text-muted-foreground/70" : "text-foreground"}
-                  >
-                    {option.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-            {!adequate && answer.status !== "na" ? (
-              <p className={`${hintClass} mt-2`}>
-                Ready becomes available once an adequate answer is recorded above.
-              </p>
-            ) : null}
-            {answer.status === "na" && field.allowsNa ? (
-              <div className="mt-3 flex flex-col gap-1.5">
-                <label htmlFor={`${field.id}-saved-na-reason`} className="text-sm font-medium">
-                  Reason this is not a foreign listing
-                </label>
-                <Textarea
-                  id={`${field.id}-saved-na-reason`}
-                  rows={2}
-                  value={answer.naReason}
-                  onChange={(event) => onTypedChange({ naReason: event.target.value })}
-                  placeholder="Record why this item does not apply"
-                />
-                {answer.naReason.trim() === "" ? (
-                  <p className={hintClass}>
-                    A recorded reason is required for a valid N/A — until then the
-                    item stays in the progress denominator and counts as a gap,
-                    and it cannot be saved as N/A.
-                  </p>
-                ) : (
-                  <p className={hintClass}>
-                    Reason recorded — this item is excluded from the progress
-                    calculation once saved.
-                  </p>
-                )}
-              </div>
-            ) : null}
-          </fieldset>
-
-          {saveState.kind === "error" ? (
-            <div className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2">
-              <p role="alert" className="text-xs leading-relaxed">
-                {saveState.message}
-              </p>
-              <div>
-                <Button variant="outline" size="sm" onClick={onRetry}>
-                  Retry {field.id}
-                </Button>
-              </div>
-            </div>
-          ) : null}
-        </CardContent>
-      </Card>
-    </li>
-  );
 }
 
 export function SavedAssessment({
@@ -358,9 +72,10 @@ export function SavedAssessment({
   const [loadState, setLoadState] = useState<LoadState>({ kind: "loading" });
   const [checklist, setChecklist] = useState<ChecklistResult | null>(null);
   const [savedRows, setSavedRows] = useState<Record<string, AnswerRow | null>>({});
-  const [drafts, setDrafts] = useState<Record<string, DemoAnswer>>({});
-  const [itemStates, setItemStates] = useState<Record<string, ItemSaveState>>({});
-  const [globalSaving, setGlobalSaving] = useState(false);
+  const [drafts, setDrafts] = useState<Record<string, SampleAnswer>>({});
+  const [invalidDrafts, setInvalidDrafts] = useState<Record<string, string>>({});
+  const ids = useMemo(() => enabledFields.map((field) => field.id), []);
+  const [autosave, dispatchAutosave] = useReducer(autosaveReducer, ids, initialAutosaveState);
   const [renameBusy, setRenameBusy] = useState(false);
   const [renameError, setRenameError] = useState<string | null>(null);
 
@@ -368,38 +83,52 @@ export function SavedAssessment({
   draftsRef.current = drafts;
   const savedRowsRef = useRef(savedRows);
   savedRowsRef.current = savedRows;
-  const itemStatesRef = useRef(itemStates);
-  itemStatesRef.current = itemStates;
-  const dirtyMapRef = useRef<Record<string, boolean>>({});
-  const globalSavingRef = useRef(globalSaving);
-  globalSavingRef.current = globalSaving;
+  const autosaveRef = useRef(autosave);
+  autosaveRef.current = autosave;
+  const itemsRef = useRef<NormalizedChecklistItem[]>([]);
   const chainRef = useRef<Promise<void>>(Promise.resolve());
   const loadEpochRef = useRef(0);
 
   const items = checklist?.ok ? checklist.items : null;
+  itemsRef.current = items ?? [];
+
+  const sections: FormSection[] | null = useMemo(() => {
+    if (!items) return null;
+    return enabledSections.map((section) => ({
+      key: section.key,
+      title: section.title,
+      items: items
+        .filter((item) => item.sectionKey === section.key)
+        .map((item) => ({
+          id: item.id,
+          prompt: item.prompt,
+          shortLabel: item.shortLabel,
+          source: item.source,
+          control: item.control,
+          allowsNa: item.allowsNa,
+          selectOptions: item.selectOptions,
+        })),
+    }));
+  }, [items]);
 
   const dirtyMap = useMemo(() => {
     const map: Record<string, boolean> = {};
     if (!items) return map;
     for (const field of items) {
-      const draft = drafts[field.id] ?? initialDemoAnswer();
-      const saved = rowToDemoAnswer(savedRows[field.id] ?? null);
+      const draft = drafts[field.id] ?? initialSampleAnswer();
+      const saved = rowToSampleAnswer(savedRows[field.id] ?? null);
       map[field.id] = answerDirty(draft, saved);
     }
     return map;
   }, [items, drafts, savedRows]);
+  const dirtyMapRef = useRef(dirtyMap);
   dirtyMapRef.current = dirtyMap;
-
-  const anyDirty = items ? items.some((field) => dirtyMap[field.id]) : false;
-  const anySaving =
-    globalSaving ||
-    (items ? items.some((field) => itemStates[field.id]?.kind === "saving") : false);
 
   // Dashboard derives only from server-confirmed rows (the saved snapshot).
   const summary = useMemo(() => {
     if (!items) return null;
-    const states: SampleItemState[] = items.map((field) => {
-      const saved = rowToDemoAnswer(savedRows[field.id] ?? null);
+    const states = items.map((field) => {
+      const saved = rowToSampleAnswer(savedRows[field.id] ?? null);
       return {
         id: field.id,
         status: saved.status,
@@ -418,6 +147,13 @@ export function SavedAssessment({
     return latest;
   }, [savedRows]);
 
+  const aggregate = aggregateAutosave(autosave);
+  const anySaving = aggregate.saving > 0;
+  const anyDirty = aggregate.dirty > 0 || Object.values(dirtyMap).some(Boolean);
+  const anyFailed = aggregate.failed > 0;
+
+  // -- Load / resume -----------------------------------------------------------
+
   const loadAll = useCallback(async () => {
     const epoch = ++loadEpochRef.current;
     setLoadState({ kind: "loading" });
@@ -428,7 +164,6 @@ export function SavedAssessment({
         (error: Error) => ({ kind: "failed" as const, message: error.message }),
       ),
     ]);
-    // Fence: a newer load (or a sign-out/unmount) supersedes this response.
     if (epoch !== loadEpochRef.current) return;
     if (!checklistResult.ok) {
       setChecklist(checklistResult);
@@ -443,101 +178,148 @@ export function SavedAssessment({
       return;
     }
     const nextRows: Record<string, AnswerRow | null> = {};
-    const nextDrafts: Record<string, DemoAnswer> = {};
+    const nextDrafts: Record<string, SampleAnswer> = {};
     for (const field of checklistResult.items) {
       const row = answersResult.rows.find((entry) => entry.item_id === field.id) ?? null;
       nextRows[field.id] = row;
-      nextDrafts[field.id] = rowToDemoAnswer(row);
+      nextDrafts[field.id] = rowToSampleAnswer(row);
     }
     setChecklist(checklistResult);
     setSavedRows(nextRows);
     setDrafts(nextDrafts);
-    setItemStates({});
+    setInvalidDrafts({});
+    dispatchAutosave({ type: "reset", ids: checklistResult.items.map((item) => item.id) });
     setLoadState({ kind: "ready" });
   }, [client, company.id]);
 
   useEffect(() => {
     void loadAll();
-    return () => { loadEpochRef.current += 1; };
+    return () => {
+      loadEpochRef.current += 1;
+    };
   }, [loadAll]);
 
-  const runSaveBatch = useCallback(
-    async (keys: string[], itemsList: NormalizedChecklistItem[], epoch: number) => {
-      if (epoch !== loadEpochRef.current) return;
-      globalSavingRef.current = true;
-      setGlobalSaving(true);
-      try {
-        for (const key of keys) {
-          if (epoch !== loadEpochRef.current) return;
-          const field = itemsList.find((entry) => entry.id === key);
-          if (!field) continue;
-          const draft = draftsRef.current[key];
-          if (!draft) continue;
-          const saved = rowToDemoAnswer(savedRowsRef.current[key] ?? null);
-          if (!answerDirty(draft, saved)) continue; // already server-confirmed
-          const issue = answerWriteIssue(field, draft);
-          if (issue) {
-            setItemStates((previous) => ({ ...previous, [key]: { kind: "error", message: issue } }));
-            continue;
-          }
-          setItemStates((previous) => ({ ...previous, [key]: { kind: "saving" } }));
-          try {
-            const row = await saveAnswer(client, company.id, field, draft);
+  // -- Serialized saving ---------------------------------------------------------
+
+  /*
+   * Flushes one item now: validates the draft (invalid drafts show a
+   * validation message and are never posted), then INSERT/UPDATE through the
+   * real API. The captured draft comparison after success re-dirties the item
+   * when the user typed during the request — a late acknowledgement never
+   * falsely says Saved.
+   */
+  const flushIds = useCallback(
+    (keys: string[], epoch: number) => {
+      const itemsList = itemsRef.current;
+      for (const key of keys) {
+        const field = itemsList.find((entry) => entry.id === key);
+        const draft = draftsRef.current[key];
+        if (!field || !draft) continue;
+        chainRef.current = chainRef.current
+          .then(async () => {
             if (epoch !== loadEpochRef.current) return;
-            savedRowsRef.current = { ...savedRowsRef.current, [key]: row };
-            setSavedRows((previous) => ({ ...previous, [key]: row }));
-            setItemStates((previous) => ({ ...previous, [key]: { kind: "saved" } }));
-          } catch (error) {
-            if (epoch !== loadEpochRef.current) return;
-            const message = error instanceof Error ? error.message : "The answer was not saved.";
-            setItemStates((previous) => ({ ...previous, [key]: { kind: "error", message } }));
-          }
-        }
-      } finally {
-        if (epoch === loadEpochRef.current) { globalSavingRef.current = false; setGlobalSaving(false); }
+            const saved = rowToSampleAnswer(savedRowsRef.current[key] ?? null);
+            if (!answerDirty(draft, saved)) {
+              /*
+               * Already server-confirmed (D2): the edit was TEXTUALLY new
+               * (e.g. "5000 " over a saved canonical 5000) but numerically
+               * acknowledged-equal, so there is nothing to persist — the
+               * typed string stays in the control and no write is made.
+               * Settle the queue state to clean here so the item cannot sit
+               * "Unsaved changes" (and trip the unload guard) forever.
+               */
+              dispatchAutosave({ type: "flush", id: key, at: Date.now() });
+              dispatchAutosave({
+                type: "succeeded",
+                id: key,
+                savedAt: savedRowsRef.current[key]?.updated_at ?? "",
+              });
+              return;
+            }
+            dispatchAutosave({ type: "flush", id: key, at: Date.now() });
+            const issue = answerWriteIssue(field, draft);
+            if (issue) {
+              // Invalid typed draft (D1): show validation, post nothing, and
+              // park the item in the STABLE "invalid" state — excluded from
+              // the automatic queue until the next corrected edit (or Retry),
+              // so an untouched invalid draft can never loop retries. The
+              // draft-vs-saved dirty map still counts it for the unload guard.
+              setInvalidDrafts((previous) => ({ ...previous, [key]: issue }));
+              dispatchAutosave({ type: "invalid", id: key });
+              return;
+            }
+            try {
+              const row = await saveAnswer(client, company.id, field, draft);
+              if (epoch !== loadEpochRef.current) return;
+              savedRowsRef.current = { ...savedRowsRef.current, [key]: row };
+              setSavedRows((previous) => ({ ...previous, [key]: row }));
+              dispatchAutosave({ type: "succeeded", id: key, savedAt: row.updated_at });
+              const current = draftsRef.current[key];
+              if (current && answerDirty(current, rowToSampleAnswer(row))) {
+                dispatchAutosave({ type: "edit", id: key, at: Date.now() });
+              }
+            } catch (error) {
+              if (epoch !== loadEpochRef.current) return;
+              const message = error instanceof Error ? error.message : "The answer was not saved.";
+              dispatchAutosave({ type: "failed", id: key, message, at: Date.now() });
+            }
+          })
+          .catch(() => {
+            if (epoch === loadEpochRef.current) {
+              dispatchAutosave({ type: "failed", id: key, message: "The save did not complete.", at: Date.now() });
+            }
+          });
       }
     },
     [client, company.id],
   );
 
-  // Serialized writes: every batch runs after the previous one settles, and a
-  // batch skips items whose drafts were already confirmed by a newer state.
-  const enqueueSave = useCallback(
-    (keys: string[]) => {
-      if (!items || keys.length === 0) return;
-      const itemsList = items;
+  // Debounce tick: flush due items, requeue failed ones after backoff.
+  useEffect(() => {
+    const timer = window.setInterval(() => {
       const epoch = loadEpochRef.current;
-      chainRef.current = chainRef.current
-        .then(() => runSaveBatch(keys, itemsList, epoch))
-        .catch(() => {});
-    },
-    [items, runSaveBatch],
-  );
+      const state = autosaveRef.current;
+      const now = Date.now();
+      for (const id of dueDirtyItems(state, now)) flushIds([id], epoch);
+      for (const id of dueRequeueItems(state, now)) dispatchAutosave({ type: "requeue", id, at: now });
+    }, 200);
+    return () => window.clearInterval(timer);
+  }, [flushIds]);
 
-  function saveAll() {
-    if (!items) return;
-    const dirtyKeys = items.filter((field) => dirtyMap[field.id]).map((field) => field.id);
-    enqueueSave(dirtyKeys);
-  }
+  // -- Draft updates ---------------------------------------------------------------
 
+  /*
+   * Every MEANINGFUL change enters the dirty queue, not only typed edits: a
+   * Ready/Return-to-draft/N-A state action or a recorded N/A reason on a
+   * clean saved item must autosave too (bounded verification 30 September
+   * 2026 caught this wiring error: non-typed changes previously never
+   * dispatched "edit", so they waited for a manual save that the UI no
+   * longer requires). Meaningful is TEXTUAL against the prior draft (D2):
+   * saved "5000" then typing "5000 " is a real change — the typed string
+   * survives and the item re-queues; numeric semantic equality is used only
+   * when comparing a draft with a server-confirmed snapshot. A patch that
+   * changes nothing textually dispatches nothing — otherwise the item would
+   * sit "dirty" while the flush finds it already server-confirmed. `typed`
+   * still governs the demotion semantics inside applyAnswerUpdate (typing
+   * returns a ready item to draft).
+   */
   const updateDraft = useCallback(
-    (field: NormalizedChecklistItem, patch: Partial<DemoAnswer>, typed: boolean) => {
-      setDrafts((previous) => {
-        const prior = previous[field.id] ?? initialDemoAnswer();
-        return { ...previous, [field.id]: applyAnswerUpdate(field, prior, patch, typed) };
-      });
-      // A new edit after a failure clears the stale failure banner; the draft
-      // itself is always preserved.
-      setItemStates((previous) =>
-        previous[field.id]?.kind === "error"
-          ? { ...previous, [field.id]: { kind: "idle" } }
-          : previous,
+    (field: NormalizedChecklistItem, patch: Partial<SampleAnswer>, typed: boolean) => {
+      const prior = draftsRef.current[field.id] ?? initialSampleAnswer();
+      const next = applyAnswerUpdate(field, prior, patch, typed);
+      if (!answerTextChanged(next, prior)) return;
+      draftsRef.current = { ...draftsRef.current, [field.id]: next };
+      setDrafts((previous) => ({ ...previous, [field.id]: next }));
+      dispatchAutosave({ type: "edit", id: field.id, at: Date.now() });
+      setInvalidDrafts((previous) =>
+        previous[field.id] ? Object.fromEntries(Object.entries(previous).filter(([key]) => key !== field.id)) : previous,
       );
     },
     [],
   );
 
-  // Warn before leaving with unsaved edits or an in-flight save.
+  // -- Exit guards -------------------------------------------------------------------
+
   useEffect(() => {
     if (!anyDirty && !anySaving) return;
     const handler = (event: BeforeUnloadEvent) => {
@@ -545,39 +327,46 @@ export function SavedAssessment({
       event.returnValue = "";
     };
     const signOutHandler = (event: Event) => {
-      if (!window.confirm("You have unsaved changes or a save in progress. Sign out and leave these changes?")) event.preventDefault();
+      if (
+        !window.confirm(
+          "You have unsaved changes or a save in progress. Sign out and leave these changes?",
+        )
+      )
+        event.preventDefault();
     };
     window.addEventListener("beforeunload", handler);
-    window.addEventListener("daraja-before-signout", signOutHandler);
-    return () => { window.removeEventListener("beforeunload", handler); window.removeEventListener("daraja-before-signout", signOutHandler); };
+    window.addEventListener("cmp-before-signout", signOutHandler);
+    return () => {
+      window.removeEventListener("beforeunload", handler);
+      window.removeEventListener("cmp-before-signout", signOutHandler);
+    };
   }, [anyDirty, anySaving]);
 
-  // Background reconciliation only while clean and idle, so a refresh can
-  // never overwrite dirty edits or race an in-flight save.
+  // Background reconciliation only while fully clean and idle.
   useEffect(() => {
     function onFocus() {
+      if (aggregateAutosave(autosaveRef.current).saving > 0) return;
       if (Object.values(dirtyMapRef.current).some(Boolean)) return;
-      if (globalSavingRef.current) return;
       const epoch = loadEpochRef.current;
       fetchAnswers(client, company.id)
         .then((rows) => {
-          if (epoch !== loadEpochRef.current || globalSavingRef.current) return;
+          if (epoch !== loadEpochRef.current) return;
+          if (aggregateAutosave(autosaveRef.current).saving > 0) return;
           if (Object.values(dirtyMapRef.current).some(Boolean)) return;
           setSavedRows((previous) => {
             const next = { ...previous };
             for (const key of Object.keys(next)) {
               const row = rows.find((entry) => entry.item_id === key);
-              if (itemStatesRef.current[key]?.kind !== "saving") next[key] = row ?? null;
+              if (autosaveRef.current.items[key]?.kind !== "saving") next[key] = row ?? null;
             }
             return next;
           });
           setDrafts((previous) => {
             const next = { ...previous };
             for (const key of Object.keys(next)) {
+              if (autosaveRef.current.items[key]?.kind === "saving") continue;
               const row = rows.find((entry) => entry.item_id === key);
-              if (itemStatesRef.current[key]?.kind !== "saving") {
-                next[key] = rowToDemoAnswer(row ?? null);
-              }
+              next[key] = rowToSampleAnswer(row ?? null);
             }
             return next;
           });
@@ -606,17 +395,17 @@ export function SavedAssessment({
     }
   }
 
+  // -- Render ---------------------------------------------------------------------------
+
   if (loadState.kind === "failed") {
     return (
       <Card className="mt-6 lg:mt-8" size="sm">
         <CardHeader>
           <CardTitle className="text-base">Assessment unavailable</CardTitle>
-          <CardDescription className="max-w-[46em] leading-relaxed">
-            {loadState.message}
-          </CardDescription>
+          <CardDescription className="max-w-[46em] leading-relaxed">{loadState.message}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" onClick={() => void loadAll()}>
+          <Button variant="outline" className="h-11 sm:h-9" onClick={() => void loadAll()}>
             Retry loading
           </Button>
         </CardContent>
@@ -624,7 +413,7 @@ export function SavedAssessment({
     );
   }
 
-  if (loadState.kind === "loading" || !items) {
+  if (loadState.kind === "loading" || !items || !sections) {
     return (
       <p role="status" className="mt-8 text-sm text-muted-foreground">
         Loading your saved assessment…
@@ -632,60 +421,249 @@ export function SavedAssessment({
     );
   }
 
+  const savedTime = formatSavedAt(lastSavedAt);
+  const globalStatus = anySaving
+    ? "Saving…"
+    : anyFailed
+      ? "Could not save — check the marked entries and retry."
+      : aggregate.invalid > 0
+        ? "Some entries need attention before they can be saved."
+        : anyDirty
+          ? "Unsaved changes — saving shortly."
+          : savedTime
+            ? `All changes saved (last save ${savedTime}).`
+            : "Autosaves a few moments after you stop typing.";
+
+  const gaps: PreparedGap[] =
+    summary?.kind === "ok"
+      ? summary.gaps.map((gap) => {
+          const field = items.find((item) => item.id === gap.id);
+          return {
+            id: gap.id,
+            shortLabel: field?.shortLabel ?? gap.id,
+            statusNote:
+              gap.status === "not_started"
+                ? "not started"
+                : gap.status === "in_progress"
+                  ? "draft"
+                  : "N/A without a recorded reason",
+          };
+        })
+      : [];
+
   return (
-    <section aria-label="Saved sample assessment" className="mt-6 lg:mt-8">
-      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-6">
-        <div className="lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1">
+    <section aria-label="Saved sample assessment" className="mt-6 flex flex-col gap-5">
+      <div
+        role="status"
+        aria-live="polite"
+        className="panel flex flex-wrap items-center gap-x-3 gap-y-2 px-3.5 py-2.5 text-sm"
+      >
+        <span
+          className={
+            anyFailed || aggregate.invalid > 0
+              ? "font-medium text-destructive"
+              : anySaving || anyDirty
+                ? "font-medium"
+                : "text-muted-foreground"
+          }
+        >
+          {globalStatus}
+        </span>
+        {(anyDirty || anyFailed) && !anySaving ? (
+          <Button
+            className="ms-auto h-11 sm:h-9"
+            onClick={() => flushIds(Object.keys(dirtyMap).filter((key) => dirtyMap[key]), loadEpochRef.current)}
+          >
+            Save now
+          </Button>
+        ) : null}
+      </div>
+      {Object.keys(invalidDrafts).length > 0 ? (
+        <div role="alert" className="rounded-lg border border-destructive/40 bg-destructive/5 px-3.5 py-2.5 text-sm">
+          {Object.entries(invalidDrafts).map(([id, message]) => (
+            <p key={id}>{message}</p>
+          ))}
+          <p className={hintClass}>The marked entries stay visible and are not saved until they are valid.</p>
+        </div>
+      ) : null}
+
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <SavedForm
+          sections={sections}
+          drafts={drafts}
+          savedRows={savedRows}
+          autosave={autosave}
+          invalidDrafts={invalidDrafts}
+          items={items}
+          summary={summary}
+          onUpdate={updateDraft}
+          onRetry={(id) => {
+            setInvalidDrafts((previous) => Object.fromEntries(Object.entries(previous).filter(([key]) => key !== id)));
+            dispatchAutosave({ type: "retry", id, at: Date.now() });
+            flushIds([id], loadEpochRef.current);
+          }}
+        />
+
+        <div className="flex flex-col gap-4">
+          <div className="hidden lg:sticky lg:top-20 lg:block">
+            <PreparedPanel
+              summary={summary}
+              gaps={gaps}
+              savedNote="Saved entries only · confirmed by the database."
+              footer={
+                <div className="flex flex-wrap items-center gap-2">
+                  {anySaving ? (
+                    <Badge variant="outline">Saving…</Badge>
+                  ) : anyDirty ? (
+                    <Badge variant="outline">Unsaved changes</Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      {savedTime ? `Saved ${savedTime}` : "No saved entries yet"}
+                    </Badge>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-11 sm:h-7"
+                    disabled={!anyDirty || anySaving}
+                    onClick={() => flushIds(Object.keys(dirtyMap).filter((key) => dirtyMap[key]), loadEpochRef.current)}
+                  >
+                    Save now
+                  </Button>
+                </div>
+              }
+            />
+          </div>
+
           <DashboardPanel
             company={company}
-            summary={summary}
             items={items}
             savedRows={savedRows}
-            lastSavedAt={lastSavedAt}
-            anyDirty={anyDirty}
-            anySaving={anySaving}
-            onSaveAll={saveAll}
             onRename={submitRename}
             renameBusy={renameBusy}
             renameError={renameError}
           />
         </div>
-
-        <div className="flex flex-col gap-4 lg:col-start-1 lg:row-start-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <Button onClick={saveAll} disabled={!anyDirty || globalSaving}>
-              {globalSaving ? "Saving…" : "Save changes"}
-            </Button>
-            <span className="text-xs text-muted-foreground">
-              {anySaving
-                ? "Saving — entries below remain editable."
-                : anyDirty
-                  ? "Unsaved changes — Save writes them to the database."
-                  : lastSavedAt ? `All changes saved (last save ${formatSavedAt(lastSavedAt)}).` : "No saved entries yet."}
-            </span>
-          </div>
-          <ol className="flex flex-col gap-4">
-            {items.map((field) => (
-              <SavedField
-                key={field.id}
-                field={field}
-                answer={drafts[field.id] ?? initialDemoAnswer()}
-                dirty={dirtyMap[field.id] ?? false}
-                saveState={itemStates[field.id] ?? { kind: "idle" }}
-                savedAt={formatSavedAt(savedRows[field.id]?.updated_at ?? null)}
-                onTypedChange={(patch) => updateDraft(field, patch, true)}
-                onStatusChange={(patch) => updateDraft(field, patch, false)}
-                onRetry={() => enqueueSave([field.id])}
-              />
-            ))}
-          </ol>
-          <p className={hintClass}>
-            These entries are saved against the signed-in company above and are
-            self-reported. The sample and readiness rules remain provisional
-            proposals pending validation; they are not a regulatory finding.
-          </p>
-        </div>
       </div>
+
+      <p className={hintClass}>
+        Entries are saved against the signed-in company above and are self-reported. The sample and rules
+        remain proposals pending validation; they are not a regulatory finding. Preview-only sessions never
+        save anything.
+      </p>
     </section>
+  );
+}
+
+/*
+ * The autosaving form wrapper: maps the shared AssessmentForm to drafts and
+ * per-item autosave chips (Unsaved changes / Saving / Saved / Could not save +
+ * Retry).
+ */
+function SavedForm({
+  sections,
+  drafts,
+  savedRows,
+  autosave,
+  invalidDrafts,
+  items,
+  summary,
+  onUpdate,
+  onRetry,
+}: {
+  sections: FormSection[];
+  drafts: Record<string, SampleAnswer>;
+  savedRows: Record<string, AnswerRow | null>;
+  autosave: ReturnType<typeof autosaveReducer>;
+  invalidDrafts: Record<string, string>;
+  items: NormalizedChecklistItem[];
+  summary: SampleProgress | null;
+  onUpdate: (field: NormalizedChecklistItem, patch: Partial<SampleAnswer>, typed: boolean) => void;
+  onRetry: (id: string) => void;
+}) {
+  const [activeKey, setActiveKey] = useState(sections[0].key);
+
+  const sectionProgress = (key: string) => {
+    const sectionItems = items.filter((item) => item.sectionKey === key);
+    return {
+      ready: sectionItems.filter((item) => rowToSampleAnswer(savedRows[item.id] ?? null).status === "ready").length,
+      total: sectionItems.length,
+    };
+  };
+
+  const itemStatusSlot = (id: string) => {
+    const state = autosave.items[id];
+    if (!state) return null;
+    if (state.kind === "saving") return <Badge variant="outline">Saving…</Badge>;
+    if (state.kind === "dirty") return <Badge variant="outline">Unsaved changes</Badge>;
+    if (state.kind === "invalid") {
+      return (
+        <Badge variant="outline" className="border-destructive/40 text-destructive">
+          Needs attention
+        </Badge>
+      );
+    }
+    if (state.kind === "failed") {
+      return (
+        <span className="flex items-center gap-1.5">
+          <Badge variant="outline" className="border-destructive/40 text-destructive">
+            Could not save
+          </Badge>
+          <Button variant="outline" size="sm" className="h-11 sm:h-7" onClick={() => onRetry(id)}>
+            Retry
+          </Button>
+        </span>
+      );
+    }
+    const savedAt = formatSavedAt(savedRows[id]?.updated_at ?? null);
+    if (savedAt) {
+      return (
+        <Badge variant="outline" className="text-muted-foreground">
+          Saved {savedAt}
+        </Badge>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <AssessmentForm
+      sections={sections}
+      progress={sectionProgress}
+      answers={drafts}
+      activeKey={activeKey}
+      onSelectSection={setActiveKey}
+      onTypedChange={(id, patch) => {
+        const field = items.find((item) => item.id === id);
+        if (field) onUpdate(field, patch, true);
+      }}
+      onMarkReady={(id) => {
+        const field = items.find((item) => item.id === id);
+        if (field) onUpdate(field, { status: "ready" }, false);
+      }}
+      onReturnToDraft={(id) => {
+        const field = items.find((item) => item.id === id);
+        if (field) onUpdate(field, { status: "in_progress" }, false);
+      }}
+      onMarkNotApplicable={(id) => {
+        const field = items.find((item) => item.id === id);
+        if (field) onUpdate(field, { status: "na" }, false);
+      }}
+      onUndoNotApplicable={(id) => {
+        const field = items.find((item) => item.id === id);
+        if (field) onUpdate(field, { status: "in_progress" }, false);
+      }}
+      statusSlot={itemStatusSlot}
+      mobileSummary={
+        <div className="panel p-4">
+          <PreparedMetric summary={summary} compact />
+        </div>
+      }
+      navSuffix={
+        Object.keys(invalidDrafts).length > 0 ? (
+          <p className={hintClass}>Some entries have validation messages — see the marked questions.</p>
+        ) : undefined
+      }
+    />
   );
 }

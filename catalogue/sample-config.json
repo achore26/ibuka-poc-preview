@@ -1,0 +1,30 @@
+{
+  "config_version": 1,
+  "sample_version": "2026-09-cmp-sample-2",
+  "description": "Reviewed enabled-sample configuration for CMP Kenya (task cmp-catalogue-20260930). Selects the proposed ten source items by exact supplied ID, order, control metadata and section grouping. PRIVATE: this file and the generator input never enter src/, public/ or dist/; only tools/generate-sample.mjs reads them and emits the enabled-only runtime data plus the reviewable database seed.",
+  "source_file": "../input/catalogue-source.json",
+  "expected_source_revision": "CMP workbook v2 observed2026-09-30",
+  "sections": [
+    { "key": "company", "title": "Company details", "items": ["CP-01", "CP-07", "CP-13"] },
+    { "key": "financial", "title": "Financial position", "items": ["SC-03", "CP-16"] },
+    { "key": "business", "title": "Business", "items": ["Q-BUS-01", "Q-BUS-03"] },
+    { "key": "risk", "title": "Risk and outlook", "items": ["Q-RISK-01", "Q-FIN-02", "Q-FIN-03"] }
+  ],
+  "fields": [
+    { "id": "CP-01", "control": "text", "short_label": "Legal name" },
+    { "id": "CP-07", "control": "date", "short_label": "Date of incorporation" },
+    { "id": "CP-13", "control": "select", "short_label": "Listing segment", "select_options": ["MIMS", "SMEMS"] },
+    { "id": "SC-03", "control": "currency", "short_label": "Paid-up amount" },
+    { "id": "CP-16", "control": "currency_date", "short_label": "Total assets" },
+    { "id": "Q-BUS-01", "control": "narrative", "short_label": "Principal products and services" },
+    { "id": "Q-BUS-03", "control": "narrative", "short_label": "Principal markets and revenue" },
+    { "id": "Q-RISK-01", "control": "narrative", "short_label": "Business and industry risks" },
+    { "id": "Q-FIN-02", "control": "narrative", "short_label": "Changes since last statements" },
+    { "id": "Q-FIN-03", "control": "narrative", "short_label": "Capital adequacy and funding plan" }
+  ],
+  "outputs": {
+    "runtime_json": "src/lib/generated/enabled-sample.json",
+    "db_seed_migration": "../cmp-catalogue-db-20260930/supabase/migrations/20260930000100_cmp_sample_v2.sql",
+    "manifest": "catalogue/generated-manifest.json"
+  }
+}

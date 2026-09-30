@@ -11,6 +11,34 @@ export interface AuthSession {
 
 // One callback exchange per client, including React StrictMode's effect replay.
 const initializations = new WeakMap<SupabaseClient, Promise<AuthNotice | null>>();
+
+/*
+ * A missing PKCE verifier means THIS browser cannot find the original
+ * sign-in request for the link. Another browser/device is one known cause,
+ * but locally stored matching data can also be missing (cleared storage,
+ * a different profile, browser data cleanup), so the message must not
+ * definitively claim a device mismatch — it states the observable fact and
+ * the reliable recovery: request a fresh link and open it in this same
+ * browser on this same device.
+ */
+const MISSING_VERIFIER_MESSAGE =
+  "This browser could not find the original sign-in request for this link, so the link could not be matched " +
+  "to it. That can happen when the link was requested in a different browser or on a different device, or " +
+  "when this browser's stored sign-in request data is missing. Request a fresh link in this browser and open " +
+  "it in this same browser on this same device.";
+const EXPIRED_LINK_MESSAGE =
+  "That sign-in link has expired or was already used. Request a fresh link and open it in the same browser on " +
+  "the same device where you requested it.";
+const GENERIC_LINK_MESSAGE =
+  "That sign-in link could not be used. Request a fresh link and open it in the same browser on the same device " +
+  "where you requested it.";
+
+function callbackErrorMessage(errorCode: string | null): string {
+  if (errorCode === "pkce_code_verifier_not_found") return MISSING_VERIFIER_MESSAGE;
+  if (errorCode === "otp_expired") return EXPIRED_LINK_MESSAGE;
+  return GENERIC_LINK_MESSAGE;
+}
+
 function initialize(client: SupabaseClient): Promise<AuthNotice | null> {
   const existing = initializations.get(client);
   if (existing) return existing;
@@ -20,19 +48,30 @@ function initialize(client: SupabaseClient): Promise<AuthNotice | null> {
     const errorCode = url.searchParams.get("error_code") ?? hash.get("error_code");
     const hasError = url.searchParams.has("error") || hash.has("error") || !!errorCode;
     const code = url.searchParams.get("code");
+    let failureCode: string | null = null;
     try {
-      if (hasError) throw new Error(errorCode === "otp_expired" ? "That sign-in link has expired." : "That sign-in link could not be used.");
+      if (hasError) {
+        failureCode = errorCode;
+        throw new Error(errorCode ?? "unknown");
+      }
       if (code) {
         const { error } = await client.auth.exchangeCodeForSession(code);
-        if (error) throw error;
+        if (error) {
+          // The SDK reports a missing local PKCE verifier as
+          // pkce_code_verifier_not_found (cross-browser/device link use).
+          failureCode = typeof error.code === "string" ? error.code : null;
+          throw error instanceof Error ? error : new Error(failureCode ?? "unknown");
+        }
       }
       return null;
     } catch {
-      return { kind: "link-error", message: "That sign-in link could not be used or has expired. Request a new link and open it in the same browser where you requested it." };
+      return { kind: "link-error", message: callbackErrorMessage(failureCode) };
     } finally {
+      // Secrets leave the URL regardless of the outcome; tokens are never logged.
       if (code || hasError) {
         for (const key of ["code", "error", "error_code", "error_description"]) {
-          url.searchParams.delete(key); hash.delete(key);
+          url.searchParams.delete(key);
+          hash.delete(key);
         }
         url.hash = hash.toString();
         window.history.replaceState(null, "", url.pathname + url.search + url.hash);
