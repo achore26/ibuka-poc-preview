@@ -1,6 +1,6 @@
 # CMP Kenya release runbook
 
-Earlier sample-v2 baseline (app + DB), verified live on 30 September 2026. The later issuer design refinement below requires its own version-specific release evidence. Runtime app revision `336c2314ebf2f5e84e0dfbac09ca159392fe77ac`; database source revision `411f672bb971c021226228aa81b4837ddd17d187`. Documentation-only follow-ups preserve that runtime. Architecture and current evidence: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
+Current issuer design: runtime app revision `5ccf45ccfb9e761b7052fdfd32e1710b6797a330`, verified live on both hostnames on 30 September 2026 through production build `2908f8fb-b3f8-4c23-a2d9-ddbabceefc3b`. Database runtime source remains `411f672bb971c021226228aa81b4837ddd17d187`. Architecture, exact asset hashes, verification scope and remaining gaps: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
 
 ## 1. Local verification (app repo)
 
@@ -13,7 +13,7 @@ Prerequisite Node ≥ 22 (`engines`), then `npm ci`.
 - `npm run test:ui` — **mock** UI suite ([`tests/ui-milestone.spec.ts`](../tests/ui-milestone.spec.ts), loopback `55473`, in-memory PostgREST-shaped adapter, unexpected requests rejected). Frontend wiring only; never citable as database proof.
 - `DARAJA_DB_WORKTREE=../cmp-catalogue-db-20260930 npm run test:browser` — real-stack suite ([`tests/assessment.spec.ts`](../tests/assessment.spec.ts) via `tests/run-local.mjs`): real local Auth/REST + Mailpit. **Set `DARAJA_DB_WORKTREE` explicitly**: the runner defaults to `../ibuka-recovery-db`, the old recovery stack on `553xx`, which this worktree must not touch.
 
-App scripts: [`package.json`](../package.json). Final local verification on 30 September 2026: unit, build, privacy and diff checks exit 0; all 8 mock UI tests and all 6 real-stack browser tests pass. Desktop/mobile evidence confirms working navigation, keyboard focus restoration, no overflow and 44-pixel mobile action targets in normal and reduced motion.
+App scripts: [`package.json`](../package.json). Earlier sample-v2 baseline: unit/build/privacy/diff, eight mock UI tests and six real-stack tests passed. The later issuer design verified all 17 UI scenarios (one slow numeric case passed an isolated repeat), repeated affected final layout/label checks, and passed all six real-stack tests. See the technical guide for the exact release evidence. Desktop/mobile evidence confirms working navigation, keyboard focus restoration, no overflow and 44-pixel mobile action targets in normal and reduced motion.
 
 ## 2. Local verification (DB repo)
 
@@ -50,7 +50,7 @@ Current change is a local release candidate until hosted readback. It changes pr
 2. Run unit/guard/guidance fixtures, production build, privacy and whitespace checks. Compare the generated sample/IDs/options to the release base and supplied fields.
 3. Run `CMP_UI_PORT=55483 npm run test:ui` for this linked worktree: mocked frontend checks, including next-question focus, review-ready withheld during pending edits, all guidance/error references, failure/retry and390×844 screenshots. Run the six real local Auth/Mailpit/REST browser checks with the explicit isolated DB worktree; the real suite excludes `ui-*.spec.ts`.
 4. Inspect desktop/mobile screenshots and keyboard/error/save states. Counts use saved rows; preview is clearly temporary, does not transfer and never posts answers. Only sign-in/onboarding can start a saved workspace.
-5. Independent GLM candidate review is **waived for this bounded pass by Barak on30September2026 following quota failure**. Do not report it as completed or generalise the exception to other releases.
+5. Independent GLM candidate review is **waived for this bounded pass by Barak on 30 September 2026 following quota failure**. Do not report it as completed or generalise the exception to other releases.
 6. Commit only explicit source/docs paths; exclude the untracked `node_modules` symlink and test/evidence artifacts. Merge through existing KASIB GitHub/Workers Builds. Verify the build's actual commit and served JS/CSS bytes on both HTTPS origins. Exercise affected live preview/sign-in/synthetic save/resume/navigation; use only controlled synthetic test rows and clean up only owned fixtures.
 7. Record exact runtime ref, test exits, screenshots, hosted results and the waiver in a version-specific receipt. Update ClickUp task evidence without treating technical release as Trevor/Willie acceptance.
 
