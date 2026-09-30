@@ -1,8 +1,8 @@
 {
   "name": "daraja-staging",
   "private": true,
-  "version": "0.1.0",
-  "description": "Daraja (working name) - static staging frontend for the IBUKA Phase 1 proof of concept by KASIB.",
+  "version": "0.2.0",
+  "description": "CMP Kenya (IBUKA Phase 1 POC) static staging frontend by KASIB; repo name retained from the Daraja-era repository.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -11,8 +11,11 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts && node --experimental-strip-types src/lib/app-data/answer-state.test.ts",
-    "test:browser": "node tests/run-local.mjs"
+    "sample:generate": "node tools/generate-sample.mjs",
+    "check:privacy": "node tools/check-privacy.mjs",
+    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts && node --experimental-strip-types src/lib/app-data/answer-state.test.ts && node --experimental-strip-types src/lib/autosave.test.ts && node tools/generate-sample.test.mjs",
+    "test:browser": "node tests/run-local.mjs",
+    "test:ui": "npx playwright test -c playwright.ui.config.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117.2",

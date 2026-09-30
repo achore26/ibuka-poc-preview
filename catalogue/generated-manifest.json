@@ -1,0 +1,30 @@
+{
+  "sample_version": "2026-09-cmp-sample-2",
+  "source_revision": "CMP workbook v2 observed2026-09-30",
+  "source_sha256": "ba138203c0fbfac761c1188913fd60f067a269d833b71c88e7967a6965bb93a8",
+  "source_file_sha256": "954017a160b2ec0167f8311a72f67281bd8de5d96a25bf62152438be67af0cd4",
+  "config_path": "catalogue/sample-config.json",
+  "counts": {
+    "source_entries": 197,
+    "source_structured": 126,
+    "source_narrative_prompts": 41,
+    "source_documents": 30,
+    "enabled": 10
+  },
+  "outputs": {
+    "src/lib/generated/enabled-sample.json": "0bdeb89f9ec195f754a1a4245a2348b1ee1f832eca8b47b9abc5bb7809ec6335",
+    "../cmp-catalogue-db-20260930/supabase/migrations/20260930000100_cmp_sample_v2.sql": "f3dda8606bebe2f0694612c4193977afca9a7defe80f650272376773eba7ddf5"
+  },
+  "enabled_ids": [
+    "CP-01",
+    "CP-07",
+    "CP-13",
+    "SC-03",
+    "CP-16",
+    "Q-BUS-01",
+    "Q-BUS-03",
+    "Q-RISK-01",
+    "Q-FIN-02",
+    "Q-FIN-03"
+  ]
+}

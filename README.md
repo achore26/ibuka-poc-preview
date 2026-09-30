@@ -1,12 +1,45 @@
-# Daraja — IBUKA Phase 1 staging frontend
+# CMP Kenya — IBUKA Phase 1 staging frontend
 
-**Daraja** is the confirmed working product name (Barak, 23 September 2026) for the IBUKA
-Phase 1 proof of concept, with the line **"Bridging business and capital"**. This private
-KASIB repository holds the static frontend that builds to `dist/` for the KASIB
-Cloudflare Worker `ibuka-poc` (Workers Builds with static assets). `ibuka-poc` remains
-the working repository name; IBUKA remains the project context.
+**CMP Kenya** is the current application identity for the IBUKA Phase 1 proof of concept.
+This private KASIB repository holds the static frontend that builds to `dist/` for the
+KASIB Cloudflare Worker `ibuka-poc` (Workers Builds with static assets). The earlier
+**Daraja** product name and the four-item review preview are **historical** — see the
+historical-evidence sections below; the top-of-file status they describe is superseded.
 
-This repository is currently the **B04 staging foundation plus a demo-only review preview**:
+## Current status — CMP workspace redesign, 30 September 2026 (UNSHIPPED)
+
+The application is now the CMP Kenya listing-preparation workspace: a light workspace
+composed with a deep navy section rail and restrained red accents, leading with the
+assessment itself. **This redesign is implemented, locally built and locally tested only —
+not deployed, not client-approved, and no cloud write or deployment has been made.**
+
+| Area | Status |
+| --- | --- |
+| Selected sample | **Ten questions** (`2026-09-cmp-sample-2`, generated from the reviewed private config; prompts verbatim) across four sections — Company details, Financial position, Business, Risk and outlook |
+| Anonymous preview | In-memory only; reload resets; no API writes; worked example `7/10 = 70%` labelled as sample |
+| Magic-link sign-in | Compact header action opening an accessible Radix dialog ("Start a saved assessment"); behaviour unchanged (PKCE, same-origin return) |
+| Saved assessment + autosave | Implemented (28 September recovery basis); redesign preserves autosave, explicit Ready/draft, stale-ack guards, dirty-signout warning |
+| Correctness fixes D1–D5 (30 Sept) | Implemented + unit regressions: stable invalid state (no retry loop), textual UI-change detection, unique compound-control error ids, describedby-only-when-rendered, checklist `allows_na` drift rejection |
+| Scoring | Self-reported prepared-for-review only; never a listing eligibility or approval finding |
+| Deployment | **Not deployed.** `wrangler.jsonc` now declares `cmpkenya.co.ke` as an additional Custom Domain route alongside `ibuka.co.ke` (same pinned KASIB account/Worker/public vars; existing resources only, no deploy performed) |
+
+Sample-denominator history: the earlier deployed review preview used a **four-item**
+sample (ids CP-07, Q-DIR-01, Q-ISS-01, Q-OFR-03); only **CP-07** is also part of the
+selected ten, so 4→10 progress figures are **not comparable**. Historical answers to the
+old four items are retained by separate additive database work (52 REST + 16 upgrade
+checks passed locally; the reviewed new migration is **not yet shipped**). No database
+proof is claimed from this repository. The real-stack suite `tests/assessment.spec.ts`
+(`npm run test:browser`) is preserved verbatim for the separate DB-integration phase and
+was NOT run for the redesign (parent instruction: do not reset the real stack).
+
+Docs: [`docs/technical-guide.md`](docs/technical-guide.md) ·
+[`docs/release-runbook.md`](docs/release-runbook.md) (docs owner maintains these two
+files; app changes must not edit them).
+
+## Historical status — Daraja foundation and four-item review preview (superseded)
+
+The sections below this line record the earlier Daraja-era revisions as evidence. Their
+"current status" claims are historical and superseded by the CMP status table above:
 
 | Area | Status |
 | --- | --- |
@@ -37,7 +70,9 @@ npm ci            # clean install exactly from package-lock.json
 npm run dev       # local dev server with hot reload
 npm run build     # typecheck (tsc --noEmit) + production build to dist/
 npm run preview   # serve the built dist/ locally at http://localhost:4173
-npm test          # built-in Node fixtures for the pure sample-progress calculator
+npm test          # built-in Node fixtures (sample-progress, answer-state, autosave, generator)
+npm run check:privacy   # prove private catalogue ids/prompts never reach dist/
+npm run test:ui   # ADDITIONAL mock-adapter browser suite (Chrome, loopback 55473; mocked, no DB/RLS/email proof)
 ```
 
 `npm test` runs `src/lib/sample-progress.test.ts` directly on Node's TypeScript

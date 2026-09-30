@@ -11,8 +11,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { AssessmentFieldSpec, DemoAnswer } from "./answer-state";
-import { demoAnswerToRowFields, type AnswerWriteFields } from "./answer-state";
+import type { AssessmentFieldSpec, SampleAnswer } from "./answer-state";
+import { sampleAnswerToRowFields, type AnswerWriteFields } from "./answer-state";
 import type { AnswerRow, CompanyRow } from "./types";
 
 export class ApiError extends Error {
@@ -131,9 +131,9 @@ export async function saveAnswer(
   client: SupabaseClient,
   companyId: string,
   field: AssessmentFieldSpec,
-  answer: DemoAnswer,
+  answer: SampleAnswer,
 ): Promise<AnswerRow> {
-  const fields: AnswerWriteFields = demoAnswerToRowFields(field.control, answer);
+  const fields: AnswerWriteFields = sampleAnswerToRowFields(field.control, answer);
   try {
     const { data, error } = await client
       .from("assessment_answer")

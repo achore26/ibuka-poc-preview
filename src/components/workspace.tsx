@@ -87,7 +87,7 @@ export function Workspace({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" onClick={() => void loadCompany()}>
+          <Button variant="outline" className="h-11 sm:h-9" onClick={() => void loadCompany()}>
             Retry loading
           </Button>
         </CardContent>

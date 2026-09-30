@@ -82,11 +82,12 @@ export function OnboardingPanel({
                 if (createState.kind !== "creating") setCreateState({ kind: "idle" });
               }}
               disabled={createState.kind === "creating"}
+              className="h-11 sm:h-9"
             />
           </div>
           <Button
             type="submit"
-            className="sm:mt-6"
+            className="h-11 sm:mt-6 sm:h-9"
             disabled={!lengthOk || createState.kind === "creating"}
           >
             {createState.kind === "creating" ? "Creating…" : "Create company"}

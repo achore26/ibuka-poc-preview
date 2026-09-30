@@ -7,6 +7,10 @@
     {
       "pattern": "ibuka.co.ke",
       "custom_domain": true
+    },
+    {
+      "pattern": "cmpkenya.co.ke",
+      "custom_domain": true
     }
   ],
   "assets": {
