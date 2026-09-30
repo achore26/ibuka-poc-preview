@@ -8,7 +8,7 @@ import { Workspace } from "@/components/workspace";
 import { useAuthSession } from "@/lib/auth-session";
 import { getAccountDataClient, getSupabaseClient } from "@/lib/supabase-client";
 import { checkSupabaseConnectivity, type ConnectivityResult } from "./lib/supabase-status";
-import { EXPECTED_SAMPLE_VERSION, enabledFields, enabledSections } from "@/lib/enabled-sample";
+import { EXPECTED_SAMPLE_VERSION } from "@/lib/enabled-sample";
 
 const statusClassByState: Record<ConnectivityResult["state"], string> = {
   reachable: "status-ok",
@@ -22,7 +22,7 @@ function describeResult(result: ConnectivityResult): string {
     case "reachable":
       return `Reachable — the Supabase API responded with HTTP ${result.httpStatus}.`;
     case "not-configured":
-      return "Not configured — the public Supabase URL is missing or not HTTPS, or the publishable key is missing.";
+      return "Not configured — the public Supabase URL is missing, is not an approved test target (only the shared synthetic test project or a local loopback stack is allowed), or the publishable key is missing.";
     case "unreachable":
       return "Unreachable — no response from the Supabase project URL (network or DNS failure).";
     case "unexpected-response":
@@ -110,6 +110,38 @@ function BrandMark({ className = "" }: { className?: string }) {
   );
 }
 
+/*
+ * Persistent TEST WORKSPACE banner (guidance task, 30 September 2026): the
+ * whole current deployment — both domains, one shared synthetic Supabase
+ * project — is test-only, so the banner stays visible in every auth state
+ * (signed-out preview, onboarding, signed-in workspace). When nothing is
+ * signed in, the copy also says the preview itself saves nothing.
+ */
+function TestWorkspaceBanner({ previewActive }: { previewActive: boolean }) {
+  return (
+    <div
+      role="note"
+      aria-label="Test workspace"
+      className="shrink-0 border-b border-border bg-card"
+      style={{ boxShadow: "inset 0.25rem 0 0 var(--status-warn)" }}
+    >
+      <div className="mx-auto flex w-full max-w-[90rem] flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 sm:px-6">
+        <span
+          className="text-[0.68rem] font-semibold uppercase tracking-[0.12em]"
+          style={{ color: "var(--status-warn)" }}
+        >
+          Test workspace
+        </span>
+        <p className="min-w-0 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+          {previewActive
+            ? "Use fictional company data. Preview entries are not saved."
+            : "Use fictional company data. Signed-in entries save to the test database."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const client = useMemo(() => getSupabaseClient(), []);
   const auth = useAuthSession(client);
@@ -131,7 +163,7 @@ export default function App() {
     <SectionNavProvider value={setNav}>
       <div className="flex min-h-svh flex-col bg-background font-sans text-foreground">
         <header className="sticky top-0 z-40 shrink-0 bg-rail text-white">
-          <div className="mx-auto flex h-14 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="mx-auto flex h-16 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
             <div className="flex min-w-0 items-center gap-2.5">
               <BrandMark />
               <span className="min-w-0">
@@ -176,6 +208,8 @@ export default function App() {
           </div>
         </header>
 
+        <TestWorkspaceBanner previewActive={!signedIn && auth.phase !== "restoring"} />
+
         {showNoticeBar ? (
           <div className="shrink-0 border-b border-destructive/25 bg-destructive/5">
             <p role="alert" className="mx-auto max-w-[90rem] px-4 py-2 text-xs leading-relaxed text-foreground sm:px-6">
@@ -187,7 +221,7 @@ export default function App() {
         <div className="mx-auto flex w-full max-w-[90rem] flex-1 items-stretch">
           <SectionRail nav={nav} />
 
-          <main className="min-w-0 flex-1 px-4 pb-16 pt-6 sm:px-8 lg:px-10 lg:pt-8">
+          <main className="min-w-0 flex-1 px-4 pb-16 pt-6 sm:px-8 lg:px-8 lg:pt-8">
             <div className="mx-auto flex w-full max-w-[71.5rem] flex-col">
               {auth.phase === "restoring" ? (
                 <p role="status" className="text-sm text-muted-foreground">
@@ -195,33 +229,25 @@ export default function App() {
                 </p>
               ) : signedIn && client && sessionUser ? (
                 <>
-                  <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-                    <div>
-                      <h1 className="text-2xl font-semibold tracking-tight sm:text-[1.7rem]">
-                        Listing preparation
-                      </h1>
-                      <p className="mt-1 max-w-[52em] text-sm leading-relaxed text-muted-foreground">
-                        {enabledFields.length} selected questions across{" "}
-                        {enabledSections.length} sections. Entries save
-                        automatically to your synthetic test company; the
-                        content remains proposed pending validation.
-                      </p>
-                    </div>
-                  </div>
                   <Workspace key={sessionUser.id} client={dataClient!} user={sessionUser} />
                 </>
               ) : (
                 <>
                   <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
                     <div>
-                      <h1 className="text-2xl font-semibold tracking-tight sm:text-[1.7rem]">
-                        Listing preparation
+                      <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Proposed sample pending validation</p>
+                      <h1 className="max-w-[25ch] text-[30px] font-semibold leading-9 tracking-tight">
+                        Prepare your company’s listing assessment.
                       </h1>
-                      <p className="mt-1 max-w-[52em] text-sm leading-relaxed text-muted-foreground">
-                        {enabledFields.length} selected questions across{" "}
-                        {enabledSections.length} sections. Proposed content
-                        pending validation.
+                      <p className="mt-2 max-w-prose text-base leading-6 text-muted-foreground">
+                        Work through company details, financial position, business, and risk.
                       </p>
+                      {auth.phase !== "unconfigured" ? (
+                        <div className="mt-4 flex flex-wrap items-center gap-3">
+                          <Button className="h-11" onClick={() => setSignInOpen(true)}>Sign in to save</Button>
+                          <Button variant="ghost" className="h-11" onClick={() => document.getElementById("preview-start")?.scrollIntoView({ block: "start" })}>Explore the preview</Button>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
@@ -231,15 +257,17 @@ export default function App() {
                         <CardTitle className="text-base">Sign-in unavailable</CardTitle>
                         <CardDescription className="max-w-[46em] leading-relaxed">
                           The public Supabase URL or publishable key is not
-                          configured, so magic-link sign-in and the saved assessment
-                          are unavailable in this build. The preview below still
-                          works.
+                          configured for an approved test target (only the
+                          shared synthetic test project or a local loopback
+                          stack is allowed), so magic-link sign-in and the
+                          saved assessment are unavailable in this build. The
+                          preview below still works.
                         </CardDescription>
                       </CardHeader>
                     </Card>
                   ) : null}
 
-                  <div className="mt-6">
+                  <div id="preview-start" className="mt-6 scroll-mt-20">
                     <ReviewPreview />
                   </div>
 

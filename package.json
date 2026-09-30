@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "sample:generate": "node tools/generate-sample.mjs",
     "check:privacy": "node tools/check-privacy.mjs",
-    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts && node --experimental-strip-types src/lib/app-data/answer-state.test.ts && node --experimental-strip-types src/lib/autosave.test.ts && node tools/generate-sample.test.mjs",
+    "test": "node --experimental-strip-types src/lib/sample-progress.test.ts && node --experimental-strip-types src/lib/app-data/answer-state.test.ts && node --experimental-strip-types src/lib/autosave.test.ts && node --experimental-strip-types src/lib/project-url-guard.test.ts && node --experimental-strip-types src/lib/selected-guidance.test.ts && node tools/generate-sample.test.mjs",
     "test:browser": "node tests/run-local.mjs",
     "test:ui": "npx playwright test -c playwright.ui.config.ts"
   },

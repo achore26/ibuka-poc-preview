@@ -1,3 +1,5 @@
+import { isApprovedSupabaseProjectUrl } from "@/lib/project-url-guard";
+
 export interface PublicRuntimeConfig {
   supabaseUrl: string | null;
   supabasePublishableKey: string | null;
@@ -7,28 +9,17 @@ function readNonEmptyString(value: unknown): string | null {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 }
 
-function isLoopbackHostname(hostname: string): boolean {
-  const normalized = hostname.toLowerCase();
-  return (
-    normalized === "localhost" ||
-    normalized.endsWith(".localhost") ||
-    normalized === "::1" ||
-    normalized === "[::1]" ||
-    /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(normalized)
-  );
-}
-
-// HTTPS is required so the publishable key is never sent to an insecure origin;
-// plain http is accepted only for loopback addresses during local development.
+/*
+ * Test-only release target safeguard (fail closed): the ONLY approved hosted
+ * target is the shared synthetic project URL verified in
+ * src/lib/project-url-guard.ts; loopback http/https keeps the local stack
+ * working. Any other URL — another hosted project, a spoofed host, userinfo,
+ * a non-root path, a query/hash or an unintended port — is rejected here so a
+ * build-time env override can never point Auth/Data initialization at an
+ * arbitrary project. The page then honestly reports "not configured".
+ */
 function parseProjectUrl(value: string): string | null {
-  try {
-    const url = new URL(value);
-    if (url.protocol === "https:") return value;
-    if (url.protocol === "http:" && isLoopbackHostname(url.hostname)) return value;
-    return null;
-  } catch {
-    return null;
-  }
+  return isApprovedSupabaseProjectUrl(value) ? value : null;
 }
 
 export function loadConfig(): PublicRuntimeConfig {

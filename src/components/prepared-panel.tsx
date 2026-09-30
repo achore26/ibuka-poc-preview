@@ -11,6 +11,7 @@
  * listing approval.
  */
 
+import { Button } from "@/components/ui/button";
 import type { SampleProgress } from "@/lib/sample-progress";
 
 export interface PreparedGap {
@@ -78,57 +79,60 @@ export function PreparedMetric({
   );
 }
 
-export function GapDisclosure({ gaps }: { gaps: PreparedGap[] }) {
-  if (gaps.length === 0) {
-    return (
-      <p className="text-xs leading-relaxed text-muted-foreground">
-        None — every selected item is prepared for review.
-      </p>
-    );
-  }
+export function GapDisclosure({ gaps, onNavigate }: { gaps: PreparedGap[]; onNavigate?: (id: string) => void }) {
+  if (gaps.length === 0) return null;
   return (
-    <details className="group/gaps text-xs">
-      <summary className="min-h-11 cursor-pointer select-none rounded py-2 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:py-0">
-        Remaining items ({gaps.length})
-      </summary>
-      <ul className="mt-1.5 flex flex-col gap-1 border-l pl-3 leading-relaxed">
+    <details className="text-sm">
+      <summary className="flex min-h-11 cursor-pointer items-center rounded text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">View remaining items ({gaps.length})</summary>
+      <ol className="mt-1 flex flex-col border-l pl-3">
         {gaps.map((gap) => (
           <li key={gap.id}>
-            <span className="font-medium text-foreground">{gap.shortLabel}</span>
-            <span className="text-muted-foreground"> — {gap.statusNote}</span>
+            <button type="button" className="min-h-11 w-full rounded py-2 text-left text-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring" onClick={() => onNavigate?.(gap.id)}>
+              {gap.shortLabel}<span className="text-muted-foreground"> — {gap.statusNote}</span>
+            </button>
           </li>
         ))}
-      </ul>
+      </ol>
     </details>
   );
 }
 
-export function PreparedPanel({
-  summary,
-  gaps,
-  savedNote,
-  footer,
-}: {
+export function PreparedPanel({ summary, gaps, savedNote, onNavigate, completeAllowed = false, preview = false, firstId }: {
   summary: SampleProgress | null;
   gaps: PreparedGap[];
   savedNote: string;
-  footer?: React.ReactNode;
+  onNavigate: (id: string) => void;
+  completeAllowed?: boolean;
+  preview?: boolean;
+  firstId: string;
 }) {
+  const allReady = summary?.kind === "ok" && summary.ready === summary.applicable && summary.applicable > 0;
+  const reviewReady = allReady && completeAllowed && !preview;
   return (
-    <aside aria-label="Assessment progress" className="panel flex flex-col gap-3.5 p-4">
+    <aside aria-label="Assessment progress" className="panel flex flex-col gap-4 p-5">
       <div>
-        <h3 className="text-sm font-semibold tracking-tight">Progress</h3>
-        <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{savedNote}</p>
+        <h3 className="text-sm font-semibold">{preview ? "Preview progress" : "Your progress"}</h3>
+        <p className="mt-1 text-sm leading-5 text-muted-foreground">{savedNote}</p>
       </div>
       <PreparedMetric summary={summary} />
-      <div className="border-t pt-3">
-        <GapDisclosure gaps={gaps} />
+      <div className="border-t pt-4">
+        {reviewReady ? (
+          <>
+            <p className="text-base font-semibold leading-6">Your sample answers are ready for review.</p>
+            <Button variant="outline" className="mt-3 h-11 w-full" onClick={() => onNavigate(firstId)}>Review answers</Button>
+          </>
+        ) : gaps.length > 0 ? (
+          <>
+            <p className="text-sm text-muted-foreground">Next</p>
+            <p className="mt-1 text-base font-semibold leading-6">{gaps[0].shortLabel}</p>
+            <Button className="mt-3 h-11 w-full" onClick={() => onNavigate(gaps[0].id)}>Continue</Button>
+            <GapDisclosure gaps={gaps} onNavigate={onNavigate} />
+          </>
+        ) : allReady ? (
+          <p className="text-sm leading-6">{preview ? "All preview items are marked ready. Sign in to start a saved assessment." : "Finish saving your latest changes before reviewing your answers."}</p>
+        ) : null}
       </div>
-      {footer ? <div className="border-t pt-3">{footer}</div> : null}
-      <p className="border-t pt-3 text-xs leading-relaxed text-muted-foreground">
-        Self-reported preparation for review — not a listing eligibility or
-        approval result.
-      </p>
+      <p className="border-t pt-4 text-sm leading-5 text-muted-foreground">This records your preparation; it is not a listing eligibility or approval result.</p>
     </aside>
   );
 }

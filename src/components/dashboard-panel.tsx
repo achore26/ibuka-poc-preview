@@ -182,7 +182,9 @@ export function DashboardPanel({
   renameError: string | null;
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <details className="text-sm">
+      <summary className="flex min-h-11 cursor-pointer items-center rounded font-medium focus-visible:outline-2 focus-visible:outline-ring">Workspace details</summary>
+      <div className="flex flex-col gap-4">
       <SavedStatesCard items={items} savedRows={savedRows} />
       <CompanyCard
         company={company}
@@ -190,6 +192,7 @@ export function DashboardPanel({
         renameBusy={renameBusy}
         renameError={renameError}
       />
-    </div>
+      </div>
+    </details>
   );
 }

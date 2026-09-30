@@ -134,6 +134,7 @@ interface Adapter {
   rows: Map<string, StoredRow>;
   writes: CapturedWrite[];
   failWrites: boolean;
+  holdWrites?: Promise<void>;
   /** Failed (503) write attempts per item — observes the bounded retry budget. */
   failedAttempts: Record<string, number>;
   /** Requests the adapter does not model — must stay empty; never forwarded. */
@@ -180,6 +181,7 @@ async function installSyntheticApi(page: Page): Promise<Adapter> {
         return json(route, rows);
       }
       const body = route.request().postDataJSON() as Partial<StoredRow>;
+      if (adapter.holdWrites) await adapter.holdWrites;
       if (adapter.failWrites) {
         // Count the failed attempt so tests can observe the bounded retry
         // budget deterministically (three automatic attempts, then stop).
@@ -368,7 +370,7 @@ test('invalid draft rests in a stable needs-attention state with zero writes; a 
     .poll(() => adapter.writes.filter((write) => write.itemId === 'SC-03').length, { timeout: 10_000 })
     .toBe(1);
   expect(adapter.writes[0]?.body.answer_number).toBe(5000);
-  await expect(paidUp.getByText(/^Saved /)).toBeVisible();
+  await waitForAllSaved(page);
   await waitForAllSaved(page);
 
   expect(adapter.unexpected).toEqual([]);
@@ -394,7 +396,7 @@ test('typing a trailing space on a saved amount keeps the typed string and settl
   await paidUp.locator('#SC-03-amount').fill('5000 ');
   await expect(paidUp.locator('#SC-03-amount')).toHaveValue('5000 ');
   await expect(paidUp.getByText('Unsaved changes', { exact: true })).toHaveCount(0, { timeout: 10_000 });
-  await expect(paidUp.getByText(/^Saved /)).toBeVisible();
+  await waitForAllSaved(page);
   await waitForAllSaved(page);
   await page.waitForTimeout(2500);
   expect(adapter.writes.filter((write) => write.itemId === 'SC-03').length).toBe(0);
@@ -474,14 +476,14 @@ test('state changes autosave without a manual save: Ready on a clean saved draft
 
   // Regression (30 Sept 2026): clicking Ready on a clean saved item must
   // autosave — no manual "Save now" anywhere in this flow.
-  await legalName.getByRole('button', { name: 'Ready for review', exact: true }).click();
+  await legalName.getByRole('button', { name: 'Mark ready for review', exact: true }).click();
   await expect
     .poll(() => adapter.writes.filter((write) => write.itemId === 'CP-01').length, { timeout: 10_000 })
     .toBe(1);
   const readyWrite = adapter.writes.find((write) => write.itemId === 'CP-01');
   expect(readyWrite?.method).toBe('PATCH'); // seeded row -> insert conflicted, update path taken
   expect(readyWrite?.status).toBe('ready');
-  await expect(legalName.getByText(/^Saved /)).toBeVisible();
+  await waitForAllSaved(page);
   await waitForAllSaved(page);
 
   // Reload: readiness came back from the (adapter-backed) saved row.
@@ -544,7 +546,7 @@ test('acknowledged numeric canonicalisation settles clean: typed 1.00 vs saved 1
   // The typed text is preserved (not clobbered by the acknowledgement) and
   // the item is CLEAN: Saved chip, no Unsaved-changes chip.
   await expect(paidUp.locator('#SC-03-amount')).toHaveValue('1.00');
-  await expect(paidUp.getByText(/^Saved /)).toBeVisible();
+  await waitForAllSaved(page);
   await expect(paidUp.getByText('Unsaved changes', { exact: true })).toHaveCount(0);
   await waitForAllSaved(page);
 
@@ -603,7 +605,7 @@ test('failed saves keep edits, Retry recovers, and mobile touch targets stay >=4
     .poll(() => adapter.writes.filter((write) => write.itemId === 'Q-BUS-01').length, { timeout: 10_000 })
     .toBe(1);
   expect(adapter.writes[0].status).toBe('in_progress');
-  await expect(products.getByText(/^Saved /)).toBeVisible();
+  await waitForAllSaved(page);
 
   expect(adapter.unexpected).toEqual([]);
 });
@@ -660,4 +662,72 @@ test('one visible label per short typed field with programmatic association; sou
   await expect(incorporation.getByText('Supplied ID CP-07')).toBeVisible();
   await expect(incorporation.getByText(/6th 3\.3 \/ A\.1/)).toBeVisible();
   await expect(incorporation.getByText('Verbatim source question: “Date of incorporation”')).toBeVisible();
+});
+
+
+test('Continue and remaining-item links switch section and focus the unresolved input', async ({ page }) => {
+  const adapter = await installSyntheticApi(page);
+  for (const id of ['CP-01', 'CP-07', 'CP-13']) {
+    adapter.seedAnswer(id, { ...EMPTY_ANSWER, status: 'ready',
+      answer_text: id === 'CP-01' ? 'Synthetic legal name' : null,
+      answer_date: id === 'CP-07' ? '1995-06-15' : null,
+      answer_select: id === 'CP-13' ? 'MIMS' : null,
+    });
+  }
+  await signInSynthetic(page);
+  await waitForSavedAssessment(page);
+  const panel = page.getByRole('complementary', { name: 'Assessment progress' });
+  await expect(panel.getByText('3 of 10')).toBeVisible();
+  await panel.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.locator('#SC-03-amount')).toBeFocused();
+  await panel.getByText('View remaining items (7)', { exact: true }).click();
+  await panel.getByRole('button', { name: /Principal products and services/ }).click();
+  await expect(page.locator('#Q-BUS-01-narrative')).toBeFocused();
+  expect(adapter.unexpected).toEqual([]);
+});
+
+test('review-ready is withheld during a held edit even when saved progress is 10 of 10', async ({ page }) => {
+  const adapter = await installSyntheticApi(page);
+  for (const section of enabled.sections) for (const item of section.items) {
+    const row = { ...EMPTY_ANSWER, status: 'ready' };
+    if (item.control === 'text' || item.control === 'narrative') row.answer_text = 'Synthetic complete answer';
+    if (item.control === 'date' || item.control === 'currency_date') row.answer_date = '2025-12-31';
+    if (item.control === 'currency' || item.control === 'currency_date') row.answer_number = 5000;
+    if (item.control === 'select') row.answer_select = 'MIMS';
+    adapter.seedAnswer(item.id, row);
+  }
+  await signInSynthetic(page);
+  await waitForSavedAssessment(page);
+  const panel = page.getByRole('complementary', { name: 'Assessment progress' });
+  await expect(panel.getByText('Your sample answers are ready for review.')).toBeVisible();
+  let release!: () => void;
+  adapter.holdWrites = new Promise<void>((resolve) => { release = resolve; });
+  try {
+    await page.locator('#CP-01-text').fill('Synthetic changed legal name');
+    await expect(panel.getByText('10 of 10')).toBeVisible();
+    await expect(panel.getByText('Your sample answers are ready for review.')).toHaveCount(0);
+    await expect(panel.getByText('Progress reflects the last saved answers.')).toBeVisible();
+    await expect(panel.getByRole('button', { name: 'Review answers' })).toHaveCount(0);
+    await expect(page.getByText('Saving…', { exact: true }).first()).toBeVisible();
+  } finally { release(); adapter.holdWrites = undefined; }
+  await waitForAllSaved(page);
+  await expect(panel.getByText('9 of 10')).toBeVisible();
+  await expect(panel.getByRole('button', { name: 'Continue' })).toBeVisible();
+  expect(adapter.unexpected).toEqual([]);
+});
+
+test('drafting mobile first input is above the fold; desktop/mobile screenshots retain the workspace hierarchy', async ({ page }) => {
+  const adapter = await installSyntheticApi(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signInSynthetic(page);
+  await waitForSavedAssessment(page);
+  const bounds = await page.locator('#CP-01-text').boundingBox();
+  expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(844);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expectMobileTouchTargets(page);
+  await page.screenshot({ path: 'test-results/cmp-issuer-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+  await page.screenshot({ path: 'test-results/cmp-issuer-desktop.png', fullPage: true });
+  expect(adapter.unexpected).toEqual([]);
 });

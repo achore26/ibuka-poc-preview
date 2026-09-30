@@ -20,6 +20,7 @@ import {
   numberValueIssue,
   type SampleAnswer,
 } from "@/lib/enabled-sample";
+import { getSelectedGuidance } from "@/lib/selected-guidance";
 
 export interface FieldSpecLike {
   id: string;
@@ -33,6 +34,28 @@ export interface FieldSpecLike {
 
 const hintClass = "text-xs leading-relaxed text-muted-foreground";
 const controlClass = "h-11 sm:h-9";
+/* Guidance is modest muted readable help (14px), a size up from the 12px
+ * validation hints so "what to enter" stays easier to read than errors. */
+const helpClass = "text-sm leading-relaxed text-muted-foreground";
+
+/*
+ * ids of the elements ALWAYS RENDERED for this field that describe its
+ * controls: the guidance block (rendered for every enabled id) and, when
+ * authored, the always-visible control note (e.g. both segment definitions
+ * for CP-13). Issue-element ids are appended per control only while that
+ * issue element is actually rendered.
+ */
+function fieldHelpIds(field: FieldSpecLike): string[] {
+  const guidance = getSelectedGuidance(field.id);
+  if (!guidance) return [];
+  const ids = [`${field.id}-help`];
+  if (guidance.controlNote) ids.push(`${field.id}-note`);
+  return ids;
+}
+
+function joinDescribed(ids: string[]): string | undefined {
+  return ids.length > 0 ? ids.join(" ") : undefined;
+}
 
 export function FieldStatusBadge({ answer }: { answer: SampleAnswer }) {
   if (answer.status === "na") return <Badge variant="secondary">Not applicable</Badge>;
@@ -70,11 +93,14 @@ function ControlError({ id, issue }: { id: string; issue: string | null }) {
  * keep a short visible secondary label above the textarea, and compound
  * controls keep a visible label where two inputs must be told apart.
  *
- * aria-describedby contract (D3/D4, 30 September 2026): every describedby
- * target is the id of an issue element that is ACTUALLY RENDERED for that
- * exact control — compound currency_date controls use distinct ids for the
- * amount and the as-at date (never a shared/duplicated id), and the plain
- * text control, which renders no issue element, omits describedby entirely.
+ * aria-describedby contract (D3/D4 + guidance task, 30 September 2026): every
+ * describedby target is the id of an element that is ACTUALLY RENDERED for
+ * that exact control. Each actual input/select/textarea references its
+ * rendered guidance (and the field's always-rendered control note when
+ * authored) plus its OWN rendered issue element — compound currency_date
+ * controls use distinct ids for the amount and the as-at date (never a
+ * shared/duplicated id). A control with neither guidance nor a rendered
+ * issue omits describedby entirely.
  */
 function FieldControl({
   field,
@@ -85,6 +111,7 @@ function FieldControl({
   answer: SampleAnswer;
   onTypedChange: (patch: Partial<SampleAnswer>) => void;
 }) {
+  const baseIds = fieldHelpIds(field);
   switch (field.control) {
     case "text":
       return (
@@ -96,6 +123,7 @@ function FieldControl({
             value={answer.text}
             onChange={(event) => onTypedChange({ text: event.target.value })}
             aria-labelledby={`${field.id}-prompt`}
+            aria-describedby={joinDescribed(baseIds)}
           />
         </div>
       );
@@ -110,31 +138,35 @@ function FieldControl({
             value={answer.dateValue}
             onChange={(event) => onTypedChange({ dateValue: event.target.value })}
             aria-labelledby={`${field.id}-prompt`}
-            aria-describedby={issue ? `${field.id}-date-issue` : undefined}
+            aria-describedby={joinDescribed(issue ? [...baseIds, `${field.id}-date-issue`] : baseIds)}
           />
           <ControlError id={`${field.id}-date-issue`} issue={issue} />
         </div>
       );
     }
-    case "select":
+    case "select": {
+      const guidance = getSelectedGuidance(field.id);
       return (
         <div className="flex flex-col gap-1.5">
           <select
             id={`${field.id}-select`}
-            className={`${controlClass} w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring sm:max-w-56`}
+            className={`${controlClass} w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring sm:max-w-72`}
             value={answer.selectValue}
             onChange={(event) => onTypedChange({ selectValue: event.target.value })}
             aria-labelledby={`${field.id}-prompt`}
+            aria-describedby={joinDescribed(baseIds)}
           >
             <option value="">Choose…</option>
             {(field.selectOptions ?? []).map((option) => (
               <option key={option} value={option}>
-                {option}
+                {/* Expanded label is display-only; the STORED value stays the exact option. */}
+                {guidance?.selectOptionLabels?.[option] ?? option}
               </option>
             ))}
           </select>
         </div>
       );
+    }
     case "currency": {
       const issue = numberValueIssue(answer.numberValue);
       return (
@@ -144,11 +176,11 @@ function FieldControl({
             className={`${controlClass} sm:max-w-56`}
             inputMode="decimal"
             autoComplete="off"
-            placeholder="0.00"
+            placeholder="2500000.50"
             value={answer.numberValue}
             onChange={(event) => onTypedChange({ numberValue: event.target.value })}
             aria-labelledby={`${field.id}-prompt`}
-            aria-describedby={issue ? `${field.id}-amount-issue` : undefined}
+            aria-describedby={joinDescribed(issue ? [...baseIds, `${field.id}-amount-issue`] : baseIds)}
           />
           <ControlError id={`${field.id}-amount-issue`} issue={issue} />
         </div>
@@ -165,11 +197,13 @@ function FieldControl({
               className={`${controlClass} sm:max-w-56`}
               inputMode="decimal"
               autoComplete="off"
-              placeholder="0.00"
+              placeholder="2500000.50"
               value={answer.numberValue}
               onChange={(event) => onTypedChange({ numberValue: event.target.value })}
               aria-labelledby={`${field.id}-prompt`}
-              aria-describedby={amountIssue ? `${field.id}-amount-issue` : undefined}
+              aria-describedby={joinDescribed(
+                amountIssue ? [...baseIds, `${field.id}-amount-issue`] : baseIds,
+              )}
             />
             <ControlError id={`${field.id}-amount-issue`} issue={amountIssue} />
           </div>
@@ -183,7 +217,9 @@ function FieldControl({
               className={`${controlClass} sm:max-w-56`}
               value={answer.dateValue}
               onChange={(event) => onTypedChange({ dateValue: event.target.value })}
-              aria-describedby={dateIssue ? `${field.id}-as-at-issue` : undefined}
+              aria-describedby={joinDescribed(
+                dateIssue ? [...baseIds, `${field.id}-as-at-issue`] : baseIds,
+              )}
             />
             <ControlError id={`${field.id}-as-at-issue`} issue={dateIssue} />
           </div>
@@ -201,13 +237,14 @@ function FieldControl({
             rows={5}
             value={answer.text}
             onChange={(event) => onTypedChange({ text: event.target.value })}
+            aria-describedby={joinDescribed(baseIds)}
           />
         </div>
       );
     case "yes-no":
       return (
         <div className="flex flex-col gap-1.5">
-          <fieldset>
+          <fieldset aria-describedby={joinDescribed(baseIds)}>
             <legend className="text-sm font-medium">{field.shortLabel}</legend>
             <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
               {(["yes", "no"] as const).map((value) => (
@@ -235,6 +272,7 @@ function FieldControl({
                 rows={3}
                 value={answer.text}
                 onChange={(event) => onTypedChange({ text: event.target.value })}
+                aria-describedby={joinDescribed(baseIds)}
               />
             </div>
           ) : null}
@@ -252,6 +290,7 @@ function FieldControl({
             rows={3}
             value={answer.text}
             onChange={(event) => onTypedChange({ text: event.target.value })}
+            aria-describedby={joinDescribed(baseIds)}
           />
         </div>
       );
@@ -259,12 +298,39 @@ function FieldControl({
 }
 
 /*
+ * The proposed plain-language guidance for one enabled field: rendered
+ * DIRECTLY UNDER the verbatim prompt heading, always visible — never behind
+ * the Source disclosure and never only a control placeholder. Proposed
+ * product help, not validated content (see src/lib/selected-guidance.ts).
+ * The id is stable per field so every control references it through
+ * aria-describedby.
+ */
+function FieldGuidanceBlock({ field }: { field: FieldSpecLike }) {
+  const guidance = getSelectedGuidance(field.id);
+  if (!guidance) return null;
+  return (
+    <div id={`${field.id}-help`} className={`mt-1.5 flex flex-col gap-1 ${helpClass}`}>
+      <p className="text-pretty"><span className="font-medium text-foreground">Guidance: </span>{guidance.intro}</p>
+      {guidance.bullets && guidance.bullets.length > 0 ? (
+        <ul className="list-disc space-y-0.5 ps-4">
+          {guidance.bullets.map((bullet) => (
+            <li key={bullet}>{bullet}</li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/*
  * One assessment field: verbatim prompt heading (the single visible label for
- * short typed controls — see FieldControl), a secondary "Source" disclosure
+ * short typed controls — see FieldControl), the always-visible proposed
+ * guidance (FieldGuidanceBlock), a secondary "Source" disclosure
  * holding the supplied ID, the exact source reference and the verbatim source
  * question (provenance stays available without printing it on every card),
- * the typed control, and the explicit state actions. `statusSlot` carries the
- * per-item autosave indicator in the saved form.
+ * the typed control plus the always-visible control note (e.g. both CP-13
+ * segment definitions), and the explicit state actions. `statusSlot` carries
+ * the per-item autosave indicator in the saved form.
  */
 export function AssessmentField({
   field,
@@ -288,11 +354,12 @@ export function AssessmentField({
   const adequate = answerAdequate(field, answer);
   const missing = missingForReview(field, answer);
   const markingNotApplicable = answer.status === "na";
+  const controlNote = getSelectedGuidance(field.id)?.controlNote;
 
   return (
-    <article aria-label={field.shortLabel}>
+    <article id={`question-${field.id}`} aria-label={field.shortLabel}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <h4 id={`${field.id}-prompt`} className="text-pretty text-[15px] font-semibold leading-snug">
+        <h4 id={`${field.id}-prompt`} className="text-pretty text-[17px] font-semibold leading-6">
           {field.prompt}
         </h4>
         <span className="ms-auto flex items-center gap-2">
@@ -300,18 +367,8 @@ export function AssessmentField({
           {statusSlot}
         </span>
       </div>
-      <details className="mt-1 text-xs text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer select-none rounded py-2 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:py-0">
-          Source
-        </summary>
-        <div className="mt-1 flex flex-col gap-0.5 border-l pl-3 leading-relaxed">
-          <p>
-            Supplied ID <span className="font-mono">{field.id}</span> · Source ref{" "}
-            <span className="font-mono">{field.source}</span>
-          </p>
-          <p>Verbatim source question: “{field.prompt}”</p>
-        </div>
-      </details>
+      <FieldGuidanceBlock field={field} />
+
 
       <div className="mt-4 flex flex-col gap-4">
         {markingNotApplicable ? (
@@ -341,13 +398,19 @@ export function AssessmentField({
           </div>
         ) : (
           <>
-            <FieldControl field={field} answer={answer} onTypedChange={onTypedChange} />
+            <div className="flex flex-col gap-2">
+              <FieldControl field={field} answer={answer} onTypedChange={onTypedChange} />
+              {controlNote && controlNote.length > 0 ? (
+                <div id={`${field.id}-note`} className={`flex flex-col gap-0.5 ${helpClass}`}>
+                  {controlNote.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+              ) : null}
+            </div>
             <div className="flex flex-col gap-2 border-t pt-4 sm:flex-row sm:items-center sm:gap-3">
               {answer.status === "ready" ? (
                 <>
-                  <p className="text-sm text-muted-foreground" role="status">
-                    Marked ready for review.
-                  </p>
                   <Button
                     variant="outline"
                     className="h-11 sm:ms-auto sm:h-9"
@@ -364,7 +427,7 @@ export function AssessmentField({
                     aria-describedby={adequate ? undefined : `${field.id}-missing`}
                     onClick={onMarkReady}
                   >
-                    Ready for review
+                    Mark ready for review
                   </Button>
                   {field.allowsNa ? (
                     <Button variant="outline" className="h-11 sm:h-9" onClick={onMarkNotApplicable}>
@@ -380,6 +443,18 @@ export function AssessmentField({
           </>
         )}
       </div>
+      <details className="mt-1 text-xs text-muted-foreground">
+        <summary className="min-h-11 cursor-pointer select-none rounded py-2 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:py-0">
+          Source
+        </summary>
+        <div className="mt-1 flex flex-col gap-0.5 border-l pl-3 leading-relaxed">
+          <p>
+            Supplied ID <span className="font-mono">{field.id}</span> · Source ref{" "}
+            <span className="font-mono">{field.source}</span>
+          </p>
+          <p>Verbatim source question: “{field.prompt}”</p>
+        </div>
+      </details>
     </article>
   );
 }

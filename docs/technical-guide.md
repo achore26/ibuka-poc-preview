@@ -83,3 +83,45 @@ Verified on 30 September 2026:
 - Independent GLM-5.3 blind resolutions and candidate comparisons completed for backend and UI; this is a separate attempt on the same model/provider, not model diversity. Runtime proof is from the actual checks above.
 
 Open business work: Trevor's validation of the selected questions/content and agreed examples, the wider requirements matrix, template/dictionary conflicts, and formal acceptance/handover. The full 197-entry catalogue is retained internally; full repeatable-table forms, document vault and template generation remain later scope. User journeys are the next product review. Deployment does not imply regulatory validation, contractual acceptance or completion of Phase 2.
+
+
+## Issuer journey and guidance refinement — 30 September 2026
+
+Release candidate: local implementation; hosted release is pending parent verification. Astra supplied the design; GLM-5.3 produced the initial guidance/target-guard draft. Its correction attempt hit the Coding Plan five-hour quota limit, so Codex completed implementation under the bounded failure fallback. Barak explicitly waived the independent GLM candidate review **for this current UI/guidance/test-workspace pass only**. Review is waived, not completed; all source, regression, visual and live checks remain required.
+
+### Permanent source rule
+
+Before every material change to wording, options, status meanings, scoring, onboarding or user flow, read the relevant current Trevor source sections and recorded decisions. Record the source/version/section and classify alignment, an unspecified design choice or a conflict. Preserve source IDs and verbatim prompts; keep product guidance separate. Surface unresolved discrepancies rather than silently choosing. Verify the changed behaviour and update the technical/task evidence. Passing tests or a deployment do not imply content approval.
+
+### Source decisions
+
+Sources checked: CMP Kenya Review and Confirmations v2, Trevor review D02/D03 and Context D06/D09/D11 (30 September snapshots); the complete body/table text of `IBUKA_Sample_Templates.docx` (received 30 September) and `ipo-platform-template-library.docx` (received 29 September). Sheet coverage rows still describe parts of the older four-item sample. They do not prove approval of the ten-item selection.
+
+- D02 requests key questions; the ten-item selection stays proposed pending Trevor's validation. Prompts/IDs/stored options remain unchanged.
+- Template 4 §7.1 supports material products/services and relative revenue importance; §7.4 requires the most recent historical financial period reported, by business segment/geography. Those constraints guide separately authored help.
+- CP-07 incorporation is distinct from continuous operating history (Context D06). Document discrepancies need clarification; the UI does not silently adjudicate them.
+- Q-RISK-01 retains the narrower prompt about measures the board has put in place; Template 4 §8.2's intended mitigation wording does not broaden answer adequacy.
+- D03's ready/applicable formula is retained. None of the current ten allows N/A. Saved-only counts use acknowledged rows; incomplete drafts stay gaps.
+- Navigation, hierarchy, next-question focus and mobile composition fill unspecified product-design gaps. The new help is proposed product guidance, not approved regulatory wording.
+
+### Interaction and modules
+
+`src/lib/selected-guidance.ts` contains help for only the ten enabled IDs. CP-13 displays full MIMS/SMEMS names with unchanged stored values and no automatic choice. `assessment-fields.tsx` associates help and distinct compound errors with their inputs; source disclosures remain available. Ready is one explicit action after an adequate answer; edits demote it to Draft. Clean per-item saved chips and the repeated ready paragraph have been removed; the aggregate acknowledgement is authoritative.
+
+`use-question-navigation.ts` switches to the containing section and focuses the chosen input after rendering. `prepared-panel.tsx` offers the next unresolved question and linked remaining items. A saved all-ready summary offers review only when there are no dirty, pending, failed or invalid changes; preview completion has separate temporary wording. Mobile progress is collapsed, leaving the first drafting input visible at 390×844; action targets remain at least44px. Preview tools are disclosed, and temporary/nontransfer/reload behaviour stays visible. Onboarding's test-company display name does not auto-fill the legal-name answer.
+
+The existing debounce, validation, serialization, stale-response guards, identity-bound API and dirty-exit warnings remain intact. `playwright.ui.config.ts` takes optional `CMP_UI_PORT` (default55473); this worktree uses55483. `playwright.config.ts` excludes **all** `ui-*.spec.ts` so the real-stack suite remains separate from mocked tests.
+
+### Test backend and later production
+
+Both HTTPS domains and build previews currently target the same existing synthetic test project `eaveywzurnrqyeejlapl`; hostname roles do not separate databases. Real controlled tester emails are account identities; company answers must be fictional. State-specific Test workspace notices appear in preview, onboarding and saved views.
+
+`src/lib/project-url-guard.ts` allows only the exact canonical hosted origin `https://eaveywzurnrqyeejlapl.supabase.co` or HTTP/HTTPS loopback for local tests. Userinfo, unexpected hosted ports, paths, query/hash, spoofed hosts and other hosted projects are rejected. `src/config.ts` disables Auth/data initialization for an unknown target, including build-env overrides. This prevents accidental target changes; it cannot classify typed text as fictional or replace RLS. No service keys are exposed.
+
+Supabase supports separate projects and isolated branches; persistent branches can serve long-lived staging. Before real-company use, provision a distinct backend through reviewed Terraform plan/apply, apply reviewed migrations, start with clean permitted seeds, configure separate URLs/public keys/Auth/SMTP and review the app guard. Do not copy tester users/answers into production. No new resource, migration, reset or environment has been created in this pass.
+
+### Explicit later gaps
+
+The full template engine, repeatable entities, signed-document vault, expert Verified status, adviser/admin collaboration, client content validation and formal acceptance remain open. Template/dictionary conflicts include SH-02 (nationality vs share counts), CP-18 (confirmation date vs dividend-waiver flag), Q-OFR-02/03 (proceeds/foreign-listing options vs allocation/sensitisation), absent Q-DIV-01/02 and undefined subfields. The sample's unselected allocation choices conflict with the library's default; financial periods and statutory responsibility/disclaimer text also require reconciliation before generation. These tags must not repurpose historical answers.
+
+Design reference: [Jakub Krehel, Details that make interfaces feel better](https://jakub.kr/writing/details-that-make-interfaces-feel-better), read30September2026. The existing antialiased type, stable tabular figures, subtle layered shadows, restrained transitions and44px hit areas follow those details. The issuer information hierarchy and source constraints come from this project's design/source review. No third-party assets or skills were installed.

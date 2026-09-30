@@ -40,3 +40,18 @@ Use only the isolated stack `cmp-catalogue-db-20260930` (API `55421`, DB `55422`
 ## 5. Acceptance boundaries
 
 Technical release checks above are separate from Trevor's validation of the regulatory content (source clauses, prompts, scoring meaning) and from formal acceptance (Willie); neither is implied by a deploy date, a passing test or this document. Record each step's evidence (revision, codes, readback) in the handover notes; the verified runtime revisions and checks above were recorded after the actual ship.
+
+
+## UI/guidance refinement gate — 30 September 2026
+
+Current change is a local release candidate until hosted readback. It changes presentation/help and rejects unexpected backend targets; there is **no database migration**. Keep the current synthetic hosted database and both origins. Do not reset or provision resources.
+
+1. Read relevant current Trevor source sections before material copy/flow changes; record alignment, gaps and conflicts as required in the technical guide.
+2. Run unit/guard/guidance fixtures, production build, privacy and whitespace checks. Compare the generated sample/IDs/options to the release base and supplied fields.
+3. Run `CMP_UI_PORT=55483 npm run test:ui` for this linked worktree: mocked frontend checks, including next-question focus, review-ready withheld during pending edits, all guidance/error references, failure/retry and390×844 screenshots. Run the six real local Auth/Mailpit/REST browser checks with the explicit isolated DB worktree; the real suite excludes `ui-*.spec.ts`.
+4. Inspect desktop/mobile screenshots and keyboard/error/save states. Counts use saved rows; preview is clearly temporary, does not transfer and never posts answers. Only sign-in/onboarding can start a saved workspace.
+5. Independent GLM candidate review is **waived for this bounded pass by Barak on30September2026 following quota failure**. Do not report it as completed or generalise the exception to other releases.
+6. Commit only explicit source/docs paths; exclude the untracked `node_modules` symlink and test/evidence artifacts. Merge through existing KASIB GitHub/Workers Builds. Verify the build's actual commit and served JS/CSS bytes on both HTTPS origins. Exercise affected live preview/sign-in/synthetic save/resume/navigation; use only controlled synthetic test rows and clean up only owned fixtures.
+7. Record exact runtime ref, test exits, screenshots, hosted results and the waiver in a version-specific receipt. Update ClickUp task evidence without treating technical release as Trevor/Willie acceptance.
+
+Future real-production isolation requires a distinct reviewed project or persistent branch, Terraform plan/apply, clean migrations/seeds and separate Auth/SMTP/public config. Do not transfer tester rows. See [technical-guide.md](./technical-guide.md) for the guard and source conflicts.

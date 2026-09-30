@@ -22,6 +22,13 @@ import { AssessmentField, type FieldSpecLike } from "@/components/assessment-fie
 import { useReportSectionNav } from "@/components/section-rail";
 import type { SampleAnswer } from "@/lib/enabled-sample";
 
+const SECTION_HELP: Record<string, string> = {
+  company: "Record your company’s identity and intended listing segment.",
+  financial: "Record the amounts and dates from your company’s financial information.",
+  business: "Explain what the business does and the markets it serves.",
+  risk: "Describe the business risks, recent changes and capital outlook.",
+};
+
 export interface FormSection {
   key: string;
   title: string;
@@ -47,6 +54,7 @@ export function AssessmentForm({
   statusSlot,
   navSuffix,
   mobileSummary,
+  persisted = false,
 }: {
   sections: FormSection[];
   progress: (sectionKey: string) => SectionProgress;
@@ -61,6 +69,7 @@ export function AssessmentForm({
   statusSlot?: (id: string) => ReactNode;
   navSuffix?: ReactNode;
   mobileSummary?: ReactNode;
+  persisted?: boolean;
 }) {
   const activeIndex = Math.max(0, sections.findIndex((section) => section.key === activeKey));
   const active = sections[activeIndex];
@@ -88,7 +97,7 @@ export function AssessmentForm({
       {/* Mobile section selector + compact selected-sample summary */}
       <div className="lg:hidden">
         <label htmlFor="section-select" className="text-sm font-medium">
-          Section
+          Section {activeIndex + 1} of {sections.length}
         </label>
         <select
           id="section-select"
@@ -105,16 +114,26 @@ export function AssessmentForm({
             );
           })}
         </select>
-        {mobileSummary ? <div className="mt-4">{mobileSummary}</div> : null}
+        {mobileSummary ? <div className="mt-2">{mobileSummary}</div> : null}
       </div>
 
       <section aria-label={active.title} className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-0.5">
-          <h3 className="text-lg font-semibold tracking-tight">{active.title}</h3>
+          <h3 className="text-[22px] font-semibold leading-7 tracking-tight">{active.title}</h3>
           <p className="font-mono text-xs tabular-nums text-muted-foreground">
             {progress(active.key).ready}/{progress(active.key).total} prepared for review
           </p>
         </div>
+        <p className="text-sm leading-relaxed text-muted-foreground">{SECTION_HELP[active.key]}</p>
+        <details aria-label="How answer status works" className="text-sm text-muted-foreground">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded focus-visible:outline-2 focus-visible:outline-ring">How Draft and Ready work</summary>
+          <p className="max-w-prose pb-3 leading-relaxed">
+            Draft answers may be incomplete. {persisted
+              ? "Valid changes save automatically; check the save message before leaving."
+              : "Preview edits are temporary and are not saved."} Ready for review means you consider the answer complete for review. It is
+            not a submission, approval or listing eligibility decision. Editing a Ready answer returns it to Draft.
+          </p>
+        </details>
         <div className="panel flex flex-col gap-0 px-4 sm:px-6">
           {active.items.map((field, index) => (
             <div key={field.id} className={index > 0 ? "border-t py-6" : "py-6"}>
