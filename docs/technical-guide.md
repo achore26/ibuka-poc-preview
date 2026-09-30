@@ -1,6 +1,6 @@
 # CMP Kenya technical guide
 
-Release verified live on 30 September 2026: app runtime revision `336c2314ebf2f5e84e0dfbac09ca159392fe77ac`, database source revision `411f672bb971c021226228aa81b4837ddd17d187`. Both https://cmpkenya.co.ke and https://ibuka.co.ke serve identical reviewed assets from the existing KASIB Worker. Companion release steps: [release-runbook.md](./release-runbook.md); database source: [ibuka-supabase](https://github.com/KASIB-KE/ibuka-supabase). Documentation-only revisions after these refs do not change the verified runtime.
+Current issuer design verified live on 30 September 2026: app runtime revision `5ccf45ccfb9e761b7052fdfd32e1710b6797a330` (PR6; implementation `5396702d64ecf92990daac457b4f313b2ea35dbf`). Database runtime migrations remain from source `411f672bb971c021226228aa81b4837ddd17d187`; later database documentation is at `6edffaf58c30baaada9c7a719cd5b4f047f7696d`. Both https://cmpkenya.co.ke and https://ibuka.co.ke serve identical reviewed assets from the existing KASIB Worker. Companion release steps: [release-runbook.md](./release-runbook.md); database source: [ibuka-supabase](https://github.com/KASIB-KE/ibuka-supabase). Documentation-only revisions do not change these verified runtime assets.
 
 ## 1. Runtime architecture
 
@@ -87,7 +87,7 @@ Open business work: Trevor's validation of the selected questions/content and ag
 
 ## Issuer journey and guidance refinement — 30 September 2026
 
-Design v2 release candidate: source/build/UI/local integration checks and hosted publication are tracked separately; do not infer a hosted release from the working tree. Astra supplied the design; GLM-5.3 produced the initial guidance/target-guard draft. Its correction attempt hit the Coding Plan five-hour quota limit, so Codex completed implementation under the bounded failure fallback. Barak explicitly waived the independent GLM candidate review **for this current UI/guidance/test-workspace pass only**. Review is waived, not completed; all source, regression, visual and live checks remain required.
+Design v2 is live at the runtime revision above; version-specific evidence is recorded below. Astra supplied the design; GLM-5.3 produced the initial guidance/target-guard draft. Its correction attempt hit the Coding Plan five-hour quota limit, so Codex completed implementation under the bounded failure fallback. Barak explicitly waived the independent GLM candidate review **for this current UI/guidance/test-workspace pass only**. Review is waived, not completed; all source, regression, visual and live checks remain required.
 
 ### Permanent source rule
 
@@ -136,3 +136,19 @@ The desktop workspace has a full-height 232px navy rail and a white utility head
 CP-13 uses native radio rows with both full segment names visible and no default, storing the existing MIMS/SMEMS enum. Narrative controls are labelled by their exact prompt rather than a duplicated short heading. Readiness appears once below the input; empty entries have no redundant Not started badge. Progress is a saved-ready count and linear track in the navy rail, with remaining-item focus links; there is no separate right-hand progress card or percentage hero. Review completion remains gated on acknowledged answers with no pending/failed/invalid edits.
 
 `workspace-slots.tsx` moves presentation into utility/rail slots using React portals. It retains the assessment's state/handlers and changes location on the 1024px media query, with listener cleanup. It does not alter Auth, persistence, API requests or ownership. Header context truncates long names; mobile rows stack, and section navigation stays in normal flow. Local system fonts and existing accessible primitives are used; no dependency/service additions.
+
+
+### Design v2 release evidence
+
+Workers preview build `3a4a7409-2b78-4f12-8175-e3989807210f` succeeded for candidate `5396702...`; production build `2908f8fb-b3f8-4c23-a2d9-ddbabceefc3b` succeeded for merged runtime `5ccf45c...`. On 30 September at 14:17 UTC, both public hostnames returned 200 and served byte-identical reviewed assets:
+
+- JavaScript `/assets/index-C-FTAWmf.js`, SHA256 `a10c2d478f6f589f15948446c46dff56b10f32bcee8673be97fa1920e4c147fa`.
+- CSS `/assets/index-B2tRmdkz.css`, SHA256 `126e0cfda29c142c0f2afd7777d7cadda356ec03a9ac84d8afdf5323a2ad7d8e`.
+
+Unit/build/diff checks pass; the strict privacy scan passes 935 unselected-ID and 935 prompt checks over 187 unselected entries and five scan files, with its existing Date/Total assets collisions recorded. The ten generated definitions remain byte-identical to source-checked base `22f4ad23...`. The visible compound-control sublabel is Asset amount; no unselected definition is imported for that label.
+
+All 17 UI scenarios were verified: the full final run passed 16, with a slow numeric-settling timeout passing its isolated repeat. The final mobile footer/count layout passed three affected scenarios, and the final compound-label refinement passed the financial scenario. All six real local Auth/Mailpit/PostgREST scenarios pass. Desktop financial/company/narrative and 390×844 mobile renders were inspected, including actual errors, long names and fully visible footer controls. Measured normal-text contrast is at least 5.5:1 for the main/rail/action palette.
+
+At 14:19 UTC the deployed CMP journey passed actual configured-sender email delivery and same-browser PKCE, cleaned callback URL, display-name/legal-answer separation, typed autosave/reload, Ready persistence, remaining-question focus, long-name mobile first-input visibility/no overflow and sign-out clearing. No page errors were observed. Both hostnames continue to use the same existing synthetic backend. Controlled fixture cleanup is tracked separately and touches only the owned tester's rows; other data is preserved.
+
+The independent GLM candidate review remains **waived for this scoped pass**, as explicitly requested. Source fidelity, tests, visual inspection and served-artifact/live-flow checks supplied the release evidence. This release completes the issuer UI refinement; content validation, broader template work and contractual acceptance remain open.
