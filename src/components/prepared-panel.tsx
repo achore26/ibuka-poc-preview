@@ -93,7 +93,7 @@ export function PreparedPanel({ summary, gaps, savedNote, onNavigate, completeAl
       <div className="progress-actions pt-1">
         {reviewReady ? (
           <>
-            <p className="text-base font-semibold leading-6">Your sample answers are ready for review.</p>
+            <p className="border-l-2 border-brand-gold pl-3 text-base font-semibold leading-6">Your sample answers are ready for review.</p>
             <Button variant="outline" className="mt-3 h-11 w-full" onClick={() => onNavigate(firstId)}>Review answers</Button>
           </>
         ) : gaps.length > 0 ? (
