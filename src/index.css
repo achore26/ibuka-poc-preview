@@ -1,69 +1,103 @@
 @import "tailwindcss";
 
 /*
- * CMP Kenya workspace theme (accepted redesign direction, 30 September
- * 2026): a crisp light workspace composed with a deep navy navigation rail
- * (#142033 vicinity) and one restrained KASIB-inspired red accent (#c82f35)
- * used for the active navigation marker, the primary action, the progress
- * fill and focus rings. Cool off-white canvas, white softly elevated
- * panels, fine separators, coherent nested radii (page 12px, panels 10px,
- * controls 6px), tabular numerals for counts, and tiny interruptible
- * opacity/color/transform transitions (120–180ms) that disappear under
- * prefers-reduced-motion. Local system font stacks only; nothing is fetched
- * from any CDN or external asset at runtime.
+ * CMP Kenya workspace theme (brand pass, 1 October 2026).
  *
- * The navy and red tones are visually inferred from the public KASIB site
- * (kasib.co.ke, observed 24 September 2026) — not an official brand
- * specification; no official KASIB logo file exists in this repository.
- * Contrast (WCAG relative luminance): near-white label on red 5.06:1 and on
- * the opaque darker hover red #b52b31 5.90:1 (both AA >= 4.5:1); rail text
- * #c7d0dc on #142033 measures ~9.7:1 and muted rail text ~5.9:1; muted
- * foreground on white ~4.7:1. The gold-free accent discipline stays: red
- * carries meaning, everything else stays neutral.
+ * Colours, type and logo treatment follow the SUPPLIED CMP Kenya Brand
+ * Identity Guidelines v1.0 (October 2026): Portal Navy #0B2545 ink and
+ * navigation rail, Listing Green #0A7A53 primary action / active marker /
+ * progress fill / focus, Mist #F3F6F9 canvas with white cards, Slate Grey
+ * #4A5568 secondary text, and the restrained Summit Gold #C9962B /
+ * Growth Mint #5CC49A accents (navy on gold/mint only — gold is never
+ * used as text on white, where it measures 2.66:1 and is decorative
+ * only). The previous KASIB-inspired red accent and repo-native monogram
+ * are superseded by this supplied identity; the earlier tones remain
+ * documented in the repository history.
+ *
+ * Typography (guidelines §5): Montserrat for headings, the tagline and
+ * button/interface labels; Source Sans 3 for body text — both self-hosted
+ * from public/fonts (Google Fonts latin WOFF2 under the SIL Open Font
+ * Licence, licence files committed beside them) with Arial as the web
+ * fallback. Nothing is fetched from any CDN or external origin at
+ * runtime. The workspace layout and 44px mobile target contract are retained;
+ * mobile/rail branding reserves an 88px header for supplied clear space.
+ *
+ * Contrast (WCAG relative luminance, verified 1 October 2026): navy on
+ * white 15.39:1 and on Mist 14.19:1; slate on white 7.53:1 and on Mist
+ * 6.94:1; white on Listing Green 5.35:1; white on the opaque darker
+ * hover green #086244 7.39:1 (all AA >= 4.5:1); the green focus ring
+ * measures 5.35:1 on white and 4.94:1 on Mist (>= 3:1 non-text); rail
+ * text #C7D3E3 on navy 10.15:1, muted rail text #94A6BD 6.19:1; navy on
+ * gold 5.77:1 and on mint 7.19:1 for any future accent pairing. These
+ * match the guidelines' own §4.2 table.
  */
 
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(/fonts/montserrat-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(/fonts/source-sans-3-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  /* Canvas and ink */
-  --background: #f4f5f6;
-  --foreground: #202833;
+  /* Canvas and ink — Mist canvas, white cards, Portal Navy ink (§4). */
+  --background: #f3f6f9;
+  --foreground: #0b2545;
   --card: #ffffff;
-  --card-foreground: oklch(0.25 0.015 255);
+  --card-foreground: #0b2545;
   --popover: #ffffff;
-  --popover-foreground: oklch(0.25 0.015 255);
+  --popover-foreground: #0b2545;
 
-  /* Navy rail family (shared by the header, the section rail and the phone
-     brand strip so the composition reads as one chrome system). */
-  --rail: #142236;
-  --rail-raised: #1b2a42;
-  --rail-foreground: #c7d0dc;
-  --rail-muted: #8d99ab;
+  /* Portal Navy rail family (header chrome, section rail, phone brand). */
+  --rail: #0b2545;
+  --rail-raised: #16345a;
+  --rail-foreground: #c7d3e3;
+  --rail-muted: #94a6bd;
 
-  --primary: #bc2936;
-  --primary-foreground: oklch(0.98 0.008 95);
-  --secondary: oklch(0.955 0.004 250);
-  --secondary-foreground: oklch(0.29 0.015 255);
-  --muted: oklch(0.955 0.004 250);
-  --muted-foreground: #596473;
-  --accent: oklch(0.955 0.004 250);
-  --accent-foreground: oklch(0.29 0.015 255);
-  --destructive: oklch(0.505 0.19 27);
-  --destructive-foreground: oklch(0.98 0.008 95);
-  --border: oklch(0.906 0.005 250);
-  --input: oklch(0.906 0.005 250);
-  --ring: #bc2936;
+  --primary: #0a7a53;
+  --primary-foreground: #ffffff;
+  --secondary: #e9eef4;
+  --secondary-foreground: #0b2545;
+  --muted: #e9eef4;
+  --muted-foreground: #4a5568;
+  --accent: #e9eef4;
+  --accent-foreground: #0b2545;
+  --destructive: #b3372d;
+  --destructive-foreground: #ffffff;
+  --border: #d8e0ea;
+  --input: #d8e0ea;
+  --ring: #0a7a53;
   --radius: 0.625rem;
-  --status-ok: oklch(0.46 0.09 155);
-  --status-warn: oklch(0.5 0.09 75);
-  --status-error: oklch(0.47 0.16 27);
+  --status-ok: #0a7a53;
+  --status-warn: #8f5310;
+  --status-error: #b3372d;
 
-  /* Soft elevation for white panels on the cool canvas. */
-  --shadow-panel: 0 1px 2px rgb(16 24 40 / 0.05), 0 1px 3px rgb(16 24 40 / 0.06);
-  --shadow-panel-raised: 0 4px 14px rgb(16 24 40 / 0.08), 0 1px 3px rgb(16 24 40 / 0.05);
+  /* Restrained brand accents (§4): decorative pairings only — navy text
+     on gold 5.77:1, navy on mint 7.19:1; NEVER gold or mint text on
+     white (gold measures 2.66:1 there). The logo artwork itself carries
+     the mint/green/gold three-bar motif. */
+  --brand-gold: #c9962b;
+  --brand-mint: #5cc49a;
+
+  /* Soft elevation for white panels on the Mist canvas. */
+  --shadow-panel: 0 1px 2px rgb(11 37 69 / 0.05), 0 1px 3px rgb(11 37 69 / 0.06);
+  --shadow-panel-raised: 0 4px 14px rgb(11 37 69 / 0.08), 0 1px 3px rgb(11 37 69 / 0.05);
 }
 
 @theme inline {
-  --font-sans:
-    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Source Sans 3", Arial, sans-serif;
+  --font-heading: "Montserrat", Arial, sans-serif;
   --font-mono:
     ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono",
     monospace;
@@ -91,6 +125,8 @@
   --color-rail-raised: var(--rail-raised);
   --color-rail-foreground: var(--rail-foreground);
   --color-rail-muted: var(--rail-muted);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-mint: var(--brand-mint);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -113,6 +149,13 @@
   body {
     @apply bg-background font-sans text-foreground antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* Headings set in Montserrat (guidelines §5); sizes unchanged. */
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
   }
 
   ::selection {
@@ -165,14 +208,24 @@
 }
 
 /*
- * Primary-button hover fill: opaque and slightly darker than #c82f35 so the
- * near-white label keeps >= 4.5:1 on hover (5.90:1). This rule is
+ * Primary-button hover fill: opaque and slightly darker than #0a7a53 so the
+ * white label keeps >= 4.5:1 on hover (7.39:1 on #086244). This rule is
  * deliberately unlayered: the vendored Button's `hover:bg-primary/80` utility
  * lives in the utilities cascade layer, and layer order outranks specificity,
  * so a components-layer override would lose.
  */
 [data-slot="button"][data-variant="default"]:hover {
-  background-color: #b52b31;
+  background-color: #086244;
+}
+
+/*
+ * Button and interface labels are Montserrat SemiBold (guidelines §5).
+ * Unlayered for the same cascade reason as the hover rule above — the
+ * vendored variants carry `font-medium` as a utility.
+ */
+[data-slot="button"] {
+  font-family: "Montserrat", Arial, sans-serif;
+  font-weight: 600;
 }
 
 /*
@@ -201,12 +254,11 @@
   }
 }
 
-#workspace-utility:has(.workspace-context) > .workspace-brand { display: none; }
-#rail-progress .progress-block { color: #c7d0dc; }
-#rail-progress .text-muted-foreground { color: #a5b1c2; }
-#rail-progress .progress-track { background: #304158; }
+#rail-progress .progress-block { color: #c7d3e3; }
+#rail-progress .text-muted-foreground { color: #a9bacf; }
+#rail-progress .progress-track { background: #33475f; }
 #rail-progress button { color: #fff; }
-#rail-progress [data-variant="outline"] { background: transparent; border-color: #526278; }
+#rail-progress [data-variant="outline"] { background: transparent; border-color: #66798f; }
 @media (max-width: 1023px) {
  .workspace-context { flex-direction: column; align-items: flex-start; gap: 0; }
  .workspace-context [role="status"] { font-size: 11px; line-height: 16px; }
@@ -229,3 +281,9 @@
 }
 
 @media (max-width: 1023px) { .progress-actions:has(> button) { grid-column: 1 / -1; } }
+
+/* Brand numbers and keyboard focus on the navy rail (§§5,7). */
+.tabular-nums { font-family: "Montserrat", Arial, sans-serif; }
+nav[aria-label="Assessment sections"] :where(button, summary):focus-visible {
+  outline-color: var(--brand-mint);
+}

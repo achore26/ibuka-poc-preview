@@ -1,6 +1,17 @@
 # CMP Kenya release runbook
 
-Current issuer design: runtime app revision `5ccf45ccfb9e761b7052fdfd32e1710b6797a330`, verified live on both hostnames on 30 September 2026 through production build `2908f8fb-b3f8-4c23-a2d9-ddbabceefc3b`. Database runtime source remains `411f672bb971c021226228aa81b4837ddd17d187`. Architecture, exact asset hashes, verification scope and remaining gaps: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
+## Supplied branding candidate — 1 October 2026
+
+For the 2 October walkthrough, the supplied CMP Kenya Brand Identity Guidelines v1.0 (October 2026) supersede the previous placeholder identity and red accent. Original horizontal/logo-icon SVGs are served byte-for-byte from `public/brand`; the original primary icon is also the favicon. The navy rail uses the reversed horizontal lockup at 124px; the small-screen preview uses the primary horizontal lockup at 124px; signed-in company context uses the primary icon at 24px. The 88px mobile/rail header conservatively reserves half the displayed artwork height as clear space. Browser favicon dimensions are platform-controlled.
+
+Palette: Portal Navy `#0B2545`, Listing Green `#0A7A53`, Mist `#F3F6F9`, White, Slate `#4A5568`; gold/mint are restrained accents. Gold is decorative on white. Keyboard focus uses green on light surfaces and mint on the navy rail. Montserrat headings/actions/numbers and Source Sans 3 body fonts are self-hosted WOFF2, unmodified, with OFL licences alongside them and Arial fallback; no font CDN is used.
+
+Source binding: DOCX SHA256 `bbea6b1a3676194aab2333878bb623058028e0030b00a82d828ec8bcceecebb9`; logo ZIP SHA256 `bbba75d524e698e89962ea74a31f50d0bd850d7a9a2e766aa39c515704f5b14f`. Guidelines §§2–5 govern the supplied name, descriptor, tagline, artwork, colours and fonts. The ten source prompts/options, scoring, saved-only preparation semantics, autosave/auth/API, sample files and infrastructure configuration remain unchanged. Guideline §4.1 readiness bands conflict with existing preparation semantics and are deferred; §7 landing-page/report mock-ups are references, not new functionality. Brand-owner approval and professional finishing under §9 remain open.
+
+Actual route: GLM-5.3 through the Z.ai Coding Plan drafted implementation; its initial attempt and one resumed attempt timed out. GPT completed bounded presentation/probe corrections under the handoff failure rule. A fresh GLM blind review is recorded; candidate comparison, production release and actual live checks must be bound to this revision before calling this pass released. The September UI-pass review waiver does not apply to this branding pass. Local mock UI checks are presentation evidence, not new RLS or real-email verification. No hosted data or infrastructure is changed.
+
+
+Previous issuer design: runtime app revision `5ccf45ccfb9e761b7052fdfd32e1710b6797a330`, verified live on both hostnames on 30 September 2026 through production build `2908f8fb-b3f8-4c23-a2d9-ddbabceefc3b`. Database runtime source remains `411f672bb971c021226228aa81b4837ddd17d187`. Architecture, exact asset hashes, verification scope and remaining gaps: [technical-guide.md](./technical-guide.md). Use the existing KASIB-owned services. New cloud resources, if required later, must use reviewed Terraform.
 
 ## 1. Local verification (app repo)
 

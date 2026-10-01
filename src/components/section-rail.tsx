@@ -13,6 +13,7 @@
 
 import { createContext, useContext } from "react";
 import { enabledSections } from "@/lib/enabled-sample";
+import { BrandLogo } from "@/components/brand-logo";
 
 export interface SectionNavGroup {
   key: string;
@@ -52,7 +53,18 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
       aria-label="Assessment sections"
       className="fixed inset-y-0 left-0 z-50 hidden overflow-y-auto w-[232px] flex-col bg-rail lg:flex"
     >
-      <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6"><span className="border-b-[3px] border-primary pb-1 text-xl font-semibold tracking-tight text-white">CMP</span><span className="text-sm text-rail-foreground">Kenya</span></div>
+      {/*
+       * Supplied reversed horizontal logo on the Portal Navy rail (brand
+       * pass, 1 October 2026): 124px wide (>= the 120px §3.4 minimum) in
+       * an 88px-tall px-6 block — clear space is half the displayed icon
+       * height (21.2px conservatively including SVG whitespace), satisfied by 22.8px vertical and 24px horizontal
+       * margins. The artwork carries the wordmark, so this img is the
+       * single accessible "CMP Kenya" on desktop; the project-context
+       * footer below therefore drops the repeated brand name.
+       */}
+      <div className="flex h-[88px] items-center border-b border-white/10 px-6">
+        <BrandLogo lockup="horizontal" tone="reversed" width={124} />
+      </div>
       <p className="px-5 pb-3 pt-8 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-rail-muted">
         Sections
       </p>
@@ -95,7 +107,7 @@ export function SectionRail({ nav }: { nav: SectionNavConfig | null }) {
       </ul>
       <div id="rail-progress" className="mt-auto border-t border-white/15 px-5 py-6" />
       <p className="px-5 pb-5 text-[0.68rem] leading-relaxed text-rail-muted">
-        CMP Kenya · IBUKA Phase 1
+        IBUKA Phase 1
         <br />
         proof of concept
       </p>

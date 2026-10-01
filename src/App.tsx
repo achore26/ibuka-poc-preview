@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReviewPreview } from "@/components/review-preview";
 import { SignInDialog } from "@/components/sign-in-dialog";
+import { BrandLogo } from "@/components/brand-logo";
 import { SectionNavProvider, SectionRail, type SectionNavConfig } from "@/components/section-rail";
 import { Workspace } from "@/components/workspace";
 import { useAuthSession } from "@/lib/auth-session";
@@ -85,28 +86,25 @@ function DevelopmentDisclosure() {
       <div className="flex flex-col gap-4 border-t px-4 py-4">
         <DiagnosticsCard />
         <p className="max-w-[52em] text-xs leading-relaxed text-muted-foreground">
-          Interface tones are visually inferred from the public KASIB site
-          (kasib.co.ke, observed 24 September 2026) — not an official brand
-          specification; this repository contains no official KASIB logo or
-          brand assets.
+          Logo, colours and type follow the supplied CMP Kenya Brand
+          Identity Guidelines v1.0 (October 2026). The artwork under
+          public/brand is reproduced exactly from the supplied files; the
+          fonts under public/fonts are self-hosted Google Fonts latin
+          WOFF2 under the SIL Open Font Licence. Working demo concept:
+          professional brand finishing and final brand approval remain
+          open (guidelines §9).
         </p>
       </div>
     </details>
   );
 }
 
-/** Repo-native CMP monogram: navy tile, white letters, one red detail. */
-function BrandMark({ className = "" }: { className?: string }) {
+/** Supplied lockup for preview; standalone accessible icon beside company context. */
+function HeaderBrand({ compact }: { compact: boolean }) {
   return (
-    <span
-      aria-hidden="true"
-      className={`inline-flex size-8 flex-col overflow-hidden rounded-lg bg-rail-raised ring-1 ring-white/15 ${className}`}
-    >
-      <span className="flex flex-1 items-center justify-center text-[0.6rem] font-bold tracking-tight text-white">
-        CMP
-      </span>
-      <span className="h-[3px] w-full bg-primary" />
-    </span>
+    <div className="workspace-brand flex shrink-0 items-center lg:hidden">
+      <BrandLogo lockup={compact ? "icon" : "horizontal"} tone="primary" width={compact ? 24 : 124} className="shrink-0" />
+    </div>
   );
 }
 
@@ -163,18 +161,8 @@ export default function App() {
     <SectionNavProvider value={setNav}>
       <div className="flex min-h-svh flex-col bg-background font-sans text-foreground lg:pl-[232px]">
         <header className="sticky top-0 z-40 shrink-0 border-b bg-white text-foreground">
-          <div className="mx-auto flex h-14 lg:h-16 w-full max-w-[90rem] items-center justify-between gap-3 px-4 sm:px-6">
-            <div id="workspace-utility" className="flex min-w-0 flex-1 items-center gap-6"><div className="workspace-brand flex min-w-0 items-center gap-2.5">
-              <BrandMark className="lg:hidden" />
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold leading-none tracking-tight">
-                  CMP Kenya
-                </span>
-                <span className="mt-1 block text-[0.68rem] leading-none text-rail-muted">
-                  Listing preparation · KASIB
-                </span>
-              </span>
-            </div></div>
+          <div className="mx-auto flex h-[88px] lg:h-16 w-full max-w-[90rem] items-center justify-between gap-3 px-6">
+            <div id="workspace-utility" className="flex min-w-0 flex-1 items-center gap-6"><HeaderBrand compact={signedIn} /></div>
             <div className="flex min-w-0 items-center gap-3">
               {signedIn && userEmail ? (
                 <>
@@ -239,8 +227,13 @@ export default function App() {
                       <h1 className="max-w-[25ch] text-[30px] font-semibold leading-9 tracking-tight">
                         Prepare your company’s listing assessment.
                       </h1>
+                      {/* Supplied tagline (guidelines §2): Montserrat SemiBold in Listing Green. */}
+                      <p className="font-heading mt-2 text-sm font-semibold tracking-[0.08em] text-primary">
+                        Assess. Prepare. List.
+                      </p>
                       <p className="mt-2 max-w-prose text-base leading-6 text-muted-foreground">
-                        Work through company details, financial position, business, and risk.
+                        Capital Markets Portal (CMP) Kenya is a Listing Readiness Assessment Toolkit. Work
+                        through company details, financial position, business, and risk.
                       </p>
                       {auth.phase !== "unconfigured" ? (
                         <div className="mt-4 flex flex-wrap items-center gap-3">
