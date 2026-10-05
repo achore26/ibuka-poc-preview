@@ -45,7 +45,7 @@ const DialogOverlay = React.forwardRef<
       ref={ref}
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-foreground/35",
+        "fixed inset-0 z-50 bg-[#0B2545]/40 backdrop-blur-md",
         className,
       )}
       {...props}
@@ -64,7 +64,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-card p-5 text-card-foreground shadow-panel-raised outline-none sm:p-6",
+          "fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-white p-5 text-card-foreground shadow-[0_25px_50px_rgba(11,37,69,0.15)] border border-white/20 outline-none sm:p-6",
           "max-h-[calc(100svh-2rem)] overflow-y-auto",
           className,
         )}

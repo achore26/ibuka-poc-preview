@@ -13,8 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { AuthNotice, SignInResult } from "@/lib/auth-session";
 
-const hintClass = "text-xs leading-relaxed text-muted-foreground";
-
 type SendState = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind: "failed"; message: string };
 
 export function SignInForm({
@@ -43,63 +41,68 @@ export function SignInForm({
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
+    <form onSubmit={submit} className="flex flex-col gap-5 mt-2">
       {notice ? (
-        <p
+        <div
           role="alert"
-          className={`rounded-md border px-3 py-2 text-sm leading-relaxed ${
+          className={`rounded-md border px-4 py-3 text-[14px] leading-relaxed ${
             notice.kind === "link-error"
-              ? "border-destructive/40 bg-destructive/5 text-foreground"
+              ? "border-destructive/30 bg-destructive/5 text-destructive"
               : "border-border bg-muted text-foreground"
           }`}
         >
           {notice.message}
-        </p>
+        </div>
       ) : null}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="sign-in-email" className="text-sm font-medium">
-          Email address
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="sign-in-email" className="text-sm font-medium text-[#0B2545]">
+          Email Address
         </label>
         <Input
           id="sign-in-email"
           type="email"
           autoComplete="email"
           inputMode="email"
-          placeholder="tester@example.com"
+          placeholder="name@company.com"
           value={email}
           onChange={(event) => {
             setEmail(event.target.value);
             if (sendState.kind !== "sending") setSendState({ kind: "idle" });
           }}
           disabled={sendState.kind === "sending"}
-          className="h-11 sm:h-9"
+          className="h-12 border-gray-200 focus-visible:ring-[#C9962B] focus-visible:border-[#C9962B] transition-all text-[15px]"
         />
       </div>
+
       <Button
         type="submit"
-        className="h-11 sm:h-9"
+        className="h-12 w-full bg-[#0B2545] hover:bg-[#0B2545]/90 text-white font-medium text-[15px] transition-all shadow-sm"
         disabled={!trimmed || !emailLooksValid || sendState.kind === "sending"}
       >
-        {sendState.kind === "sending" ? "Sending…" : "Send sign-in link"}
+        {sendState.kind === "sending" ? "Sending Secure Link..." : "Continue with Email"}
       </Button>
-      {sendState.kind === "sent" ? (
-        <p role="status" className={hintClass}>
-          Link sent{trimmed ? ` to ${trimmed}` : ""}. Open it in this same browser on this same
-          device — it continues the request started here, and it expires after
-          use. Opening it on another device or browser will not sign you in.
-        </p>
-      ) : null}
-      {sendState.kind === "failed" ? (
-        <p role="alert" className={hintClass}>
+
+      {sendState.kind === "sent" && (
+        <div className="rounded-md bg-[#5CC49A]/10 p-4 border border-[#5CC49A]/30 mt-2">
+          <p className="text-[14px] text-[#0A7A53] leading-relaxed">
+            <strong>Check your inbox!</strong> A secure sign-in link has been sent{trimmed ? ` to ${trimmed}` : ""}. Please open it on this device to continue.
+          </p>
+        </div>
+      )}
+
+      {sendState.kind === "failed" && (
+        <p role="alert" className="text-[13px] text-destructive mt-1 font-medium text-center">
           {sendState.message}
         </p>
-      ) : null}
-      <p className={hintClass}>
-        Use a real, deliverable tester email address you control — an address
-        that cannot receive mail cannot sign in. Keep the company details you
-        enter synthetic; real client company data is not permitted at this
-        stage of the proof of concept.
-      </p>
+      )}
+
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <p className="text-[13px] text-gray-500 text-center leading-relaxed">
+          Secure, passwordless authentication. By continuing, you agree to the 
+          terms of this proof-of-concept. Please use a deliverable email address.
+        </p>
+      </div>
     </form>
   );
 }

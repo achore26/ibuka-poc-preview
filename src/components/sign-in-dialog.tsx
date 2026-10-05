@@ -52,14 +52,13 @@ export function SignInDialog({
       <DialogTrigger asChild>
         <Button className={triggerClassName}>Sign in</Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Start a saved assessment</DialogTitle>
-          <DialogDescription>
-            Entries in this preview are temporary — reloading the page resets
-            them. Signing in starts a saved assessment for your synthetic test
-            company that resumes on any reload. Nothing you typed in the
-            preview is transferred.
+      <DialogContent className="sm:max-w-[425px] p-6 sm:p-8">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="font-heading text-2xl font-semibold tracking-tight text-[#0B2545]">
+            Welcome Back
+          </DialogTitle>
+          <DialogDescription className="text-[15px] text-gray-500 mt-2">
+            Sign in to securely save your assessment progress and resume at any time.
           </DialogDescription>
         </DialogHeader>
         <SignInForm notice={notice} onSignIn={onSignIn} />
