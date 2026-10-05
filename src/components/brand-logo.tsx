@@ -23,7 +23,7 @@ export function BrandLogo({
   const height = Math.round(width * (lockup === "horizontal" ? HORIZONTAL_HEIGHT_RATIO : ICON_HEIGHT_RATIO) * 10) / 10;
   return (
     <img
-      src={`/brand/cmp-kenya_${lockup === "horizontal" ? "logo_horizontal" : "icon"}_${tone}.svg`}
+      src={`${import.meta.env.BASE_URL}brand/cmp-kenya_${lockup === "horizontal" ? "logo_horizontal" : "icon"}_${tone}.svg`}
       alt={labelled ? "CMP Kenya" : ""}
       width={width}
       height={height}
