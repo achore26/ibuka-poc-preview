@@ -102,7 +102,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: false, margin: "-50px" }}
           variants={{
             hidden: {},
             visible: { transition: { staggerChildren: 0.15 } }
@@ -162,7 +162,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-[#0B2545] font-heading text-3xl font-medium mb-6">How It Works</h2>
@@ -194,7 +194,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-[#051429] p-10 rounded-2xl text-white shadow-xl"
           >
