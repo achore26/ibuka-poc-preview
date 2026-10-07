@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 
-
 interface LandingPageProps {
   authPhase: string;
   setSignInOpen: (open: boolean) => void;
@@ -9,122 +8,130 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }: LandingPageProps) {
+  const handleStartAssessment = () => {
+    if (authPhase === "unconfigured") {
+      alert("Sign-in is unavailable in this test build. Please configure the Supabase URL.");
+    } else {
+      setSignInOpen(true);
+    }
+  };
+
   return (
-    <div className="w-full bg-background flex flex-col items-center">
+    <div className="w-full bg-[#F3F6F9] flex flex-col items-center">
       
-      {/* 
-        HERO SECTION
-        Restored the premium dark blue background, skyscraper abstract, and gold banner,
-        but brought the CTA higher up and introduced a product-forward collage.
-      */}
-      <section className="relative w-full min-h-[90vh] bg-[#051429] text-white flex flex-col justify-center overflow-hidden pt-24 pb-20">
-        
-        {/* Background Texture/Image (Abstract Corporate Blue) */}
-        <div 
-          className="absolute inset-0 opacity-40 mix-blend-screen"
-          style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0B2545]/95 via-[#0B2545]/85 to-[#0B2545]/40" />
+      {/* HERO SECTION - CLEAN, CONCISE, DISTINCT CMP IDENTITY */}
+      <section className="relative w-full overflow-hidden pt-20 pb-24 lg:pt-32 lg:pb-32 bg-white border-b border-border">
+        {/* Subtle decorative accent */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-[#E8F3EF] to-transparent rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
 
         <div className="relative z-10 mx-auto w-full max-w-[90rem] px-6 lg:px-12">
-          
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="mb-12 text-center lg:text-left"
-          >
-            <h1 className="font-heading text-5xl lg:text-7xl font-medium tracking-tight text-white mb-8 transition-all duration-700 hover:text-white/90 hover:drop-shadow-[0_0_20px_rgba(201,150,43,0.35)] cursor-default">
-              Listing Readiness Assessment
-            </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
-            {/* Gold Bordered Banner Box */}
-            <div className="mx-auto lg:mx-0 w-full lg:w-auto inline-block border border-[#C9962B]/60 bg-[#C9962B]/5 px-8 py-5 transition-all duration-500 hover:bg-[#C9962B]/15 hover:border-[#C9962B] hover:shadow-[0_0_25px_rgba(201,150,43,0.15)] cursor-default">
-              <p className="font-heading text-[#C9962B] text-xl font-medium tracking-wide">
-                Know Where You Stand. List With Confidence
-              </p>
-              <p className="text-[#C9962B]/80 italic mt-2 text-lg">
-                A structured diagnostic determining your company's listing readiness position.
-              </p>
-            </div>
-          </motion.div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-16 items-center">
-            
-            {/* Left Column: Shortened Content + CTA High Up */}
+            {/* Left Column: Shortened Opening, Main Action High Up */}
             <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="xl:col-span-5 flex flex-col gap-6 text-[17px] leading-relaxed text-gray-200"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="flex flex-col gap-8 text-left max-w-2xl"
             >
-              <p className="text-xl text-white font-light">
-                Early preparation is the highest-ROI step in any listing journey. Issues resolved upstream save significant time and capital.
-              </p>
-              
-              <div className="flex flex-col gap-4 mt-2">
-                <Button 
-                  size="lg" 
-                  className="h-16 px-10 text-xl bg-[#C9962B] hover:bg-[#b08223] text-[#0B2545] font-semibold border-none shadow-[0_0_20px_rgba(201,150,43,0.3)] transition-transform hover:-translate-y-1 w-full sm:w-auto" 
-                  onClick={() => setSignInOpen(true)}
-                >
-                  Start the Assessment Workspace
-                </Button>
-                <p className="text-sm text-[#C9962B]/70 ml-2">
-                  10-item diagnostic sample ({expectedSampleVersion})
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F3EF] text-[#0A7A53] text-sm font-semibold mb-6">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0A7A53] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0A7A53]"></span>
+                  </span>
+                  {expectedSampleVersion}
+                </div>
+                
+                <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0B2545] mb-6 leading-[1.15]">
+                  Know exactly where you stand before the listing process begins.
+                </h1>
+                
+                <p className="text-lg lg:text-xl text-[#4A5568] leading-relaxed">
+                  Capital Markets Portal (CMP) Kenya provides a structured Listing Readiness Diagnostic. Map your position against POLD 2023 & NSE requirements, resolve issues upstream, and sequence your timeline with clarity.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 border-t border-white/10 mt-6">
-                <div>
-                  <h3 className="text-[#5CC49A] font-heading text-lg font-medium mb-2">What is CMP?</h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    A benchmarked assessment mapping your position against POLD 2023 & NSE requirements.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-[#5CC49A] font-heading text-lg font-medium mb-2">Who It Helps</h3>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    Companies seeking to list on the Nairobi Securities Exchange with clarity and confidence.
-                  </p>
-                </div>
+              {/* Main Action High Up */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mt-2">
+                <Button 
+                  size="lg" 
+                  className="h-14 px-8 text-lg bg-[#0A7A53] hover:bg-[#086244] text-white font-semibold transition-all hover:-translate-y-0.5 shadow-lg shadow-[#0A7A53]/20 w-full sm:w-auto" 
+                  onClick={handleStartAssessment}
+                >
+                  Start the Assessment
+                </Button>
+                <p className="text-sm text-[#4A5568]">
+                  Secure, private workspace.
+                </p>
               </div>
             </motion.div>
 
-            {/* Right Column: Stacked Sharp-Edged Photos */}
+            {/* Right Column: Clearly Labelled Product Mock (Give product prominence) */}
             <motion.div 
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="xl:col-span-7 flex flex-col gap-6"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative hidden lg:block"
             >
-              {/* Top Photo */}
-              <div className="w-full h-[350px] lg:h-[400px] overflow-hidden shadow-2xl relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1573164574511-73c773193279?auto=format&fit=crop&w=1200&q=80" 
-                  alt="Black corporate professionals reviewing strategy"
-                  className="w-full h-full object-cover object-center"
-                />
+              {/* Product Mock Container */}
+              <div className="relative bg-white rounded-2xl shadow-[0_20px_60px_rgba(11,37,69,0.08)] border border-border overflow-hidden">
+                {/* Mock Header */}
+                <div className="bg-[#F3F6F9] border-b border-border px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                    </div>
+                    <span className="text-xs font-mono text-[#4A5568] ml-2 font-medium">cmp-kenya.app/workspace</span>
+                  </div>
+                </div>
+                
+                {/* Mock Content */}
+                <div className="p-8 flex flex-col gap-8">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-2">Listing Readiness</h3>
+                      <p className="text-sm text-[#4A5568]">Overall completion status</p>
+                    </div>
+                    <div className="text-3xl font-heading font-bold text-[#0A7A53]">65%</div>
+                  </div>
+                  
+                  <div className="w-full bg-[#F3F6F9] h-3 rounded-full overflow-hidden">
+                    <div className="bg-[#0A7A53] h-full rounded-full" style={{ width: '65%' }} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    {[
+                      { name: "Governance", status: "Complete", color: "bg-[#0A7A53]", text: "text-[#0A7A53]", bg: "bg-[#E8F3EF]" },
+                      { name: "Financial Reporting", status: "In Progress", color: "bg-[#C9962B]", text: "text-[#C9962B]", bg: "bg-[#FCF7EB]" },
+                      { name: "Business Operations", status: "Review", color: "bg-[#5CC49A]", text: "text-[#5CC49A]", bg: "bg-[#EEF9F5]" },
+                      { name: "Risk & Compliance", status: "Not Started", color: "bg-[#4A5568]", text: "text-[#4A5568]", bg: "bg-[#F3F6F9]" }
+                    ].map((item, idx) => (
+                      <div key={idx} className="p-4 rounded-xl border border-border flex flex-col gap-3">
+                        <span className="font-medium text-[#0B2545] text-sm">{item.name}</span>
+                        <div className={`inline-flex self-start px-2.5 py-1 rounded-md text-xs font-semibold ${item.bg} ${item.text}`}>
+                          {item.status}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              {/* Bottom Photo */}
-              <div className="w-full h-[300px] lg:h-[350px] overflow-hidden shadow-2xl relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1573496130141-209d200cebd8?auto=format&fit=crop&w=1200&q=80" 
-                  alt="Black business woman in modern office"
-                  className="w-full h-full object-cover object-center"
-                />
+              
+              {/* Floating Label */}
+              <div className="absolute -right-6 top-1/4 bg-[#0B2545] text-white px-4 py-3 rounded-lg shadow-xl text-sm font-medium transform rotate-3 flex items-center gap-2 z-20">
+                <svg className="w-4 h-4 text-[#5CC49A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Track readiness in real-time
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* DOMAINS SECTION */}
-      <section className="w-full max-w-[90rem] px-6 lg:px-12 py-24 overflow-hidden bg-white">
+      {/* WHAT IT IS & WHO IT HELPS (Scannable sections) */}
+      <section className="w-full max-w-[90rem] mx-auto px-6 lg:px-12 py-20 bg-[#F3F6F9]">
         <motion.div 
           initial="hidden"
           whileInView="visible"
@@ -133,148 +140,149 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
             hidden: {},
             visible: { transition: { staggerChildren: 0.15 } }
           }}
+          className="grid md:grid-cols-3 gap-10"
         >
-          <motion.h2 
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
-            }}
-            className="text-[#0B2545] font-heading text-3xl md:text-4xl font-medium mb-16 tracking-tight"
-          >
-            What We Assess: The 4 Diagnostic Domains
-          </motion.h2>
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+            <div className="w-12 h-12 rounded-xl bg-[#0B2545] text-white flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            </div>
+            <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-3">What is CMP?</h3>
+            <p className="text-[#4A5568] leading-relaxed">
+              A structured diagnostic assessment mapped precisely against the requirements of POLD 2023 and the Nairobi Securities Exchange.
+            </p>
+          </motion.div>
+
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+            <div className="w-12 h-12 rounded-xl bg-[#0A7A53] text-white flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </div>
+            <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-3">Who It Helps</h3>
+            <p className="text-[#4A5568] leading-relaxed">
+              Executive teams and boards preparing their companies for a public listing, ensuring compliance before the formal process begins.
+            </p>
+          </motion.div>
+
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-white p-8 rounded-2xl shadow-sm border border-border">
+            <div className="w-12 h-12 rounded-xl bg-[#C9962B] text-white flex items-center justify-center mb-6">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            </div>
+            <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-3">What You Receive</h3>
+            <p className="text-[#4A5568] leading-relaxed">
+              A scored readiness heatmap and a phased implementation roadmap sequenced to your target listing timeline.
+            </p>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ASSESSMENT AREAS */}
+      <section className="w-full bg-white border-y border-border py-24">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-[#0B2545] font-heading text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
+              The 4 Diagnostic Domains
+            </h2>
+            <p className="text-lg text-[#4A5568]">
+              We evaluate critical listing elements across 4 core domains, specifically tailored to your regulatory pathway.
+            </p>
+          </div>
           
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-12">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, margin: "-50px" }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } }
+            }}
+            className="grid md:grid-cols-2 gap-8"
+          >
             {[
               {
-                title: "1. Company Details & Governance:",
+                title: "1. Company Details & Governance",
                 desc: "Corporate structure, entity rationalization, articles & by-laws, IP ownership, independence & committee composition, governance policies."
               },
               {
-                title: "2. Financial Position & Reporting:",
+                title: "2. Financial Position & Reporting",
                 desc: "Audit-ready financials, capital table integrity, complex accounting, internal controls, CFO capability, and compliance framework."
               },
               {
-                title: "3. Business & Operations:",
+                title: "3. Business & Operations",
                 desc: "Operations, human capital, KPIs, ESG materiality, ERP capability for public-company close cycles, and business continuity."
               },
               {
-                title: "4. Risk & Compliance:",
+                title: "4. Risk & Compliance",
                 desc: "Cybersecurity risk disclosure, ITGC assessment, privacy compliance, board-level ESG oversight, and anti-bribery compliance."
               }
             ].map((domain, i) => (
               <motion.div 
                 key={i}
                 variants={{
-                  hidden: { opacity: 0, y: 40, scale: 0.96 },
-                  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
                 }}
-                className="flex flex-col gap-3 p-8 -m-8 rounded-2xl transition-all duration-500 hover:bg-[#f8f9fa] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 cursor-default border border-transparent hover:border-gray-100"
+                className="bg-[#F3F6F9] p-8 rounded-2xl border border-transparent hover:border-border transition-colors"
               >
-                <h3 className="font-heading text-xl font-semibold text-[#0B2545]">
+                <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-3">
                   {domain.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-[17px]">
+                <p className="text-[#4A5568] leading-relaxed">
                   {domain.desc}
                 </p>
               </motion.div>
             ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* HOW IT WORKS & WHAT YOU RECEIVE */}
-      <section className="w-full bg-[#f8f9fa] border-t border-border overflow-hidden">
-        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, margin: "-50px" }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <h2 className="text-[#0B2545] font-heading text-3xl font-medium mb-8">How It Works</h2>
-              <div className="flex flex-col gap-8">
-                {[
-                  { step: "1", title: "Create your workspace", desc: "Sign in to access your secure, private assessment dashboard." },
-                  { step: "2", title: "Complete the domains", desc: "Work through structured diagnostic questions benchmarked against regulatory standards." },
-                  { step: "3", title: "Track progress instantly", desc: "Your entries autosave, and your readiness score updates in real time." }
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-6 items-start">
-                    <div className="shrink-0 w-12 h-12 rounded-full bg-white shadow-sm border border-[#5CC49A]/30 text-[#0B2545] font-heading text-xl font-semibold flex items-center justify-center">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-medium text-[#0B2545] mb-1">{item.title}</h4>
-                      <p className="text-gray-600 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+      {/* HOW IT WORKS */}
+      <section className="w-full bg-[#0B2545] text-white py-24 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+          <svg className="absolute right-0 top-1/2 -translate-y-1/2 w-[800px] h-[800px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
 
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, margin: "-50px" }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-[#0B2545] p-10 lg:p-14 rounded-2xl text-white shadow-xl relative overflow-hidden"
-            >
-              <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#C9962B] opacity-10 blur-3xl rounded-full" />
-              
-              <h2 className="text-white font-heading text-3xl font-medium mb-6 relative z-10">What You Receive</h2>
-              <p className="text-gray-300 leading-relaxed mb-8 relative z-10">
-                The output is a structured independent review indicating your listing readiness position.
-              </p>
-              
-              <ul className="space-y-6 text-gray-200 relative z-10">
-                <li className="flex gap-4 items-start">
-                  <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-[#C9962B]/20 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-[#C9962B]" />
-                  </div>
-                  <span className="text-lg">A scored readiness assessment</span>
-                </li>
-                <li className="flex gap-4 items-start">
-                  <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-[#C9962B]/20 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-[#C9962B]" />
-                  </div>
-                  <span className="text-lg">A visual heatmap of your position by workstream</span>
-                </li>
-                <li className="flex gap-4 items-start">
-                  <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-[#C9962B]/20 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-[#C9962B]" />
-                  </div>
-                  <span className="text-lg">A phased implementation roadmap</span>
-                </li>
-              </ul>
-            </motion.div>
-            
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 relative z-10">
+          <h2 className="font-heading text-3xl lg:text-4xl font-bold mb-12 tracking-tight">How It Works</h2>
+          
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { step: "1", title: "Create Workspace", desc: "Sign in to access your secure, private assessment dashboard." },
+              { step: "2", title: "Complete Domains", desc: "Work through structured diagnostic questions benchmarked against regulatory standards." },
+              { step: "3", title: "Track Progress", desc: "Your entries autosave, and your readiness heatmap updates in real time." }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="flex flex-col gap-4"
+              >
+                <div className="w-14 h-14 rounded-full bg-[#C9962B] text-[#0B2545] flex items-center justify-center font-bold text-2xl font-heading shadow-lg shadow-[#C9962B]/20">
+                  {item.step}
+                </div>
+                <h4 className="text-xl font-bold mt-2">{item.title}</h4>
+                <p className="text-gray-300 leading-relaxed max-w-sm">{item.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* FINAL CTA & DISCLAIMER */}
-      <section className="w-full bg-[#051429] py-24 border-t border-white/10 overflow-hidden relative">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1573496130141-209d200cebd8?auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-luminosity bg-cover bg-center" />
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-50px" }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-[90rem] mx-auto px-6 lg:px-12 text-center relative z-10"
-        >
+      <section className="w-full bg-[#F3F6F9] py-24 border-t border-border">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 text-center">
           <Button 
             size="lg" 
-            className="h-16 px-12 text-xl bg-[#C9962B] hover:bg-[#b08223] text-[#0B2545] font-semibold mb-12 shadow-[0_0_20px_rgba(201,150,43,0.2)] transition-all hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(201,150,43,0.4)]" 
-            onClick={() => setSignInOpen(true)}
+            className="h-16 px-12 text-xl bg-[#0A7A53] hover:bg-[#086244] text-white font-bold mb-10 shadow-xl shadow-[#0A7A53]/20 transition-all hover:-translate-y-1" 
+            onClick={handleStartAssessment}
           >
             Start the Assessment Workspace
           </Button>
           
-          <div className="max-w-4xl mx-auto p-6 lg:p-8 border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl text-sm leading-relaxed text-gray-400 space-y-4 text-left shadow-2xl">
-            <h4 className="text-white font-medium mb-2 uppercase tracking-widest text-xs">Important Disclaimer</h4>
+          <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl border border-border text-sm leading-relaxed text-[#4A5568] space-y-4 shadow-sm text-left">
+            <h4 className="text-[#0B2545] font-bold uppercase tracking-widest text-xs">Important Disclaimer</h4>
             <p>
               This page previews a sample proof of concept for review. The prompts, controls, and progress rules are proposals and are not validated regulatory content.
             </p>
@@ -282,7 +290,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
               The progress figure is a self-reported metric and does not constitute a regulatory pass/fail result, an official determination of listing eligibility, or formal approval.
             </p>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {authPhase === "unconfigured" && (
