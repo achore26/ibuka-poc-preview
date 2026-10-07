@@ -95,38 +95,27 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
               </div>
             </motion.div>
 
-            {/* Right Column: Product + Corporate Collage (Merging Trevor's feedback with the premium aesthetic) */}
+            {/* Right Column: Stacked Sharp-Edged Photos */}
             <motion.div 
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="xl:col-span-7 relative h-[600px] hidden md:block"
+              className="xl:col-span-7 flex flex-col gap-6"
             >
-              {/* The Corporate Image - Set as a backdrop */}
-              <div className="absolute right-0 top-0 w-[70%] h-[400px] overflow-hidden shadow-2xl border border-white/10 z-0 opacity-80">
+              {/* Top Photo */}
+              <div className="w-full h-[350px] lg:h-[400px] overflow-hidden shadow-2xl relative">
                 <img 
                   src="https://images.unsplash.com/photo-1573164574511-73c773193279?auto=format&fit=crop&w=1200&q=80" 
                   alt="Black corporate professionals reviewing strategy"
-                  className="w-full h-full object-cover object-center grayscale-[20%] mix-blend-luminosity hover:mix-blend-normal hover:grayscale-0 transition-all duration-700"
+                  className="w-full h-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-[#0B2545]/20" />
               </div>
-              
-              {/* The Product Screenshot - Given Prominence in the foreground */}
-              <div className="absolute left-0 bottom-0 w-[80%] h-auto rounded-xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-white/20 z-10 hover:-translate-y-2 transition-transform duration-500">
-                <div className="bg-[#0B2545] border-b border-white/10 px-4 py-3 flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                  <span className="text-xs text-white/50 ml-2 font-mono">cmp-kenya.app / assessment</span>
-                </div>
+              {/* Bottom Photo */}
+              <div className="w-full h-[300px] lg:h-[350px] overflow-hidden shadow-2xl relative">
                 <img 
-                  src={`${import.meta.env.BASE_URL}product-screenshot.png`}
-                  alt="CMP Assessment Interface"
-                  className="w-full h-auto object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"; // Fallback
-                  }}
+                  src="https://images.unsplash.com/photo-1573496130141-209d200cebd8?auto=format&fit=crop&w=1200&q=80" 
+                  alt="Black business woman in modern office"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </motion.div>
