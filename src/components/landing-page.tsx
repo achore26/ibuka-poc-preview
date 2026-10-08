@@ -35,13 +35,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
               className="flex flex-col gap-8 text-left max-w-2xl"
             >
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F3EF] text-[#0A7A53] text-sm font-semibold mb-6">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0A7A53] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0A7A53]"></span>
-                  </span>
-                  {expectedSampleVersion}
-                </div>
+
                 
                 <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0B2545] mb-6 leading-[1.15]">
                   Know exactly where you stand before the listing process begins.
