@@ -9,11 +9,7 @@ interface LandingPageProps {
 
 export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
   const handleStartAssessment = () => {
-    if (authPhase === "unconfigured") {
-      alert("Sign-in is unavailable in this test build. Please configure the Supabase URL.");
-    } else {
-      setSignInOpen(true);
-    }
+    window.location.href = "https://cmpkenya.co.ke/workspace";
   };
 
   return (
@@ -36,11 +32,11 @@ export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
             >
               <div>
                 <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0B2545] mb-6 leading-[1.15]">
-                  Assess your readiness for the Nairobi Securities Exchange.
+                  Check how ready your company is to list on the Nairobi Securities Exchange.
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-[#4A5568] leading-relaxed">
-                  The Capital Markets Portal (CMP) is a secure self-assessment toolkit that helps you evaluate your company's listing eligibility against regulatory standards.
+                  Complete a short self-assessment and see where your company stands against the listing requirements.
                 </p>
               </div>
 
@@ -318,11 +314,6 @@ export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
         </div>
       </footer>
 
-      {authPhase === "unconfigured" && (
-        <div className="w-full bg-destructive text-destructive-foreground text-center py-3 text-sm font-medium sticky bottom-0 z-50">
-          Note: Magic-link sign-in and saved assessments are unavailable (Supabase not configured).
-        </div>
-      )}
     </div>
   );
 }
