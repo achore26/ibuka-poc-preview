@@ -178,16 +178,6 @@ export default function App() {
                     Sign out
                   </Button>
                 </>
-              ) : auth.phase === "unconfigured" ? (
-                <span className="text-xs text-rail-muted">Sign-in unavailable</span>
-              ) : auth.phase !== "restoring" ? (
-                <SignInDialog
-                  open={signInOpen}
-                  onOpenChange={setSignInOpen}
-                  notice={auth.notice}
-                  onSignIn={auth.signIn}
-                  triggerClassName="h-11 border-border bg-transparent text-foreground hover:bg-muted"
-                />
               ) : null}
             </div>
           </div>
