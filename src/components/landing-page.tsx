@@ -7,7 +7,7 @@ interface LandingPageProps {
   expectedSampleVersion: string;
 }
 
-export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }: LandingPageProps) {
+export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
   const handleStartAssessment = () => {
     if (authPhase === "unconfigured") {
       alert("Sign-in is unavailable in this test build. Please configure the Supabase URL.");
@@ -19,7 +19,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
   return (
     <div className="w-full bg-[#F3F6F9] flex flex-col items-center">
       
-      {/* HERO SECTION - CLEAN, CONCISE, DISTINCT CMP IDENTITY */}
+      {/* 1. WHAT CMP IS (HERO SECTION) */}
       <section className="relative w-full overflow-hidden pt-20 pb-24 lg:pt-32 lg:pb-32 bg-white border-b border-border">
         {/* Subtle decorative accent */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-[#E8F3EF] to-transparent rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
@@ -27,7 +27,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         <div className="relative z-10 mx-auto w-full max-w-[90rem] px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
-            {/* Left Column: Shortened Opening, Main Action High Up */}
+            {/* Left Column */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -35,14 +35,12 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
               className="flex flex-col gap-8 text-left max-w-2xl"
             >
               <div>
-
-                
                 <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0B2545] mb-6 leading-[1.15]">
-                  Know exactly where you stand before the listing process begins.
+                  Assess your readiness for the Nairobi Securities Exchange.
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-[#4A5568] leading-relaxed">
-                  Capital Markets Portal (CMP) offers a structured Listing Readiness Diagnostic. Map your position against regulatory requirements, resolve issues upstream, and sequence your timeline with clarity.
+                  The Capital Markets Portal (CMP) is a secure self-assessment toolkit that helps you evaluate your company's listing eligibility against regulatory standards.
                 </p>
               </div>
 
@@ -53,21 +51,23 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
                   className="h-14 px-8 text-lg bg-[#0A7A53] hover:bg-[#086244] text-white font-semibold transition-all hover:-translate-y-0.5 shadow-lg shadow-[#0A7A53]/20 w-full sm:w-auto" 
                   onClick={handleStartAssessment}
                 >
-                  Start the Assessment
+                  Start Assessment
                 </Button>
-                <p className="text-sm text-[#4A5568]">
-                  Secure, private workspace.
-                </p>
               </div>
             </motion.div>
 
-            {/* Right Column: Clearly Labelled Product Mock (Give product prominence) */}
+            {/* Right Column: Clearly Labelled Product Mock */}
             <motion.div 
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative hidden lg:block"
             >
+              {/* "Example only" label over the mockup */}
+              <div className="absolute -top-4 -right-4 bg-[#C9962B] text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full z-30 shadow-md">
+                Example only
+              </div>
+
               {/* Product Mock Container */}
               <div className="relative bg-white rounded-2xl shadow-[0_20px_60px_rgba(11,37,69,0.08)] border border-border overflow-hidden">
                 {/* Mock Header */}
@@ -98,10 +98,10 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
 
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     {[
-                      { name: "Governance", status: "Complete", color: "bg-[#0A7A53]", text: "text-[#0A7A53]", bg: "bg-[#E8F3EF]" },
-                      { name: "Financial Reporting", status: "In Progress", color: "bg-[#C9962B]", text: "text-[#C9962B]", bg: "bg-[#FCF7EB]" },
-                      { name: "Business Operations", status: "Review", color: "bg-[#5CC49A]", text: "text-[#5CC49A]", bg: "bg-[#EEF9F5]" },
-                      { name: "Risk & Compliance", status: "Not Started", color: "bg-[#4A5568]", text: "text-[#4A5568]", bg: "bg-[#F3F6F9]" }
+                      { name: "Company details", status: "Complete", color: "bg-[#0A7A53]", text: "text-[#0A7A53]", bg: "bg-[#E8F3EF]" },
+                      { name: "Financial position", status: "In Progress", color: "bg-[#C9962B]", text: "text-[#C9962B]", bg: "bg-[#FCF7EB]" },
+                      { name: "Business model", status: "Review", color: "bg-[#5CC49A]", text: "text-[#5CC49A]", bg: "bg-[#EEF9F5]" },
+                      { name: "Risks & governance", status: "Not Started", color: "bg-[#4A5568]", text: "text-[#4A5568]", bg: "bg-[#F3F6F9]" }
                     ].map((item, idx) => (
                       <div key={idx} className="p-4 rounded-xl border border-border flex flex-col gap-3">
                         <span className="font-medium text-[#0B2545] text-sm">{item.name}</span>
@@ -133,54 +133,36 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         </div>
       </section>
 
-      {/* WHAT IT IS & WHO IT HELPS (Expanded scannable sections) */}
-      <section className="w-full max-w-[90rem] mx-auto px-6 lg:px-12 py-24 bg-[#F3F6F9]">
+      {/* 2. WHO IT HELPS */}
+      <section className="w-full max-w-[90rem] mx-auto px-6 lg:px-12 py-24 bg-[#F3F6F9] flex justify-center">
         <motion.div 
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "-50px" }}
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.15 } }
-          }}
-          className="grid md:grid-cols-2 gap-12 lg:gap-16"
+          className="bg-white p-10 rounded-2xl shadow-sm border border-border flex flex-col max-w-4xl text-center items-center"
         >
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-white p-10 rounded-2xl shadow-sm border border-border flex flex-col h-full">
-            <div className="w-14 h-14 rounded-xl bg-[#0B2545] text-white flex items-center justify-center mb-6">
-              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-            </div>
-            <h3 className="font-heading text-2xl font-bold text-[#0B2545] mb-4">What is CMP?</h3>
-            <p className="text-[#4A5568] leading-relaxed text-lg flex-grow">
-              The Capital Markets Portal (CMP) is a secure, interactive platform designed to help companies navigate the complex preparation required for a public listing. 
-              <br/><br/>
-              It provides a structured diagnostic framework that translates complex regulatory standards (such as POLD 2023 and NSE requirements) into an accessible, step-by-step self-assessment. By demystifying the pre-listing phase, CMP enables companies to identify gaps early and allocate resources efficiently before formal engagement.
+          <div className="w-14 h-14 rounded-xl bg-[#0B2545] text-white flex items-center justify-center mb-6">
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+          </div>
+          <h2 className="font-heading text-2xl font-bold text-[#0B2545] mb-4">Who this helps</h2>
+          <p className="text-[#4A5568] leading-relaxed text-lg">
+            This toolkit serves founders, boards, and finance teams considering a listing on the Nairobi Securities Exchange (NSE) through the Main Investment Market Segment (MIMS) or the Growth Enterprise Market Segment (GEMS).
+          </p>
+          <div className="mt-6 px-4 py-2 bg-[#F3F6F9] rounded border border-border">
+            <p className="text-xs text-[#4A5568] italic">
+              * Note for review: Audience description is subject to confirmation with Trevor.
             </p>
-          </motion.div>
-
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-white p-10 rounded-2xl shadow-sm border border-border flex flex-col h-full">
-            <div className="w-14 h-14 rounded-xl bg-[#0A7A53] text-white flex items-center justify-center mb-6">
-              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-            </div>
-            <h3 className="font-heading text-2xl font-bold text-[#0B2545] mb-4">Who It Helps</h3>
-            <p className="text-[#4A5568] leading-relaxed text-lg flex-grow">
-              This diagnostic tool is built for executive leadership teams, boards of directors, and financial controllers of privately held companies considering a transition to public markets.
-              <br/><br/>
-              Whether you are actively planning an IPO within the next 12-24 months or simply evaluating long-term strategic options, CMP provides the foundational baseline needed to inform your capital markets strategy and ensure compliance before the formal process begins.
-            </p>
-          </motion.div>
+          </div>
         </motion.div>
       </section>
 
-      {/* ASSESSMENT AREAS */}
+      {/* 3. ASSESSMENT AREAS */}
       <section className="w-full bg-white border-y border-border py-24">
         <div className="max-w-[90rem] mx-auto px-6 lg:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-[#0B2545] font-heading text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
-              The 4 Diagnostic Domains
+              Assessment areas
             </h2>
-            <p className="text-lg text-[#4A5568]">
-              We evaluate critical listing elements across 4 core domains, specifically tailored to your regulatory pathway.
-            </p>
           </div>
           
           <motion.div 
@@ -191,24 +173,24 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
               hidden: {},
               visible: { transition: { staggerChildren: 0.1 } }
             }}
-            className="grid md:grid-cols-2 gap-8"
+            className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
           >
             {[
               {
-                title: "1. Company Details & Governance",
-                desc: "Corporate structure, entity rationalization, articles & by-laws, IP ownership, independence & committee composition, governance policies."
+                title: "Company details",
+                desc: "Review your corporate structure, incorporation status, and foundational details."
               },
               {
-                title: "2. Financial Position & Reporting",
-                desc: "Audit-ready financials, capital table integrity, complex accounting, internal controls, CFO capability, and compliance framework."
+                title: "Financial position and history",
+                desc: "Evaluate your financial health, historical audits, and reporting capabilities."
               },
               {
-                title: "3. Business & Operations",
-                desc: "Operations, human capital, KPIs, ESG materiality, ERP capability for public-company close cycles, and business continuity."
+                title: "Business model and revenue",
+                desc: "Assess your operational metrics, market position, and revenue generation."
               },
               {
-                title: "4. Risk & Compliance",
-                desc: "Cybersecurity risk disclosure, ITGC assessment, privacy compliance, board-level ESG oversight, and anti-bribery compliance."
+                title: "Risks, outlook and governance",
+                desc: "Identify key risks, forward-looking strategies, and board compliance."
               }
             ].map((domain, i) => (
               <motion.div 
@@ -217,9 +199,9 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
                 }}
-                className="bg-[#F3F6F9] p-8 rounded-2xl border border-transparent hover:border-border transition-colors"
+                className="bg-[#F3F6F9] p-8 rounded-2xl border border-transparent hover:border-border transition-colors flex flex-col justify-center"
               >
-                <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-3">
+                <h3 className="font-heading text-xl font-bold text-[#0B2545] mb-2">
                   {domain.title}
                 </h3>
                 <p className="text-[#4A5568] leading-relaxed">
@@ -231,7 +213,7 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
+      {/* 4. HOW IT WORKS */}
       <section className="w-full bg-[#0B2545] text-white py-24 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
           <svg className="absolute right-0 top-1/2 -translate-y-1/2 w-[800px] h-[800px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,13 +222,13 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         </div>
 
         <div className="max-w-[90rem] mx-auto px-6 lg:px-12 relative z-10">
-          <h2 className="font-heading text-3xl lg:text-4xl font-bold mb-12 tracking-tight">How It Works</h2>
+          <h2 className="font-heading text-3xl lg:text-4xl font-bold mb-12 tracking-tight">How it works</h2>
           
           <div className="grid md:grid-cols-3 gap-12">
             {[
-              { step: "1", title: "Create Workspace", desc: "Sign in to access your secure, private assessment dashboard dedicated to your company." },
-              { step: "2", title: "Complete Domains", desc: "Work systematically through structured diagnostic questions benchmarked against regulatory standards." },
-              { step: "3", title: "Review & Refine", desc: "Your entries autosave. Collaborate with your team and update your answers as your readiness evolves." }
+              { step: "1", title: "Answer Questions", desc: "Work systematically through structured diagnostic questions based on listing requirements." },
+              { step: "2", title: "Track Progress", desc: "Your entries autosave. Collaborate with your team as you gather documentation." },
+              { step: "3", title: "See Your Status", desc: "View an instantly updated readiness score as you complete each core domain." }
             ].map((item, i) => (
               <motion.div 
                 key={i}
@@ -267,48 +249,74 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
         </div>
       </section>
 
-      {/* WHAT YOU RECEIVE */}
+      {/* 5. WHAT USERS RECEIVE */}
       <section className="w-full bg-white py-24">
         <div className="max-w-[90rem] mx-auto px-6 lg:px-12 flex flex-col items-center text-center">
           <div className="w-16 h-16 rounded-2xl bg-[#C9962B] text-white flex items-center justify-center mb-8 shadow-lg shadow-[#C9962B]/20">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
           </div>
           <h2 className="text-[#0B2545] font-heading text-3xl lg:text-4xl font-bold mb-6 tracking-tight">
-            What You Receive
+            What you receive
           </h2>
-          <p className="text-lg md:text-xl text-[#4A5568] leading-relaxed max-w-4xl">
-            Upon completing the diagnostic, you generate a comprehensive readiness profile. This includes a clear gap analysis highlighting areas requiring immediate attention, a visual readiness heatmap, and a foundational implementation roadmap sequenced to help you prioritize remediation efforts ahead of formal auditor or underwriter engagement.*
+          <p className="text-lg md:text-xl text-[#4A5568] leading-relaxed max-w-3xl mb-8">
+            Upon completing the diagnostic, you receive a clear view of your listing readiness. You will see an overall completion score alongside a status breakdown for each of the four assessment domains, helping you identify areas requiring attention before formal underwriter engagement.
           </p>
-          <div className="mt-8 px-6 py-4 bg-[#F3F6F9] rounded-lg border border-border max-w-3xl">
-            <p className="text-sm text-[#4A5568] italic text-left">
-              * Note for review: Claims regarding heatmaps and implementation roadmaps are pending final confirmation based on platform scope.
-            </p>
+        </div>
+      </section>
+
+      {/* 6. START ASSESSMENT & DISCLAIMER */}
+      <section className="w-full bg-[#F3F6F9] py-24 border-t border-border">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 text-center flex flex-col items-center">
+          <Button 
+            size="lg" 
+            className="h-16 px-12 text-xl bg-[#0A7A53] hover:bg-[#086244] text-white font-bold mb-6 shadow-xl shadow-[#0A7A53]/20 transition-all hover:-translate-y-1" 
+            onClick={handleStartAssessment}
+          >
+            Start Assessment
+          </Button>
+          
+          <div className="max-w-2xl mx-auto p-5 bg-white rounded-xl border border-border text-sm leading-relaxed text-[#4A5568] text-center shadow-sm">
+            <strong>Important:</strong> This tool provides an indicative self-assessment. The progress figure is a self-reported metric and does not constitute an approval, a regulatory opinion, or a guarantee of listing.
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA & DISCLAIMER */}
-      <section className="w-full bg-[#F3F6F9] py-24 border-t border-border">
-        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 text-center">
-          <Button 
-            size="lg" 
-            className="h-16 px-12 text-xl bg-[#0A7A53] hover:bg-[#086244] text-white font-bold mb-10 shadow-xl shadow-[#0A7A53]/20 transition-all hover:-translate-y-1" 
-            onClick={handleStartAssessment}
-          >
-            Start the Assessment Workspace
-          </Button>
-          
-          <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl border border-border text-sm leading-relaxed text-[#4A5568] space-y-4 shadow-sm text-left">
-            <h4 className="text-[#0B2545] font-bold uppercase tracking-widest text-xs">Important Disclaimer</h4>
-            <p>
-              This page previews a sample proof of concept for review. The prompts, controls, and progress rules are proposals and are not validated regulatory content.
-            </p>
-            <p>
-              The progress figure is a self-reported metric and does not constitute a regulatory pass/fail result, an official determination of listing eligibility, or formal approval.
-            </p>
+      {/* 7. FOOTER & FAQS */}
+      <footer className="w-full bg-[#0B2545] text-white pt-20 pb-10 border-t border-[#1a3a60]">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12">
+          {/* FAQs section within footer area */}
+          <div className="mb-16 border-b border-[#1a3a60] pb-16">
+            <h3 className="font-heading text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h3>
+            <div className="grid md:grid-cols-3 gap-8 text-sm">
+              <div>
+                <h4 className="font-bold mb-2 text-[#C9962B]">Who should fill this out?</h4>
+                <p className="text-gray-300">It is best completed collaboratively by the company's founders, board members, and executive finance team.</p>
+              </div>
+              <div>
+                <h4 className="font-bold mb-2 text-[#C9962B]">Is my data secure?</h4>
+                <p className="text-gray-300">Yes, the assessment runs in a secure, private workspace dedicated solely to your organization.</p>
+              </div>
+              <div>
+                <h4 className="font-bold mb-2 text-[#C9962B]">What happens after I finish?</h4>
+                <p className="text-gray-300">You can use your resulting score and domain breakdown to guide your internal preparation and conversations with advisors.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Links */}
+          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-white transition-colors">Data Privacy Policy</a>
+              <a href="#" className="hover:text-white transition-colors">Support Contact</a>
+            </div>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-white transition-colors">Nairobi Securities Exchange (NSE)</a>
+              <a href="#" className="hover:text-white transition-colors">Capital Markets Authority (CMA)</a>
+            </div>
           </div>
         </div>
-      </section>
+      </footer>
 
       {authPhase === "unconfigured" && (
         <div className="w-full bg-destructive text-destructive-foreground text-center py-3 text-sm font-medium sticky bottom-0 z-50">
