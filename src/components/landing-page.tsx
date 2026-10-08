@@ -112,22 +112,22 @@ export function LandingPage({ authPhase, setSignInOpen, expectedSampleVersion }:
                     ))}
                   </div>
                 </div>
-                
-                {/* Decorative overlay indicator */}
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1, duration: 0.5 }}
-                  className="absolute bottom-6 right-6 bg-white p-4 rounded-xl shadow-lg border border-border flex items-center gap-3"
-                >
-                  <div className="w-8 h-8 rounded-full bg-[#EEF9F5] flex items-center justify-center">
-                    <svg className="w-4 h-4 text-[#5CC49A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </div>
-                  <div className="text-sm font-medium text-[#0B2545]">
-                    Track readiness in real-time
-                  </div>
-                </motion.div>
               </div>
+              
+              {/* Decorative overlay indicator */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+                className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg border border-border flex items-center gap-3 z-20"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#EEF9F5] flex items-center justify-center">
+                  <svg className="w-4 h-4 text-[#5CC49A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <div className="text-sm font-medium text-[#0B2545]">
+                  Track readiness in real-time
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
