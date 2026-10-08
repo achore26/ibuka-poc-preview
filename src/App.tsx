@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { LandingPage } from "@/components/landing-page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { SignInDialog } from "@/components/sign-in-dialog";
+
 import { BrandLogo } from "@/components/brand-logo";
 import { SectionNavProvider, SectionRail, type SectionNavConfig } from "@/components/section-rail";
 import { Workspace } from "@/components/workspace";

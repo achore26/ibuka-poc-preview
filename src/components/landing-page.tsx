@@ -1,13 +1,66 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 
-interface LandingPageProps {
-  authPhase: string;
-  setSignInOpen: (open: boolean) => void;
-  expectedSampleVersion: string;
+const TYPEWRITER_PHRASES = [
+  "list on the Nairobi Securities Exchange.",
+  "transition to the public markets.",
+  "meet NSE regulatory requirements.",
+  "attract institutional investors."
+];
+
+function TypewriterEffect({ texts }: { texts: string[] }) {
+  const [textIndex, setTextIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const typingSpeed = 60;
+    const deletingSpeed = 30;
+    const pauseBeforeDelete = 2500;
+    const pauseBeforeType = 400;
+
+    const currentFullText = texts[textIndex];
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting && displayedText === currentFullText) {
+      timer = setTimeout(() => setIsDeleting(true), pauseBeforeDelete);
+    } else if (isDeleting && displayedText === "") {
+      setIsDeleting(false);
+      setTextIndex((prev) => (prev + 1) % texts.length);
+      timer = setTimeout(() => {}, pauseBeforeType);
+    } else {
+      const nextText = isDeleting 
+        ? currentFullText.substring(0, displayedText.length - 1)
+        : currentFullText.substring(0, displayedText.length + 1);
+
+      timer = setTimeout(() => {
+        setDisplayedText(nextText);
+      }, isDeleting ? deletingSpeed : typingSpeed);
+    }
+
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, textIndex, texts]);
+
+  return (
+    <span className="text-[#0A7A53]">
+      {displayedText}
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+        className="inline-block w-[3px] h-[0.9em] bg-[#C9962B] ml-1 align-middle -translate-y-[2px]"
+      />
+    </span>
+  );
 }
 
-export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
+interface LandingPageProps {
+  authPhase?: string;
+  setSignInOpen?: (open: boolean) => void;
+  expectedSampleVersion?: string;
+}
+
+export function LandingPage(_props: LandingPageProps) {
   const handleStartAssessment = () => {
     window.location.href = "https://cmpkenya.co.ke/workspace";
   };
@@ -30,9 +83,10 @@ export function LandingPage({ authPhase, setSignInOpen }: LandingPageProps) {
               transition={{ duration: 0.8 }}
               className="flex flex-col gap-8 text-left max-w-2xl"
             >
-              <div>
+              <div className="min-h-[14rem] sm:min-h-[12rem] lg:min-h-[16rem]">
                 <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-[#0B2545] mb-6 leading-[1.15]">
-                  Check how ready your company is to list on the Nairobi Securities Exchange.
+                  Check how ready your company is to <br className="hidden sm:block" />
+                  <TypewriterEffect texts={TYPEWRITER_PHRASES} />
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-[#4A5568] leading-relaxed">
